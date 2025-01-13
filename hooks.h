@@ -87,7 +87,6 @@ public:
 	void                     BuildTransformations( int a2, int a3, int a4, int a5, int a6, int a7 );
 	bool                     IsConnected( );
 	bool                     IsHLTV( );
-	void                     EmitSound( IRecipientFilter& filter, int iEntIndex, int iChannel, const char* pSoundEntry, unsigned int nSoundEntryHash, const char* pSample, float flVolume, float flAttenuation, int nSeed, int iFlags, int iPitch, const vec3_t* pOrigin, const vec3_t* pDirection, void* pUtlVecOrigins, bool bUpdatePositions, float soundtime, int speakerentity );
 	void                     RenderSmokeOverlay( bool unk );
 	void                     OnRenderStart( );
     void                     RenderView( const CViewSetup &view, const CViewSetup &hud_view, int clear_flags, int what_to_draw );

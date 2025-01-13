@@ -5,7 +5,6 @@ public:
 	// indexes for virtuals and hooks.
 	enum indices : size_t {
 		EMITAMBIENTSOUND = 12,
-		EMITSOUND = 5,
 	};
 
 	enum {
