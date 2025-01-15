@@ -595,14 +595,17 @@ void Client::UpdateIncomingSequences() {
 		m_sequences.pop_back();
 }
 
-
-
-void Client::SetClantag()
-{
+void Client::SetClantag() {
 	static int(__fastcall * clantag)(const char*, const char*);
-	if (!clantag)
-		clantag = pattern::find(g_csgo.m_engine_dll, XOR("53 56 57 8B DA 8B F9 FF 15")).as< int(__fastcall*)(const char*, const char*) >();
 
-	clantag("zephyr", "zephyr");
+	if (!clantag) {
+		clantag = pattern::find(g_csgo.m_engine_dll, XOR("53 56 57 8B DA 8B F9 FF 15")).as< int(__fastcall*)(const char*, const char*) >();
+	}
+
+	// get our text.
+	std::string text = g_menu.main.misc.clantag_text.gets( );
+
+	// run clantag lambda.
+	clantag(text.c_str(), text.c_str());
 }
 

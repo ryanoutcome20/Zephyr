@@ -73,16 +73,29 @@ LRESULT WINAPI Hooks::WndProc( HWND wnd, uint32_t msg, WPARAM wp, LPARAM lp ) {
 		case VK_BACK:
 			if( !g_input.m_buffer.empty( ) )
 				g_input.m_buffer.pop_back( );
-			break;
 
+			if ( !g_input.m_full_buffer.empty() )
+				g_input.m_full_buffer.pop_back();
+
+			break;
+		case VK_SPACE:
+			g_input.m_full_buffer += " ";
+			break;
 		case VK_ESCAPE:
 		case VK_TAB:
 		case VK_RETURN:
 			break;
 
 		default:
-			if( std::isdigit( static_cast< char >( wp ) ) )
-				g_input.m_buffer += static_cast< char >( wp );
+			char wpc = static_cast<char>(wp);
+
+			if( std::isdigit( wpc ) ) {
+				g_input.m_buffer += wpc;
+				g_input.m_full_buffer += wpc;
+			}
+
+			if( std::isalpha( wpc ) )
+				g_input.m_full_buffer += wpc;
 
 			break;
 		}

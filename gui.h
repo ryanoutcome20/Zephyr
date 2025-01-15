@@ -36,6 +36,7 @@ public:
 	std::array< key_t, 256 > m_keys;
 	Point					 m_mouse;
 	std::string				 m_buffer;
+	std::string				 m_full_buffer;
 
 public:
 	__forceinline void update( ) {

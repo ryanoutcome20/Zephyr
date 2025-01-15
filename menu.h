@@ -1925,6 +1925,7 @@ public:
 	MultiDropdown ragdoll_modifiers;
 	Checkbox killfeed;
 	Checkbox clantag;
+	Edit			 clantag_text;
 public:
 	void init() {
 		SetTitle(XOR("misc"));
@@ -2030,6 +2031,9 @@ public:
 
 		clantag.setup(XOR("clantag"), XOR("clantag"));
 		RegisterElement(&clantag, 1);
+
+		clantag_text.setup("", XOR("clantag_text"), 16, false, XOR("zephyr"), true);
+		RegisterElement(&clantag_text, 1);
 	}
 };
 
