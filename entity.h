@@ -1274,7 +1274,7 @@ public:
 
 		// if we have no bullets, we have no spread.
 		wep_info = GetWpnData();
-		if (!wep_info || !wep_info->m_bullets)
+		if ( !wep_info || !wep_info->m_bullets )
 			return {};
 
 		// get some data for later.
@@ -1282,105 +1282,23 @@ public:
 		recoil_index = m_flRecoilIndex();
 
 		// seed randomseed.
-		g_csgo.RandomSeed((seed & 0xff) + 1);
+		g_csgo.RandomSeed(seed);
 
 		// generate needed floats.
 		r1 = g_csgo.RandomFloat(0.f, 1.f);
 		r2 = g_csgo.RandomFloat(0.f, math::pi_2);
-
-		// todo - dex; need to make sure this is right for shotguns still.
-		//             the 3rd arg to get_shotgun_spread is actually using the bullet iterator
-		//             should also probably check for if the weapon is a shotgun, but it seems like GetShotgunSpread modifies some the r1 - r4 vars...
-		// for( int i{}; i < wep_info->m_bullets; ++i )
-		/*
-			// shotgun shit, or first bullet
-			if ( !bullet_i
-			  || ((int (__thiscall *)(void ***))weapon_accuracy_shotgun_spread_patterns[13])(&weapon_accuracy_shotgun_spread_patterns) )
-			{
-			  r1 = RandomFloat(0, 0x3F800000);// rand 0.f, 1.f
-			  r2 = RandomFloat(0, 0x40C90FDB);// rand 0.f, pi * 2.f
-			  v47 = *(_DWORD *)v45;
-			  r2_ = r2;
-			  v48 = (*(int (__thiscall **)(int))(v47 + 48))(v45);
-
-			  // not revolver?
-			  if ( v48 != sub_101D9B10(&dword_14FA0DE0) || a7 != 1 )
-			  {
-
-				// not negev?
-				v50 = (*(int (__thiscall **)(int))(*(_DWORD *)v45 + 48))(v45);
-				if ( v50 != sub_101D9B10(&dword_14FA0DEC) || recoil_index >= 3.0 )
-				{
-				  r1_ = r1;
-				}
-				else
-				{
-				  r1__ = r1;
-				  recoil_index_it1 = 3;
-				  do
-				  {
-					--recoil_index_it1;
-					r1__ = r1__ * r1__;
-				  }
-				  while ( (float)recoil_index_it1 > recoil_index );
-				  r1_ = 1.0 - r1__;
-				}
-			  }
-			  else
-			  {
-				r1_ = 1.0 - (float)(r1 * r1);
-			  }
-
-			  // some convar stuff / etc
-			  if ( max_inaccuracy )
-				r1_ = 1.0;
-
-			  bullet_i = v87;
-			  bullet_i1 = r1_ * v104;
-
-			  if ( only_up_is_not_0 )
-				v53 = 1.5707964;
-			  else
-				v53 = r2_;
-
-			  r2_ = v53;
-			}
-
-			if ( ((int (__thiscall *)(void ***))weapon_accuracy_shotgun_spread_patterns[13])(&weapon_accuracy_shotgun_spread_patterns) )
-			{
-			  null0 = v54;
-			  m_iItemDefinitionIndex = (**(int (***)(void))LODWORD(v88))();
-			  get_shotgun_spread(
-				m_iItemDefinitionIndex,
-				null0,
-				bullet_i + m_BulletsPerShot * (signed int)recoil_index,
-				&r4,
-				&r3);
-			}
-			else
-			{
-			  r3 = RandomFloat(0, 0x3F800000);// rand 0.f, 1.f
-			  r4 = RandomFloat(0, 0x40C90FDB);// rand 0.f, pi * 2.f
-			}
-		*/
-
-		if ( /*wep_info->m_weapon_type == WEAPONTYPE_SHOTGUN &&*/ g_csgo.weapon_accuracy_shotgun_spread_patterns->GetInt() > 0)
-			g_csgo.GetShotgunSpread(item_def_index, 0, 0 /*bullet_i*/ + wep_info->m_bullets * recoil_index, &r4, &r3);
-
-		else {
-			r3 = g_csgo.RandomFloat(0.f, 1.f);
-			r4 = g_csgo.RandomFloat(0.f, math::pi_2);
-		}
+		r3 = g_csgo.RandomFloat(0.f, 1.f);
+		r4 = g_csgo.RandomFloat(0.f, math::pi_2);
 
 		// revolver secondary spread.
-		if (item_def_index == REVOLVER && revolver2) {
+		if ( item_def_index == REVOLVER && revolver2 ) {
 			r1 = 1.f - (r1 * r1);
 			r3 = 1.f - (r3 * r3);
 		}
 
 		// negev spread.
-		else if (item_def_index == NEGEV && recoil_index < 3.f) {
-			for (int i{ 3 }; i > recoil_index; --i) {
+		else if ( item_def_index == NEGEV && recoil_index < 3.f ) {
+			for ( int i{ 3 }; i > recoil_index; --i ) {
 				r1 *= r1;
 				r3 *= r3;
 			}

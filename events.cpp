@@ -29,11 +29,27 @@ void events::round_start( IGameEvent* evt ) {
 	g_visuals.m_opacities.fill( 0.f );
     g_visuals.m_offscreen_damage.fill( OffScreenDamageData_t() );
 
-	// buybot.
-	int team = g_cl.m_local->m_iTeamNum( );
+	// update all players.
+	for( int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i  ) {
+		Player* player = g_csgo.m_entlist->GetClientEntity< Player* >( i );
+		if( !player || player->m_bIsLocalPlayer( ) )
+			continue;
 
-	if ( g_menu.main.misc.buy.get( ) && ( team == TEAM_TERRORISTS || team == TEAM_COUNTERTERRORISTS ) ) {
-		if( !g_menu.main.misc.buy_money.get( ) || g_cl.m_local->m_iAccount( ) > g_menu.main.misc.buy_money_amt.get( ) ) {
+		AimPlayer* data = &g_aimbot.m_players[ i - 1 ];
+		data->OnRoundStart( player );
+	}
+
+	// clear origins.
+	g_cl.m_net_pos.clear( );
+
+	// buybot.
+	if(!g_cl.m_local)
+		return; // odd.
+
+	int team = g_cl.m_local->m_iTeamNum();
+
+	if ( g_menu.main.misc.buy.get() && (team == TEAM_TERRORISTS || team == TEAM_COUNTERTERRORISTS) ) {
+		if ( !g_menu.main.misc.buy_money.get() || g_cl.m_local->m_iAccount() > g_menu.main.misc.buy_money_amt.get() ) {
 			auto buy1 = g_menu.main.misc.buy1.GetActiveItems();
 			auto buy2 = g_menu.main.misc.buy2.GetActiveItems();
 			auto buy3 = g_menu.main.misc.buy3.GetActiveItems();
@@ -52,19 +68,6 @@ void events::round_start( IGameEvent* evt ) {
 			}
 		}
 	}
-
-	// update all players.
-	for( int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i  ) {
-		Player* player = g_csgo.m_entlist->GetClientEntity< Player* >( i );
-		if( !player || player->m_bIsLocalPlayer( ) )
-			continue;
-
-		AimPlayer* data = &g_aimbot.m_players[ i - 1 ];
-		data->OnRoundStart( player );
-	}
-
-	// clear origins.
-	g_cl.m_net_pos.clear( );
 }
 
 void events::round_end( IGameEvent* evt ) {

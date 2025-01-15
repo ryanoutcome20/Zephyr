@@ -1922,6 +1922,8 @@ public:
 
 	MultiDropdown notifications;
 	Keybind       last_tick_defuse;
+
+	Checkbox    fake_latency_always;
 	Keybind       fake_latency;
 	Slider		  fake_latency_amt;
 
@@ -2018,6 +2020,9 @@ public:
 
 		fake_latency_amt.setup("", XOR("fake_latency_amt"), 50.f, 800.f, false, 0, 200.f, 50.f, XOR(L"ms"));
 		RegisterElement(&fake_latency_amt);
+
+		fake_latency_always.setup(XOR("fake latency always on"), XOR("fake_latency_always"));
+		RegisterElement(&fake_latency_always);
 
 		// col2.
 		autoaccept.setup(XOR("auto-accept matchmaking"), XOR("autoaccept"));

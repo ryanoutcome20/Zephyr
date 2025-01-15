@@ -70,6 +70,7 @@ public:
 	bool                     InPrediction( );
 	bool                     ShouldDrawParticles( );
 	bool                     ShouldDrawFog( );
+	bool                     ShouldDrawCrosshair();
 	void                     OverrideView( CViewSetup* view );
 	void                     LockCursor( );
 	void                     PlaySound( const char* name );
@@ -81,8 +82,7 @@ public:
 	void                     SceneEnd( );
 	void                     DrawModelExecute( uintptr_t ctx, const DrawModelState_t& state, const ModelRenderInfo_t& info, matrix3x4_t* bone );
 	void                     ComputeShadowDepthTextures( const CViewSetup& view, bool unk );
-	int                      DebugSpreadGetInt( );
-	bool                     NetShowFragmentsGetBool( );
+	bool                     DebugSpreadGetBool( );
 	void                     DoExtraBoneProcessing( int a2, int a3, int a4, int a5, int a6, int a7 );
 	void                     BuildTransformations( int a2, int a3, int a4, int a5, int a6, int a7 );
 	bool                     IsConnected( );

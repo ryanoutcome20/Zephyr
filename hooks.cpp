@@ -187,11 +187,8 @@ void Hooks::init( ) {
 	g_custom_entity_listener.init( );
 
 	// cvar hooks.
-	m_debug_spread.init( g_csgo.net_showfragments );
-	m_debug_spread.add( ConVar::GETINT, util::force_cast( &Hooks::DebugSpreadGetInt ) );
-
-	m_net_show_fragments.init( g_csgo.net_showfragments );
-	m_net_show_fragments.add( ConVar::GETBOOL, util::force_cast( &Hooks::NetShowFragmentsGetBool ) );
+	m_debug_spread.init( g_csgo.weapon_debug_spread_show );
+	m_debug_spread.add( ConVar::GETBOOL, util::force_cast( &Hooks::DebugSpreadGetBool ) );
 
 	// set netvar proxies.
 	g_netvars.SetProxy( HASH( "DT_CSPlayer" ), HASH( "m_angEyeAngles[0]" ), Pitch_proxy, m_Pitch_original );

@@ -4,20 +4,40 @@
 #define NET_FRAMES_MASK ( NET_FRAMES_BACKUP - 1 )
 
 int Hooks::SendDatagram( void* data ) {
-	int backup2 = g_csgo.m_net->m_in_seq;
+	// get our net channel.
+	INetChannel* channel = (INetChannel*)this;
 
-	if( g_aimbot.m_fake_latency ) {
-		int ping = g_menu.main.misc.fake_latency_amt.get( );
+	// sanity checks.
+	if (!channel || !g_csgo.m_engine->IsInGame() || !g_csgo.m_net || !g_cl.m_processing || channel != g_csgo.m_cl->m_net_channel)
+		return g_hooks.m_net_channel.GetOldMethod< SendDatagram_t >(INetChannel::SENDDATAGRAM)(this, data);
 
-		// the target latency.
-		float correct = std::max( 0.f, ( ping / 1000.f ) - g_cl.m_latency - g_cl.m_lerp );
+	// backup our networking variables.
+	int backup_in_seq = channel->m_in_seq;
+	int backup_rel_state = channel->m_in_rel_state;
 
-		g_csgo.m_net->m_in_seq += 2 * NET_FRAMES_MASK - static_cast< uint32_t >( NET_FRAMES_MASK * correct );
+	// fake latency.
+	if (g_aimbot.m_fake_latency || g_menu.main.misc.fake_latency_always.get()) {
+		float ping = g_menu.main.misc.fake_latency_amt.get() / 1000.f;
+
+		if ( g_cl.m_latency < ping ) {
+			int target_in_seq = channel->m_in_seq - game::TIME_TO_TICKS(ping - g_cl.m_latency);
+
+			channel->m_in_seq = target_in_seq;
+
+			for ( auto& seq : g_cl.m_sequences ) {
+				if ( seq.m_seq != target_in_seq )
+					continue;
+
+				channel->m_in_rel_state = seq.m_state;
+			}
+		}
 	}
 
-	int ret = g_hooks.m_net_channel.GetOldMethod< SendDatagram_t >( INetChannel::SENDDATAGRAM )( this, data );
+	// call our old method and reset our backup data.
+	int ret = g_hooks.m_net_channel.GetOldMethod< SendDatagram_t >(INetChannel::SENDDATAGRAM)(this, data);
 
-	g_csgo.m_net->m_in_seq       = backup2;
+	channel->m_in_seq = backup_in_seq;
+	channel->m_in_rel_state = backup_rel_state;
 
 	return ret;
 }

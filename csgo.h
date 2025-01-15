@@ -105,7 +105,6 @@ public:
 	ConVar *cl_lagcompensation;
 	ConVar *mp_teammates_are_enemies;
 	ConVar *weapon_debug_spread_show;
-	ConVar *net_showfragments;
 	ConVar *molotov_throw_detonate_time;
 	ConVar *weapon_molotov_maxdetonateslope;
 	ConVar *weapon_recoil_scale;

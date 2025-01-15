@@ -6,7 +6,7 @@ void callbacks::SkinUpdate( ) {
 }
 
 void callbacks::ForceFullUpdate( ) {
-	if( g_csgo.m_net->IsLoopback( ) )
+	if( g_csgo.m_net && g_csgo.m_net->IsLoopback( ) )
 		return;
 
 	g_csgo.m_cl->m_delta_tick = -1;

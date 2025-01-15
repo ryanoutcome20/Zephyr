@@ -103,7 +103,6 @@ bool CSGO::init( ) {
 	hud_scaling                             = m_cvar->FindVar( HASH( "hud_scaling" ) );
     sv_clip_penetration_traces_to_players   = m_cvar->FindVar( HASH( "sv_clip_penetration_traces_to_players" ) );
     weapon_accuracy_shotgun_spread_patterns = m_cvar->FindVar( HASH( "weapon_accuracy_shotgun_spread_patterns" ) );
-	net_showfragments                       = m_cvar->FindVar( HASH( "net_showfragments" ) );
 
 	// hehe xd.
 	name->m_callbacks.RemoveAll( );
@@ -124,7 +123,6 @@ bool CSGO::init( ) {
 	m_mem_alloc          = PE::GetExport( m_tier0_dll, HASH( "g_pMemAlloc" ) ).get< IMemAlloc* >( );
 	GetGlowObjectManager = pattern::find( m_client_dll, XOR( "A1 ? ? ? ? A8 01 75 4B" ) ).as< GetGlowObjectManager_t >( );
 	m_glow               = GetGlowObjectManager( );
-	//m_hookable_cl        = reinterpret_cast< void * >( *reinterpret_cast< uintptr_t ** >( reinterpret_cast< uintptr_t >( m_cl ) + 0x8 ) );
 
 	// classes by offset from virtual.
 	m_globals     = util::get_method( m_client, CHLClient::INIT ).add( 0x1b ).get< CGlobalVarsBase* >( 2 );
@@ -203,8 +201,6 @@ bool CSGO::init( ) {
 	g_chams.init( );
 	g_hooks.init( );
 
-	
-
     // if we injected and we're ingame, run map load func.
 	if( m_engine->IsInGame( ) ) {
 		g_cl.OnMapload( );
@@ -212,7 +208,9 @@ bool CSGO::init( ) {
 	}
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	
 	m_done = true;
+	
 	return true;
 }
 
