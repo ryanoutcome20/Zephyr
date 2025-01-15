@@ -48,7 +48,6 @@ public:
 	using Render2DEffectsPostHUD_t     = void( __thiscall* )( void*, const CViewSetup& );
 	using OnRenderStart_t              = void( __thiscall* )( void* );
     using RenderView_t                 = void( __thiscall* )( void*, const CViewSetup &, const CViewSetup &, int, int );
-	using GetMatchSession_t            = CMatchSessionOnlineHost*( __thiscall* )( void* );
 	using OnScreenSizeChanged_t        = void( __thiscall* )( void*, int, int );
 	using OverrideConfig_t             = bool( __thiscall* )( void*, MaterialSystem_Config_t*, bool );
 	using PostDataUpdate_t             = void( __thiscall* )( void*, DataUpdateType_t );
@@ -87,7 +86,6 @@ public:
 	void                     OnRenderStart( );
     void                     RenderView( const CViewSetup &view, const CViewSetup &hud_view, int clear_flags, int what_to_draw );
 	void                     Render2DEffectsPostHUD( const CViewSetup& setup );
-	CMatchSessionOnlineHost* GetMatchSession( );
 	bool                     OverrideConfig( MaterialSystem_Config_t* config, bool update );
 	void                     PostDataUpdate( DataUpdateType_t type );
 

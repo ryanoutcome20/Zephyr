@@ -17,7 +17,6 @@ public:
 public:
 	void JumpRelated( );
 	void Strafe( );
-	void DoPrespeed( );
 	bool GetClosestPlane( vec3_t& plane );
 	bool WillCollide( float time, float step );
 	void FixMove( CUserCmd* cmd, const ang_t& old_angles );

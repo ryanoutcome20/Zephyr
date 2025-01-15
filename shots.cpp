@@ -252,7 +252,7 @@ void Shots::OnHurt( IGameEvent *evt ) {
 	}
 
 	// print this shit.
-	if ( g_menu.main.misc.notifications.get( 1 ) ) {
+	if ( g_menu.main.misc.notifications.get( 0 ) ) {
 		std::string out = tfm::format( XOR( "hit %s in the %s for %i (%i remaining)\n" ), name, m_groups[ group ], ( int )damage, hp );
 		g_notify.add( out );
 	}

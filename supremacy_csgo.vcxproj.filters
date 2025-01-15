@@ -446,9 +446,6 @@
     <ClCompile Include="keybind.cpp">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="matchframework.cpp">
-      <Filter>Source Files\hooks\game</Filter>
-    </ClCompile>
     <ClCompile Include="materialsystem.cpp">
       <Filter>Source Files\hooks\game</Filter>
     </ClCompile>

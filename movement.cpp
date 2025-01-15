@@ -61,41 +61,13 @@ void Movement::Strafe( ) {
 
 	// cancel out any forwardmove values.
 	g_cl.m_cmd->m_forward_move = 0.f;
-
-	// do allign strafer.
-	if( g_input.GetKeyState( g_menu.main.movement.astrafe.get( ) ) ) {
-		float angle = std::max( m_ideal2, 4.f );
-
-		if( angle > m_ideal2 && !( m_strafe_index % 5 ) )
-			angle = m_ideal2;
-
-		// add the computed step to the steps of the previous circle iterations.
-		m_circle_yaw = math::NormalizedAngle( m_circle_yaw + angle );
-
-		// apply data to usercmd.
-		g_cl.m_cmd->m_view_angles.y = m_circle_yaw;
-		g_cl.m_cmd->m_side_move = -450.f;
-
-		return;
-	}
-
-	// do ciclestrafer
-	else if( g_input.GetKeyState( g_menu.main.movement.cstrafe.get( ) ) ) {
-		// if no duck jump.
-		if( !g_menu.main.movement.airduck.get( ) ) {
-			// crouch to fit into narrow areas.
-			g_cl.m_cmd->m_buttons |= IN_DUCK;
-		}
-
-		DoPrespeed( );
-		return;
-	}
-
-	else if( g_input.GetKeyState( g_menu.main.movement.zstrafe.get( ) ) ) {
-		float freq = ( g_menu.main.movement.z_freq.get( ) * 0.2f ) * g_csgo.m_globals->m_realtime;
+	
+	// do snake strafe.
+	if( g_input.GetKeyState( g_menu.main.movement.snakestrafe.get( ) ) ) {
+		float freq = ( g_menu.main.movement.snake_freq.get( ) * 0.2f ) * g_csgo.m_globals->m_realtime;
 
 		// range [ 1, 100 ], aka grenerates a factor.
-		float factor = g_menu.main.movement.z_dist.get( ) * 0.5f;
+		float factor = g_menu.main.movement.snake_dist.get( ) * 0.5f;
 
 		g_cl.m_cmd->m_view_angles.y += ( factor * std::sin( freq ) );
 	}
@@ -155,79 +127,6 @@ void Movement::Strafe( ) {
 			g_cl.m_cmd->m_side_move = -450.f;
 		}
 	}
-}
-
-void Movement::DoPrespeed( ) {
-	float   mod, min, max, step, strafe, time, angle;
-	vec3_t  plane;
-
-	// min and max values are based on 128 ticks.
-	mod = g_csgo.m_globals->m_interval * 128.f;
-
-	// scale min and max based on tickrate.
-	min = 2.25f * mod;
-	max = 5.f * mod;
-
-	// compute ideal strafe angle for moving in a circle.
-	strafe = m_ideal * 2.f;
-
-	// clamp ideal strafe circle value to min and max step.
-	math::clamp( strafe, min, max );
-
-	// calculate time.
-	time = 320.f / m_speed;
-
-	// clamp time.
-	math::clamp( time, 0.35f, 1.f );
-
-	// init step.
-	step = strafe;
-
-	while( true ) {
-		// if we will not collide with an object or we wont accelerate from such a big step anymore then stop.
-		if( !WillCollide( time, step ) || max <= step )
-			break;
-
-		// if we will collide with an object with the current strafe step then increment step to prevent a collision.
-		step += 0.2f;
-	}
-
-	if( step > max ) {
-		// reset step.
-		step = strafe;
-
-		while( true ) {
-			// if we will not collide with an object or we wont accelerate from such a big step anymore then stop.
-			if( !WillCollide( time, step ) || step <= -min )
-				break;
-
-			// if we will collide with an object with the current strafe step decrement step to prevent a collision.
-			step -= 0.2f;
-		}
-
-		if( step < -min ) {
-			if( GetClosestPlane( plane ) ) {
-				// grab the closest object normal
-				// compute the angle of the normal
-				// and push us away from the object.
-				angle = math::rad_to_deg( std::atan2( plane.y, plane.x ) );
-				step = -math::NormalizedAngle( m_circle_yaw - angle ) * 0.1f;
-			}
-		}
-
-		else
-			step -= 0.2f;
-	}
-
-	else
-		step += 0.2f;
-
-	// add the computed step to the steps of the previous circle iterations.
-	m_circle_yaw = math::NormalizedAngle( m_circle_yaw + step );
-
-	// apply data to usercmd.
-	g_cl.m_cmd->m_view_angles.y = m_circle_yaw;
-	g_cl.m_cmd->m_side_move = ( step >= 0.f ) ? -450.f : 450.f;
 }
 
 bool Movement::GetClosestPlane( vec3_t &plane ) {

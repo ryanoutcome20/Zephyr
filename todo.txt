@@ -1,0 +1,74 @@
+=== Additions ===
+
+- Infinite configuration names.
+	Text entry
+	Create, Save, Delete, Rename
+		Refresh the dropdown when any of these are clicked.
+
+//- Autobuy Checkbox
+//- Autobuy Priority 
+//	Pistol / Armor for round one
+
+- Notifications
+	Spread
+	Resolver
+
+- Ragdoll Effects
+	Force
+	Invisible
+- Ragdoll Effects Teammates
+
+- Animated Clantag
+	CurTime % 7.5 in switch statement
+
+- Z-Strafe renamed into Snake Strafe
+
+- Autopeek Improvements
+	Ground Circle
+	Move to Circle (VectorAngles origin - startorigin)
+
+- Dropped weapons name & color
+- Dropped weapons ammo text & color
+- Dropped weapons ammo bar & color
+
+- Ground Fire
+	
+- Offscreen ESP
+	Size
+	Distance
+
+- Planted C4 Customizablity
+
+- Override FOV when scoped without override fov
+
+=== Fixes / Bugs ===
+
+- Dropped weapons with anti-aim make them hit the floor
+	See IN_KeyEvent
+
+//- Skin freeze bug
+
+//- Fix game events
+
+//- Fix strange force crosshair relying on net_showfragments
+
+- Move things from using the includes.h file instead use direct includes as needed
+
+//- Fix the fake latency
+
+- Hitchance doesn't work
+
+=== Removals ===
+
+- Notifications
+	Matchmaking
+
+- Auto-Accept Matchmaking
+
+- Reveal Matchmaking Ranks
+
+- C-Strafe
+- A-Strafe
+
+- Do not render teammates
+	Move to removals

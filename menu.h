@@ -748,11 +748,9 @@ public:
 	Checkbox bhop;
 	Checkbox airduck;
 	Checkbox autostrafe;
-	Keybind  cstrafe;
-	Keybind  astrafe;
-	Keybind  zstrafe;
-	Slider   z_freq;
-	Slider   z_dist;
+	Keybind  snakestrafe;
+	Slider   snake_freq;
+	Slider   snake_dist;
 
 	Keybind  fakewalk;
 	Keybind  autopeek;
@@ -772,20 +770,14 @@ public:
 		autostrafe.setup(XOR("automatic strafe"), XOR("autostrafe"));
 		RegisterElement(&autostrafe);
 
-		cstrafe.setup(XOR("c-strafe"), XOR("cstrafe"));
-		RegisterElement(&cstrafe);
+		snakestrafe.setup(XOR("snake-strafe"), XOR("snakestrafe"));
+		RegisterElement(&snakestrafe);
 
-		astrafe.setup(XOR("a-strafe"), XOR("astrafe"));
-		RegisterElement(&astrafe);
+		snake_freq.setup("", XOR("snake_freq"), 1.f, 100.f, false, 0, 50.f, 0.5f, XOR(L"hz"));
+		RegisterElement(&snake_freq);
 
-		zstrafe.setup(XOR("z-strafe"), XOR("zstrafe"));
-		RegisterElement(&zstrafe);
-
-		z_freq.setup("", XOR("z_freq"), 1.f, 100.f, false, 0, 50.f, 0.5f, XOR(L"hz"));
-		RegisterElement(&z_freq);
-
-		z_dist.setup("", XOR("z_dist"), 1.f, 100.f, false, 0, 20.f, 0.5f, XOR(L"%"));
-		RegisterElement(&z_dist);
+		snake_dist.setup("", XOR("snake_dist"), 1.f, 100.f, false, 0, 20.f, 0.5f, XOR(L"%"));
+		RegisterElement(&snake_dist);
 
 		fakewalk.setup(XOR("fake-walk"), XOR("fakewalk"));
 		RegisterElement(&fakewalk, 1);
@@ -1928,12 +1920,10 @@ public:
 	Slider		  fake_latency_amt;
 
 	// col2.
-	Checkbox autoaccept;
 	Checkbox unlock;
 	Checkbox hitmarker;
 	MultiDropdown ragdoll_modifiers;
 	Checkbox killfeed;
-	Checkbox ranks;
 	Checkbox clantag;
 public:
 	void init() {
@@ -2008,7 +1998,7 @@ public:
 		buy_money_amt.AddShowCallback(callbacks::IsAutoBuyOn);
 		RegisterElement(&buy_money_amt);
 
-		notifications.setup(XOR("notifications"), XOR("notifications"), { XOR("matchmaking"), XOR("damage"), XOR("purchases"), XOR("bomb"), XOR("defuse") });
+		notifications.setup(XOR("notifications"), XOR("notifications"), { XOR("damage"), XOR("purchases"), XOR("bomb"), XOR("defuse") });
 		RegisterElement(&notifications);
 
 		last_tick_defuse.setup(XOR("last tick defuse"), XOR("last_tick_defuse"));
@@ -2025,9 +2015,6 @@ public:
 		RegisterElement(&fake_latency_always);
 
 		// col2.
-		autoaccept.setup(XOR("auto-accept matchmaking"), XOR("autoaccept"));
-		RegisterElement(&autoaccept, 1);
-
 		unlock.setup(XOR("unlock inventory in-game"), XOR("unlock_inventory"));
 		RegisterElement(&unlock, 1);
 
@@ -2036,9 +2023,6 @@ public:
 
 		ragdoll_modifiers.setup(XOR("ragdoll modifiers"), XOR("ragdoll_modifers"), { XOR("force"), XOR("gravity") });
 		RegisterElement(&ragdoll_modifiers, 1);
-
-		ranks.setup(XOR("reveal matchmaking ranks"), XOR("ranks"));
-		RegisterElement(&ranks, 1);
 
 		killfeed.setup(XOR("preserve killfeed"), XOR("killfeed"));
 		killfeed.SetCallback(callbacks::ToggleKillfeed);

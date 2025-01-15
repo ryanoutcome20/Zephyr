@@ -226,7 +226,6 @@
     <ClCompile Include="events.cpp" />
     <ClCompile Include="firebullets.cpp" />
     <ClCompile Include="keybind.cpp" />
-    <ClCompile Include="matchframework.cpp" />
     <ClCompile Include="materialsystem.cpp" />
     <ClCompile Include="shadowmgr.cpp" />
     <ClCompile Include="csgo.cpp" />

@@ -315,15 +315,8 @@ void Client::EndMove(CUserCmd* cmd) {
 }
 
 void Client::OnTick(CUserCmd* cmd) {
-	// TODO; add this to the menu.
-	if (g_menu.main.misc.ranks.get() && cmd->m_buttons & IN_SCORE) {
-		static CCSUsrMsg_ServerRankRevealAll msg{ };
-		g_csgo.ServerRankRevealAll(&msg);
-	}
-
 	if (g_menu.main.misc.clantag.get())
 		g_cl.SetClantag();
-
 
 	// store some data and update prediction.
 	StartMove(cmd);

@@ -117,7 +117,7 @@ void events::item_purchase( IGameEvent* evt ) {
 	if( !g_cl.m_local || !evt )
 		return;
 
-	if( !g_menu.main.misc.notifications.get( 2 ) )
+	if( !g_menu.main.misc.notifications.get( 1 ) )
 		return;
 
 	// only log purchases of the enemy team.
@@ -152,7 +152,7 @@ void events::player_death( IGameEvent* evt ) {
 void events::player_given_c4( IGameEvent* evt ) {
 	player_info_t info;
 
-	if( !g_menu.main.misc.notifications.get( 3 ) )
+	if( !g_menu.main.misc.notifications.get( 2 ) )
 		return;
 
     // get the player who received the bomb.
@@ -170,7 +170,7 @@ void events::player_given_c4( IGameEvent* evt ) {
 void events::bomb_beginplant( IGameEvent* evt ) {
 	player_info_t info;
 
-	if( !g_menu.main.misc.notifications.get( 3 ) )
+	if( !g_menu.main.misc.notifications.get( 2 ) )
 		return;
 
     // get the player who played the bomb.
@@ -189,7 +189,7 @@ void events::bomb_beginplant( IGameEvent* evt ) {
 void events::bomb_abortplant( IGameEvent* evt ) {
 	player_info_t info;
 
-	if( !g_menu.main.misc.notifications.get( 3 ) )
+	if( !g_menu.main.misc.notifications.get( 2 ) )
 		return;
 
 	// get the player who stopped planting the bomb.
@@ -219,7 +219,7 @@ void events::bomb_planted( IGameEvent* evt ) {
         g_visuals.m_last_bombsite = site_name;
     }
 
-	if( !g_menu.main.misc.notifications.get( 3 ) )
+	if( !g_menu.main.misc.notifications.get( 2 ) )
 		return;
 
 	player_index = g_csgo.m_engine->GetPlayerForUserID( evt->m_keys->FindKey( HASH( "userid" ) )->GetInt( ) );
@@ -296,7 +296,7 @@ void events::bomb_beep( IGameEvent *evt ) {
 void events::bomb_begindefuse( IGameEvent* evt ) {
 	player_info_t info;
 
-	if( !g_menu.main.misc.notifications.get( 4 ) )
+	if( !g_menu.main.misc.notifications.get( 3 ) )
 		return;
 
 	// get index of player that started defusing the bomb.
@@ -323,7 +323,7 @@ void events::bomb_begindefuse( IGameEvent* evt ) {
 void events::bomb_abortdefuse( IGameEvent* evt ) {
 	player_info_t info;
 
-	if( !g_menu.main.misc.notifications.get( 4 ) )
+	if( !g_menu.main.misc.notifications.get( 3 ) )
 		return;
 
 	// get index of player that stopped defusing the bomb.
