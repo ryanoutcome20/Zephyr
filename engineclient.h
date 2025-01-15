@@ -1,5 +1,6 @@
 #pragma once
 
+// public/inetchannelinfo.h and public/inetchannel.h
 class INetChannel {
 public:
 	enum {
@@ -27,6 +28,7 @@ public:
 	};
 
 	enum indices : size_t {
+		ISLOOPBACK    = 6,
 		GETLATENCY    = 9,
 		GETAVGLATENCY = 10,
 		PROCESSPACKET = 41,
@@ -35,6 +37,10 @@ public:
 	};
 
 public:
+	__forceinline bool IsLoopback( ) {
+		return util::get_method< float( __thiscall* )( decltype( this ) ) >( this, ISLOOPBACK )( this );
+	}
+
 	__forceinline float GetLatency( int flow ) {
 		return util::get_method< float( __thiscall* )( decltype( this ), int ) >( this, GETLATENCY )( this, flow );
 	}
@@ -48,6 +54,7 @@ public:
 		return util::get_method< bool( __thiscall* )( decltype( this ), void*, bool, bool ) >( this, SENDNETMSG )( this, msg, rel, voice );
 	}
 
+	// engine/net_chan.h
 private:
 	PAD( 0x14 );
 

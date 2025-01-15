@@ -30,23 +30,31 @@ void events::round_start( IGameEvent* evt ) {
     g_visuals.m_offscreen_damage.fill( OffScreenDamageData_t() );
 
 	// buybot.
-	{
-		auto buy1 = g_menu.main.misc.buy1.GetActiveItems( );
-		auto buy2 = g_menu.main.misc.buy2.GetActiveItems( );
-		auto buy3 = g_menu.main.misc.buy3.GetActiveItems( );
+	int team = g_cl.m_local->m_iTeamNum( );
 
-		for( auto it = buy1.begin( ); it != buy1.end( ); ++it )
-			g_csgo.m_engine->ExecuteClientCmd( tfm::format( XOR( "buy %s" ), *it ).data( ) );
+	if ( g_menu.main.misc.buy.get( ) && ( team == TEAM_TERRORISTS || team == TEAM_COUNTERTERRORISTS ) ) {
+		if( !g_menu.main.misc.buy_money.get( ) || g_cl.m_local->m_iAccount( ) > g_menu.main.misc.buy_money_amt.get( ) ) {
+			auto buy1 = g_menu.main.misc.buy1.GetActiveItems();
+			auto buy2 = g_menu.main.misc.buy2.GetActiveItems();
+			auto buy3 = g_menu.main.misc.buy3.GetActiveItems();
 
-		for( auto it = buy2.begin( ); it != buy2.end( ); ++it )
-			g_csgo.m_engine->ExecuteClientCmd( tfm::format( XOR( "buy %s" ), *it ).data( ) );
+			for ( auto it = buy1.begin(); it != buy1.end(); ++it )
+				g_csgo.m_engine->ExecuteClientCmd(tfm::format(XOR("buy %s"), *it).data());
 
-		for( auto it = buy3.begin( ); it != buy3.end( ); ++it )
-			g_csgo.m_engine->ExecuteClientCmd( tfm::format( XOR( "buy %s" ), *it ).data( ) );
+			for ( auto it = buy2.begin(); it != buy2.end(); ++it )
+				g_csgo.m_engine->ExecuteClientCmd(tfm::format(XOR("buy %s"), *it).data());
+
+			for ( auto it = buy3.begin(); it != buy3.end(); ++it ) {
+				if ( *it == "defuser" && team != TEAM_COUNTERTERRORISTS )
+					continue;
+
+				g_csgo.m_engine->ExecuteClientCmd(tfm::format(XOR("buy %s"), *it).data());
+			}
+		}
 	}
 
 	// update all players.
-	for( int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i ) {
+	for( int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i  ) {
 		Player* player = g_csgo.m_entlist->GetClientEntity< Player* >( i );
 		if( !player || player->m_bIsLocalPlayer( ) )
 			continue;

@@ -6,12 +6,8 @@ void callbacks::SkinUpdate( ) {
 }
 
 void callbacks::ForceFullUpdate( ) {
-	//static DWORD tick{};
-	//
-	//if( tick != g_winapi.GetTickCount( ) ) {
-	//	g_csgo.cl_fullupdate->m_callback( );
-	//	tick = g_winapi.GetTickCount( );
-	//
+	if( g_csgo.m_net->IsLoopback( ) )
+		return;
 
 	g_csgo.m_cl->m_delta_tick = -1;
 }
@@ -201,6 +197,11 @@ bool callbacks::IsFakeAntiAimRelative( ) {
 
 bool callbacks::IsFakeAntiAimJitter( ) {
 	return g_menu.main.antiaim.fake_yaw.get( ) == 3;
+}
+
+bool callbacks::IsAutoBuyOn()
+{
+	return g_menu.main.misc.buy.get( );
 }
 
 bool callbacks::IsConfigMM( ) {

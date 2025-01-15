@@ -47,6 +47,8 @@ namespace callbacks {
 	bool IsFakeAntiAimRelative( );
 	bool IsFakeAntiAimJitter( );
 	
+	bool IsAutoBuyOn( );
+
 	bool IsConfigMM( );
 	bool IsConfigNS( );
 	bool IsConfig1( );

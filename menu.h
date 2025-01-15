@@ -1913,9 +1913,13 @@ public:
 class MiscTab : public Tab {
 public:
 	// col1.
+	Checkbox           buy;
 	MultiDropdown buy1;
 	MultiDropdown buy2;
 	MultiDropdown buy3;
+	Checkbox           buy_money;
+	Slider				   buy_money_amt;
+
 	MultiDropdown notifications;
 	Keybind       last_tick_defuse;
 	Keybind       fake_latency;
@@ -1933,7 +1937,10 @@ public:
 	void init() {
 		SetTitle(XOR("misc"));
 
-		buy1.setup(XOR("auto buy items"), XOR("auto_buy1"),
+		buy.setup(XOR("auto buy items"), XOR("auto_buy"));
+		RegisterElement(&buy);
+
+		buy1.setup("", XOR("auto_buy1"),
 			{
 				XOR("galilar"),
 				XOR("famas"),
@@ -1957,7 +1964,8 @@ public:
 				XOR("ump45"),
 				XOR("p90"),
 				XOR("bizon"),
-			});
+			}, false);
+		buy1.AddShowCallback(callbacks::IsAutoBuyOn);
 		RegisterElement(&buy1);
 
 		buy2.setup("", XOR("auto_buy2"),
@@ -1971,6 +1979,7 @@ public:
 				XOR("fn57"),
 				XOR("deagle"),
 			}, false);
+		buy2.AddShowCallback(callbacks::IsAutoBuyOn);
 		RegisterElement(&buy2);
 
 		buy3.setup("", XOR("auto_buy3"),
@@ -1979,7 +1988,6 @@ public:
 				XOR("vesthelm"),
 				XOR("taser"),
 				XOR("defuser"),
-				XOR("heavyarmor"),
 				XOR("molotov"),
 				XOR("incgrenade"),
 				XOR("decoy"),
@@ -1987,7 +1995,16 @@ public:
 				XOR("hegrenade"),
 				XOR("smokegrenade"),
 			}, false);
+		buy3.AddShowCallback(callbacks::IsAutoBuyOn);
 		RegisterElement(&buy3);
+	
+		buy_money.setup(XOR("money override"), XOR("buy_money"));
+		buy_money.AddShowCallback(callbacks::IsAutoBuyOn);
+		RegisterElement(&buy_money);
+
+		buy_money_amt.setup("", XOR("buy_money_amt"), 0.f, 16000.f, false, 0, 16000.f, 100.f, XOR(L"$"));
+		buy_money_amt.AddShowCallback(callbacks::IsAutoBuyOn);
+		RegisterElement(&buy_money_amt);
 
 		notifications.setup(XOR("notifications"), XOR("notifications"), { XOR("matchmaking"), XOR("damage"), XOR("purchases"), XOR("bomb"), XOR("defuse") });
 		RegisterElement(&notifications);
