@@ -37,6 +37,7 @@ public:
 	using ComputeShadowDepthTextures_t = void( __thiscall* )( void*, const CViewSetup&, bool );
 	using GetInt_t                     = int( __thiscall* )( void* );
 	using GetBool_t                    = bool( __thiscall* )( void* );
+	using GetFloat_t					= float(__thiscall*)(void*);
 	using IsConnected_t                = bool( __thiscall* )( void* );
 	using IsHLTV_t                     = bool( __thiscall* )( void* );
 	using OnEntityCreated_t            = void( __thiscall* )( void*, Entity* );
@@ -51,12 +52,8 @@ public:
 	using OnScreenSizeChanged_t        = void( __thiscall* )( void*, int, int );
 	using OverrideConfig_t             = bool( __thiscall* )( void*, MaterialSystem_Config_t*, bool );
 	using PostDataUpdate_t             = void( __thiscall* )( void*, DataUpdateType_t );
-	using TempEntities_t               = bool( __thiscall* )( void*, void * );
-	using EmitSound_t                  = void( __thiscall* )( void*, IRecipientFilter&, int, int, const char*, unsigned int, const char*, float, float, int, int, int, const vec3_t*, const vec3_t*, void*, bool, float, int );
-	// using PreDataUpdate_t            = void( __thiscall* )( void*, DataUpdateType_t );
 
 public:
-	bool                     TempEntities( void *msg );
 	void                     PaintTraverse( VPANEL panel, bool repaint, bool force );
 	bool                     DoPostScreenSpaceEffects( CViewSetup* setup );
 	bool                     CreateMove( float input_sample_time, CUserCmd* cmd );
@@ -70,7 +67,6 @@ public:
 	bool                     InPrediction( );
 	bool                     ShouldDrawParticles( );
 	bool                     ShouldDrawFog( );
-	bool                     ShouldDrawCrosshair();
 	void                     OverrideView( CViewSetup* view );
 	void                     LockCursor( );
 	void                     PlaySound( const char* name );
@@ -137,7 +133,6 @@ public:
 	RecvVarProxy_t m_Pitch_original;
 	RecvVarProxy_t m_Body_original;
     RecvVarProxy_t m_Force_original;
-	RecvVarProxy_t m_AbsYaw_original;
 };
 
 // note - dex; these are defined in player.cpp.

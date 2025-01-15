@@ -1931,7 +1931,7 @@ public:
 	Checkbox autoaccept;
 	Checkbox unlock;
 	Checkbox hitmarker;
-	Checkbox ragdoll_force;
+	MultiDropdown ragdoll_modifiers;
 	Checkbox killfeed;
 	Checkbox ranks;
 	Checkbox clantag;
@@ -2034,8 +2034,8 @@ public:
 		hitmarker.setup(XOR("hitmarker"), XOR("hitmarker"));
 		RegisterElement(&hitmarker, 1);
 
-		ragdoll_force.setup(XOR("ragdoll force"), XOR("ragdoll_force"));
-		RegisterElement(&ragdoll_force, 1);
+		ragdoll_modifiers.setup(XOR("ragdoll modifiers"), XOR("ragdoll_modifers"), { XOR("force"), XOR("gravity") });
+		RegisterElement(&ragdoll_modifiers, 1);
 
 		ranks.setup(XOR("reveal matchmaking ranks"), XOR("ranks"));
 		RegisterElement(&ranks, 1);

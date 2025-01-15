@@ -103,6 +103,7 @@ bool CSGO::init( ) {
 	hud_scaling                             = m_cvar->FindVar( HASH( "hud_scaling" ) );
     sv_clip_penetration_traces_to_players   = m_cvar->FindVar( HASH( "sv_clip_penetration_traces_to_players" ) );
     weapon_accuracy_shotgun_spread_patterns = m_cvar->FindVar( HASH( "weapon_accuracy_shotgun_spread_patterns" ) );
+	cl_ragdoll_gravity											= m_cvar->FindVar(HASH("cl_ragdoll_gravity"));
 
 	// hehe xd.
 	name->m_callbacks.RemoveAll( );

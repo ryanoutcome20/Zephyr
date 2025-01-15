@@ -34,53 +34,6 @@ void Body_proxy( CRecvProxyData *data, Address ptr, Address out ) {
 		g_hooks.m_Body_original( data, ptr, out );
 }
 
-void AbsYaw_proxy( CRecvProxyData *data, Address ptr, Address out ) {
-	// convert to ragdoll.
-	//Ragdoll* ragdoll = ptr.as< Ragdoll* >( );
-
-	// get ragdoll owner.
-	//Player* player = ragdoll->GetPlayer( );
-
-	// get data for this player.
-	/*AimPlayer* aim = &g_aimbot.m_players[ player->index( ) - 1 ];
-
-	if( player && aim ) {
-	if( !aim->m_records.empty( ) ) {
-	LagRecord* match{ nullptr };
-
-	// iterate records.
-	for( const auto &it : aim->m_records ) {
-	// find record that matches with simulation time.
-	if( it->m_sim_time == player->m_flSimulationTime( ) ) {
-	match = it.get( );
-	break;
-	}
-	}
-
-	// we have a match.
-	// and it is standing
-	// TODO; add air?
-	if( match /*&& match->m_mode == Resolver::Modes::RESOLVE_STAND*/// ) {
-	/*	RagdollRecord record;
-	record.m_record   = match;
-	record.m_rotation = math::NormalizedAngle( data->m_Value.m_Float );
-	record.m_delta    = math::NormalizedAngle( record.m_rotation - match->m_lbyt );
-
-	float death = math::NormalizedAngle( ragdoll->m_flDeathYaw( ) );
-
-	// store.
-	//aim->m_ragdoll.push_front( record );
-
-	//g_cl.print( tfm::format( XOR( "rot %f death %f delta %f\n" ), record.m_rotation, death, record.m_delta ).data( ) );
-	}
-	}*/
-	//}
-
-	// call original netvar proxy.
-	if ( g_hooks.m_AbsYaw_original )
-		g_hooks.m_AbsYaw_original( data, ptr, out );
-}
-
 void Force_proxy( CRecvProxyData *data, Address ptr, Address out ) {
 	// convert to ragdoll.
 	Ragdoll *ragdoll = ptr.as< Ragdoll * >( );
@@ -89,7 +42,7 @@ void Force_proxy( CRecvProxyData *data, Address ptr, Address out ) {
 	Player *player = ragdoll->GetPlayer( );
 
 	// we only want this happening to noobs we kill.
-	if ( g_menu.main.misc.ragdoll_force.get( ) && g_cl.m_local && player && player->enemy( g_cl.m_local ) ) {
+	if ( g_menu.main.misc.ragdoll_modifiers.get( 0 ) && g_cl.m_local && player ) {
 		// get m_vecForce.
 		vec3_t vel = { data->m_Value.m_Vector[ 0 ], data->m_Value.m_Vector[ 1 ], data->m_Value.m_Vector[ 2 ] };
 
@@ -111,6 +64,17 @@ void Force_proxy( CRecvProxyData *data, Address ptr, Address out ) {
 		data->m_Value.m_Vector[ 0 ] = vel.x;
 		data->m_Value.m_Vector[ 1 ] = vel.y;
 		data->m_Value.m_Vector[ 2 ] = vel.z;
+	}
+
+	// for some god forsaken reason the vphysics engine doesn't want to listen to the convar detour, so we'll have to do it like this.
+	// tested it and onetap does the same thing. I assume it is actually impossible to modify it with a convar detour unless I do some trickery with physenv (SetAlternativeGravity).
+	static float m_ragdoll_gravity = g_csgo.cl_ragdoll_gravity->GetFloat( );
+
+	if ( g_menu.main.misc.ragdoll_modifiers.get(1) ) {
+		g_csgo.cl_ragdoll_gravity->SetValue(-100.f);
+	}
+	else {
+		g_csgo.cl_ragdoll_gravity->SetValue(m_ragdoll_gravity);
 	}
 
 	if ( g_hooks.m_Force_original )
@@ -177,10 +141,7 @@ void Hooks::init( ) {
 	m_material_system.add( IMaterialSystem::OVERRIDECONFIG, util::force_cast( &Hooks::OverrideConfig ) );
 
 	m_fire_bullets.init( g_csgo.TEFireBullets );
-	m_fire_bullets.add( 7, util::force_cast( &Hooks::PostDataUpdate ) );
-
-	//m_client_state.init( g_csgo.m_hookable_cl );
-	m_client_state.add( CClientState::TEMPENTITIES, util::force_cast( &Hooks::TempEntities ) );
+	m_fire_bullets.add( Entity::N_POSTDATAUPDATE, util::force_cast( &Hooks::PostDataUpdate ) );
 
 	// register our custom entity listener.
 	// todo - dex; should we push our listeners first? should be fine like this.
@@ -194,5 +155,4 @@ void Hooks::init( ) {
 	g_netvars.SetProxy( HASH( "DT_CSPlayer" ), HASH( "m_angEyeAngles[0]" ), Pitch_proxy, m_Pitch_original );
 	g_netvars.SetProxy( HASH( "DT_CSPlayer" ), HASH( "m_flLowerBodyYawTarget" ), Body_proxy, m_Body_original );
 	g_netvars.SetProxy( HASH( "DT_CSRagdoll" ), HASH( "m_vecForce" ), Force_proxy, m_Force_original );
-	g_netvars.SetProxy( HASH( "DT_CSRagdoll" ), HASH( "m_flAbsYaw" ), AbsYaw_proxy, m_AbsYaw_original );
 }

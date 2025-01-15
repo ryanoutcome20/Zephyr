@@ -18,5 +18,5 @@ void Hooks::PostDataUpdate( DataUpdateType_t type ) {
 	
 	//Player* player = g_csgo.m_entlist->GetClientEntity< Player* >( shot->m_index + 1 );
 
-	g_hooks.m_fire_bullets.GetOldMethod< PostDataUpdate_t >( 7 )( this, type );
+	g_hooks.m_fire_bullets.GetOldMethod< PostDataUpdate_t >( Entity::N_POSTDATAUPDATE )( this, type );
 }

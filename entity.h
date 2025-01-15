@@ -287,6 +287,23 @@ public:
 public:
 	// virtual indices
 	enum indices : size_t {
+		R_GETRENDERORIGIN = 1,
+		R_GETRENDERANGLES = 2,
+		R_GETMODEL = 8,
+		R_DRAWMODEL = 9,
+		R_SETUPBONES = 13,
+
+		N_RELEASE = 1,
+		N_GETCLIENTCLASS = 2,
+		N_ONDATACHANGED = 5,
+		N_PREDATAUPDATE = 6,
+		N_POSTDATAUPDATE = 7,
+		N_DORMANT = 9,
+		N_INDEX = 10,
+		N_SETDDESTROYEDONRECREATEENTITIES = 13,
+
+		GETABSORIGIN = 10,
+		GETABSANGLES = 11,
 		WORLDSPACECENTER = 78,
 		GETMAXHEALTH = 122,
 		ISPLAYER = 152,
@@ -301,23 +318,23 @@ public:
 	}
 
 	__forceinline vec3_t& GetRenderOrigin() {
-		return util::get_method< vec3_t& (__thiscall*)(void*) >(renderable(), 1)(renderable());
+		return util::get_method< vec3_t& (__thiscall*)(void*) >(renderable(), R_GETRENDERORIGIN)(renderable());
 	}
 
 	__forceinline ang_t& GetRenderAngles() {
-		return util::get_method< ang_t& (__thiscall*)(void*) >(renderable(), 2)(renderable());
+		return util::get_method< ang_t& (__thiscall*)(void*) >(renderable(), R_GETRENDERANGLES)(renderable());
 	}
 
 	__forceinline const model_t* GetModel() {
-		return util::get_method< const model_t* (__thiscall*)(void*) >(renderable(), 8)(renderable());
+		return util::get_method< const model_t* (__thiscall*)(void*) >(renderable(), R_GETMODEL)(renderable());
 	}
 
 	__forceinline void DrawModel(int flags = STUDIO_RENDER, const RenderableInstance_t& instance = {}) {
-		return util::get_method< void(__thiscall*)(void*, int, const RenderableInstance_t&)>(renderable(), 9)(renderable(), flags, instance);
+		return util::get_method< void(__thiscall*)(void*, int, const RenderableInstance_t&)>(renderable(), R_DRAWMODEL)(renderable(), flags, instance);
 	}
 
 	__forceinline bool SetupBones(matrix3x4_t* out, int max, int mask, float time) {
-		return util::get_method< bool(__thiscall*)(void*, matrix3x4_t*, int, int, float)>(renderable(), 13)(renderable(), out, max, mask, time);
+		return util::get_method< bool(__thiscall*)(void*, matrix3x4_t*, int, int, float)>(renderable(), R_SETUPBONES)(renderable(), out, max, mask, time);
 	}
 
 	// networkable table.
@@ -326,44 +343,44 @@ public:
 	}
 
 	__forceinline void Release() {
-		return util::get_method< void(__thiscall*)(void*) >(networkable(), 1)(networkable());
+		return util::get_method< void(__thiscall*)(void*) >(networkable(), N_RELEASE)(networkable());
 	}
 
 	__forceinline ClientClass* GetClientClass() {
-		return util::get_method< ClientClass* (__thiscall*)(void*) >(networkable(), 2)(networkable());
+		return util::get_method< ClientClass* (__thiscall*)(void*) >(networkable(), N_GETCLIENTCLASS)(networkable());
 	}
 
 	__forceinline void OnDataChanged(DataUpdateType_t type) {
-		return util::get_method< void(__thiscall*)(void*, DataUpdateType_t) >(networkable(), 5)(networkable(), type);
+		return util::get_method< void(__thiscall*)(void*, DataUpdateType_t) >(networkable(), N_ONDATACHANGED)(networkable(), type);
 	}
 
 	__forceinline void PreDataUpdate(DataUpdateType_t type) {
-		return util::get_method< void(__thiscall*)(void*, DataUpdateType_t) >(networkable(), 6)(networkable(), type);
+		return util::get_method< void(__thiscall*)(void*, DataUpdateType_t) >(networkable(), N_PREDATAUPDATE)(networkable(), type);
 	}
 
 	__forceinline void PostDataUpdate(DataUpdateType_t type) {
-		return util::get_method< void(__thiscall*)(void*, DataUpdateType_t) >(networkable(), 7)(networkable(), type);
+		return util::get_method< void(__thiscall*)(void*, DataUpdateType_t) >(networkable(), N_POSTDATAUPDATE)(networkable(), type);
 	}
 
 	__forceinline bool dormant() {
-		return util::get_method< bool(__thiscall*)(void*) >(networkable(), 9)(networkable());
+		return util::get_method< bool(__thiscall*)(void*) >(networkable(), N_DORMANT)(networkable());
 	}
 
 	__forceinline int index() {
-		return util::get_method< int(__thiscall*)(void*) >(networkable(), 10)(networkable());
+		return util::get_method< int(__thiscall*)(void*) >(networkable(), N_INDEX)(networkable());
 	}
 
 	__forceinline void SetDestroyedOnRecreateEntities() {
-		return util::get_method< void(__thiscall*)(void*) >(networkable(), 13)(networkable());
+		return util::get_method< void(__thiscall*)(void*) >(networkable(), N_SETDDESTROYEDONRECREATEENTITIES)(networkable());
 	}
 
 	// normal table.
 	__forceinline const vec3_t& GetAbsOrigin() {
-		return util::get_method< const vec3_t& (__thiscall*)(void*) >(this, 10)(this);
+		return util::get_method< const vec3_t& (__thiscall*)(void*) >(this, GETABSORIGIN)(this);
 	}
 
 	__forceinline const ang_t& GetAbsAngles() {
-		return util::get_method< const ang_t& (__thiscall*)(void*) >(this, 11)(this);
+		return util::get_method< const ang_t& (__thiscall*)(void*) >(this, GETABSANGLES)(this);
 	}
 
 	__forceinline bool IsPlayer() {

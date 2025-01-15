@@ -115,6 +115,7 @@ public:
 	ConVar *hud_scaling;
 	ConVar *sv_clip_penetration_traces_to_players;
 	ConVar *weapon_accuracy_shotgun_spread_patterns;
+	ConVar *cl_ragdoll_gravity;
 
 public:
 	// functions.
