@@ -587,8 +587,13 @@ public:
 class VisualsTab : public Tab {
 public:
 	Checkbox      items;
-	Checkbox      ammo;
 	Colorpicker   item_color;
+	Checkbox      ammo;
+	Colorpicker   ammo_color;
+	Checkbox		 ammo_bar;
+	Colorpicker	 ammo_bar_color;
+	Checkbox	     dropped_c4;
+	Colorpicker   dropped_c4_color;
 	Checkbox      proj;
 	Colorpicker   proj_color;
 	MultiDropdown proj_range;
@@ -632,11 +637,26 @@ public:
 		items.setup(XOR("dropped weapons"), XOR("items"));
 		RegisterElement(&items);
 
+		item_color.setup(XOR("color"), XOR("item_color"), colors::white);
+		RegisterElement(&item_color);
+
 		ammo.setup(XOR("dropped weapons ammo"), XOR("ammo"));
 		RegisterElement(&ammo);
 
-		item_color.setup(XOR("color"), XOR("item_color"), colors::white);
-		RegisterElement(&item_color);
+		ammo_color.setup(XOR("color"), XOR("ammo_color"), colors::white);
+		RegisterElement(&ammo_color);
+
+		ammo_bar.setup(XOR("dropped weapons ammo bar"), XOR("ammo_bar"));
+		RegisterElement(&ammo_bar);
+
+		ammo_bar_color.setup(XOR("color"), XOR("ammo_bar_color"), colors::burgundy);
+		RegisterElement(&ammo_bar_color);
+
+		dropped_c4.setup( XOR("dropped c4"), XOR("dropped_c4"));
+		RegisterElement(&dropped_c4);
+
+		dropped_c4_color.setup(XOR("color"), XOR("dropped_c4_color"), colors::burgundy);
+		RegisterElement(&dropped_c4_color);
 
 		proj.setup(XOR("projectiles"), XOR("proj"));
 		RegisterElement(&proj);
@@ -1999,7 +2019,7 @@ public:
 		buy_money_amt.AddShowCallback(callbacks::IsAutoBuyOn);
 		RegisterElement(&buy_money_amt);
 
-		notifications.setup(XOR("notifications"), XOR("notifications"), { XOR("damage"), XOR("purchases"), XOR("bomb"), XOR("defuse") });
+		notifications.setup(XOR("notifications"), XOR("notifications"), { XOR("damage"), XOR("purchases"), XOR("bomb"), XOR("defuse"), XOR("spread") });
 		RegisterElement(&notifications);
 
 		last_tick_defuse.setup(XOR("last tick defuse"), XOR("last_tick_defuse"));

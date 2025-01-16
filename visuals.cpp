@@ -438,7 +438,7 @@ void Visuals::draw( Entity* ent ) {
 		DrawPlayer( player );
 	}
 
-	else if( g_menu.main.visuals.items.get( ) && ent->IsBaseCombatWeapon( ) && !ent->dormant( ) )
+	else if( ent->IsBaseCombatWeapon( ) && !ent->dormant( ) )
 		DrawItem( ent->as< Weapon* >( ) );
 
 	else if( g_menu.main.visuals.proj.get( ) )
@@ -452,7 +452,7 @@ void Visuals::DrawProjectile( Weapon* ent ) {
 		return;
 
 	Color col = g_menu.main.visuals.proj_color.get( );
-	col.a( ) = 0xb4;
+	col.a( ) = 180;
 
 	// draw decoy.
 	if( ent->is( HASH( "CDecoyProjectile" ) ) )
@@ -512,26 +512,27 @@ void Visuals::DrawItem( Weapon* item ) {
 	if( !data )
 		return;
 
-	Color col = g_menu.main.visuals.item_color.get( );
-	col.a( ) = 0xb4;
+	// render bomb esp.
+	if( item->is( HASH( "CC4" ) ) ) {
+		if( g_menu.main.visuals.dropped_c4.get( ) )
+			render::esp_small.string( screen.x, screen.y, g_menu.main.visuals.dropped_c4_color.get( ), XOR( "BOMB" ), render::ALIGN_CENTER );
 
-	// render bomb in green.
-	if( item->is( HASH( "CC4" ) ) )
-		render::esp_small.string( screen.x, screen.y, { 150, 200, 60, 0xb4 }, XOR( "BOMB" ), render::ALIGN_CENTER );
-
-	// if not bomb
-	// normal item, get its name.
-	else {
-		std::string name{ item->GetLocalizedName( ) };
-
-		// smallfonts needs uppercase.
-		std::transform( name.begin( ), name.end( ), name.begin( ), ::toupper );
-
-		render::esp_small.string( screen.x, screen.y, col, name, render::ALIGN_CENTER );
+		// exit out, thats it.
+		return;
 	}
 
-	if( !g_menu.main.visuals.ammo.get( ) )
+	// if not bomb
+	if( !g_menu.main.visuals.items.get( ) )
 		return;
+
+	// normal item, get its name.
+	std::string name{ item->GetLocalizedName( ) };
+
+	// smallfonts needs uppercase.
+	std::transform( name.begin( ), name.end( ), name.begin( ), ::toupper );
+
+	// render our text.
+	render::esp_small.string( screen.x, screen.y, g_menu.main.visuals.item_color.get(), name, render::ALIGN_CENTER );
 
 	// nades do not have ammo.
 	if( data->m_weapon_type == WEAPONTYPE_GRENADE || data->m_weapon_type == WEAPONTYPE_KNIFE )
@@ -540,8 +541,34 @@ void Visuals::DrawItem( Weapon* item ) {
 	if( item->m_iItemDefinitionIndex( ) == 0 || item->m_iItemDefinitionIndex( ) == C4 )
 		return;
 
-	std::string ammo = tfm::format( XOR( "(%i/%i)" ), item->m_iClip1( ), item->m_iPrimaryReserveAmmoCount( ) );
-	render::esp_small.string( screen.x, screen.y - render::esp_small.m_size.m_height - 1, col, ammo, render::ALIGN_CENTER );
+	// render ammo text.
+	if ( g_menu.main.visuals.ammo.get() ) {
+		std::string ammo = tfm::format( XOR( "(%i/%i)" ), item->m_iClip1( ), item->m_iPrimaryReserveAmmoCount( ) );
+
+		render::esp_small.string( screen.x, screen.y - render::esp_small.m_size.m_height - 1, g_menu.main.visuals.ammo_color.get( ), ammo, render::ALIGN_CENTER );
+	}
+
+	// render ammo bar.
+	if ( g_menu.main.visuals.ammo_bar.get() ) {
+		// get weapon data for scaling calculation.
+		WeaponInfo* data = item->GetWpnData();
+
+		// calculate size.
+		render::FontSize_t size = render::esp_small.size(name);
+
+		// get some constants.
+		int x = screen.x - (size.m_width / 2.f); 
+		int y = screen.y + size.m_height;
+
+		// draw our outline rect.
+		render::rect_filled(x, y, size.m_width, 4, { 10, 10, 10, 179 });
+
+		// get the length of the bar inside of the outline.
+		int fullness = (int)std::round((size.m_width - 1) * ((float)item->m_iClip1() / data->m_max_clip1));
+
+		// draw our overlay rect.
+		render::rect(x, y + 1, fullness, 2, g_menu.main.visuals.ammo_bar_color.get());
+	}
 }
 
 void Visuals::OffScreen( Player* player, int alpha ) {
@@ -851,13 +878,9 @@ void Visuals::DrawPlayer( Player* player ) {
 
 			// armor.
 			if( *it == 1 ) {
-				// helmet and kevlar.
-				if( player->m_bHasHelmet( ) && player->m_ArmorValue( ) > 0 )
+				// helmet.
+				if( player->m_bHasHelmet( ) )
 					flags.push_back( { XOR( "HK" ), { 255, 255, 255, low_alpha } } );
-
-				// only helmet.
-				else if( player->m_bHasHelmet( ) )
-					flags.push_back( { XOR( "H" ), { 255, 255, 255, low_alpha } } );
 
 				// only kevlar.
 				else if( player->m_ArmorValue( ) > 0 )

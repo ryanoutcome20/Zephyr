@@ -12,13 +12,6 @@ void Slider::draw( ) {
 	if( m_use_label )
 		render::menu_shade.string( p.x + LABEL_OFFSET, p.y - 2, { 205, 205, 205, m_parent->m_alpha }, m_label );
 
-	// decrementor.
-	//render::rect( p.x - 5, p.y + SLIDER_OFFSET_Y + 4, 3, 1, { 75, 75, 75, m_parent->m_alpha } );
-
-	// incrementor.
-	//render::rect( p.x + m_w - SLIDER_OFFSET + 3, p.y + SLIDER_OFFSET_Y + 4, 3, 1, { 75, 75, 75, m_parent->m_alpha } );
-	//render::rect( p.x + m_w - SLIDER_OFFSET + 4, p.y + SLIDER_OFFSET_Y + 3, 1, 3, { 75, 75, 75, m_parent->m_alpha } );
-
 	// outline.
 	render::rect( p.x + SLIDER_X_OFFSET, p.y + m_offset, m_w - SLIDER_X_OFFSET, SLIDER_HEIGHT, { 0, 0, 0, m_parent->m_alpha } );
 

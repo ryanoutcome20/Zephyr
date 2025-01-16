@@ -102,7 +102,7 @@ void Grenades::paint( ) {
 			m_bounces.back( ).color = { 0, 255, 0, 255 };
 
 		if( render::WorldToScreen( prev, screen ) )
-			render::esp_small.string( screen.x, screen.y + 5, { 255, 255, 255, 0xb4 }, tfm::format( XOR( "%i" ), ( int )target.first ), render::ALIGN_CENTER );
+			render::esp_small.string( screen.x, screen.y + 5, { 255, 255, 255, 180 }, tfm::format( XOR( "%i" ), ( int )target.first ), render::ALIGN_CENTER );
 	}
 
 	// render bounces.

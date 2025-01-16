@@ -1,26 +1,39 @@
 #include "includes.h"
 
-void Hooks::OnRenderStart( ) {
+
+void Hooks::OnRenderStart() {
 	// call og.
 	g_hooks.m_view_render.GetOldMethod< OnRenderStart_t >( CViewRender::ONRENDERSTART )( this );
 
-	if( g_menu.main.visuals.fov.get( ) ) {
-		if( g_cl.m_local && g_cl.m_local->m_bIsScoped( ) ) {
-			if( g_menu.main.visuals.fov_scoped.get( ) ) {
-				if( g_cl.m_local->GetActiveWeapon( )->m_zoomLevel( ) != 2 ) {
-					g_csgo.m_view_render->m_view.m_fov = g_menu.main.visuals.fov_amt.get( );
-				}
-				else {
-					g_csgo.m_view_render->m_view.m_fov += 45.f;
-				}
+	// get our config variables.
+	float fov_amount = g_menu.main.visuals.fov_amt.get();
+	bool fov_override = g_menu.main.visuals.fov.get();
+
+	// run our scoped calculations.
+	if ( g_cl.m_local && g_cl.m_local->m_bIsScoped() ) {
+		Weapon* weapon = g_cl.m_local->GetActiveWeapon();
+
+		if ( g_menu.main.visuals.fov_scoped.get() && weapon ) {
+			if ( weapon->m_zoomLevel() != 2 ) {
+				if ( fov_override && 90.f >= fov_amount )
+					g_csgo.m_view_render->m_view.m_fov = 90.f;
+				else
+					g_csgo.m_view_render->m_view.m_fov = fov_amount;
+			}
+			else {
+				g_csgo.m_view_render->m_view.m_fov += 45.f;
 			}
 		}
-
-		else g_csgo.m_view_render->m_view.m_fov = g_menu.main.visuals.fov_amt.get( );
 	}
 
-	if( g_menu.main.visuals.viewmodel_fov.get( ) )
-		g_csgo.m_view_render->m_view.m_viewmodel_fov = g_menu.main.visuals.viewmodel_fov_amt.get( );
+	// run baseline fov adjustment.
+	if ( fov_override && g_cl.m_local && !g_cl.m_local->m_bIsScoped() ) {
+		g_csgo.m_view_render->m_view.m_fov = fov_amount;
+	}
+
+	// run viewmodel fov adjustment.
+	if ( g_menu.main.visuals.viewmodel_fov.get() )
+		g_csgo.m_view_render->m_view.m_viewmodel_fov = g_menu.main.visuals.viewmodel_fov_amt.get();
 }
 
 void Hooks::RenderView( const CViewSetup &view, const CViewSetup &hud_view, int clear_flags, int what_to_draw ) {

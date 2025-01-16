@@ -47,7 +47,7 @@ public:
 		}
 
 		// we have nothing to draw.
-		if( m_notify_text.empty( ) )
+		if( m_notify_text.empty( ) || g_csgo.developer->GetInt( ) == 1 )
 			return;
 
 		// iterate entries.
