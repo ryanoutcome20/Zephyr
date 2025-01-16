@@ -202,7 +202,7 @@ void events::bomb_planted( IGameEvent* evt ) {
     bomb_target = g_csgo.m_entlist->GetClientEntity( evt->m_keys->FindKey( HASH( "site" ) )->GetInt( ) );
     if( bomb_target ) {
         site_name                 = bomb_target->GetBombsiteName( );
-        g_visuals.m_last_bombsite = site_name;
+        g_visuals.m_last_bombsite = site_name.at(0);
     }
 
 	if( !g_menu.main.misc.notifications.get( 2 ) )
@@ -210,12 +210,12 @@ void events::bomb_planted( IGameEvent* evt ) {
 
 	player_index = g_csgo.m_engine->GetPlayerForUserID( evt->m_keys->FindKey( HASH( "userid" ) )->GetInt( ) );
     if( player_index == g_csgo.m_engine->GetLocalPlayer( ) )
-        out = tfm::format( XOR( "you planted the bomb at %s\n" ), site_name.c_str( ) );
+        out = tfm::format( XOR( "You planted the bomb at %s\n" ), site_name.c_str( ) );
 
     else {
         g_csgo.m_engine->GetPlayerInfo( player_index, &info );
 
-        out = tfm::format( XOR( "the bomb was planted at %s by %s\n" ), site_name.c_str( ), std::string( info.m_name ).substr( 0, 24 ) );
+        out = tfm::format( XOR( "The bomb was planted at %s by %s\n" ), site_name.c_str( ), std::string( info.m_name ).substr( 0, 24 ) );
     }
 
 	g_notify.add( out );

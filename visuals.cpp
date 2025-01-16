@@ -967,7 +967,7 @@ void Visuals::DrawPlayer( Player* player ) {
 						if( current <= ( int ) std::round( max / 5 ) && !reload )
 							render::esp_small.string( box.x + bar, box.y + box.h + offset, { 255, 255, 255, alpha }, std::to_string( current ), render::ALIGN_CENTER );
 
-						offset += 6;
+						offset += 8;
 					}
 
 					// text.
@@ -1050,7 +1050,7 @@ void Visuals::DrawPlantedC4( ) {
 	explode_time_diff = m_planted_c4_explode_time - g_csgo.m_globals->m_curtime;
 
 	// get formatted strings for bomb.
-	time_str = tfm::format( XOR( "%.2f" ), explode_time_diff );
+	time_str = tfm::format( XOR( "%s - %.2f" ), m_last_bombsite, explode_time_diff );
 	damage_str = tfm::format( XOR( "%i" ), final_damage );
 
 	// get damage color.
