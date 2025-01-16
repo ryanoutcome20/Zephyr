@@ -725,7 +725,7 @@ bool AimPlayer::SetupHitboxPoints(LagRecord* record, BoneArray* bones, int index
 	float scale = g_menu.main.aimbot.scale.get() / 100.f;
 
 	// big inair fix.
-	if (!(record->m_pred_flags) & FL_ONGROUND)
+	if (!(record->m_pred_flags & FL_ONGROUND))
 		scale = 0.7f;
 
 	float bscale = g_menu.main.aimbot.body_scale.get() / 100.f;
@@ -1133,8 +1133,9 @@ void Aimbot::apply() {
 			if (!g_menu.main.aimbot.silent.get())
 				g_csgo.m_engine->SetViewAngles(m_angle);
 
-			//add checkbox
-			g_visuals.DrawHitboxMatrix(m_record, colors::white, 2.f);
+			// draw our shot matrix.
+			if( g_menu.main.players.shot_matrix.get( ) )
+				g_visuals.DrawHitboxMatrix( m_record, g_menu.main.players.shot_matrix_color.get( ), g_menu.main.players.shot_matrix_time.get());
 		}
 
 		// nospread.

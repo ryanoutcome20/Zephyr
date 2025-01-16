@@ -424,6 +424,9 @@ public:
 	Colorpicker   ammo_color;
 	Checkbox      lby_update;
 	Colorpicker   lby_update_color;
+	Checkbox		 shot_matrix;
+	Colorpicker   shot_matrix_color;
+	Slider			 shot_matrix_time;
 
 	// col2.
 	MultiDropdown skeleton;
@@ -445,7 +448,6 @@ public:
 	Colorpicker   chams_friendly_vis;
 	Colorpicker   chams_friendly_invis;
 	Slider        chams_friendly_blend;
-	//Checkbox      chams_local;
 	MultiDropdown chams_local;
 	Colorpicker   chams_local_col;
 	Slider        chams_local_blend;
@@ -523,6 +525,15 @@ public:
 
 		lby_update_color.setup(XOR("color"), XOR("lby_update_color"), colors::orange);
 		RegisterElement(&lby_update_color);
+
+		shot_matrix.setup(XOR("shot matrix"), XOR("shot_matrix"));
+		RegisterElement(&shot_matrix);
+
+		shot_matrix_color.setup(XOR("color"), XOR("shot_matrix_color"), colors::white);
+		RegisterElement(&shot_matrix_color);
+
+		shot_matrix_time.setup( XOR("shot matrix time"), XOR("shot_matrix_time"), 0.1f, 10.f, true, 1, 2.f, 0.1f, XOR(L"s"));
+		RegisterElement(&shot_matrix_time);
 
 		// col2.
 		skeleton.setup(XOR("skeleton"), XOR("skeleton"), { XOR("enemy"), XOR("friendly") });
@@ -2178,7 +2189,7 @@ public:
 public:
 	void init() {
 		SetPosition(50, 50);
-		SetSize(630, 550);
+		SetSize(630, 630);
 
 		// aim.
 		RegisterTab(&aimbot);
