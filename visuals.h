@@ -1,18 +1,9 @@
 #pragma once
 
-struct OffScreenDamageData_t {
-    float m_time, m_color_step;
-    Color m_color;
-
-    __forceinline OffScreenDamageData_t( ) : m_time{ 0.f }, m_color{ colors::white } {}
-    __forceinline OffScreenDamageData_t( float time, float m_color_step, Color color ) : m_time{ time }, m_color{ color } {}
-};
-
 class Visuals {
 public:
 	std::array< bool, 64 >                  m_draw;
 	std::array< float, 2048 >               m_opacities;
-    std::array< OffScreenDamageData_t, 64 > m_offscreen_damage;
 	vec2_t                                  m_crosshair;
 	bool                                    m_thirdperson;
 	float					                m_hit_start, m_hit_end, m_hit_duration;

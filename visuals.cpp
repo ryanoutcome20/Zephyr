@@ -557,7 +557,7 @@ void Visuals::DrawItem( Weapon* item ) {
 		render::FontSize_t size = render::esp_small.size(name);
 
 		// get some constants.
-		int x = screen.x - (size.m_width / 2.f); 
+		int x = screen.x - (size.m_width / 2.f) + 2; 
 		int y = screen.y + size.m_height;
 
 		// draw our outline rect.
@@ -576,7 +576,7 @@ void Visuals::OffScreen( Player* player, int alpha ) {
 	vec2_t screen_pos, offscreen_pos;
 	float  leeway_x, leeway_y, radius, offscreen_rotation;
 	bool   is_on_screen;
-	Vertex verts[ 3 ], verts_outline[ 3 ];
+	Vertex verts[ 3 ];
 	Color  color;
 
 	// todo - dex; move this?
@@ -642,7 +642,7 @@ void Visuals::OffScreen( Player* player, int alpha ) {
 		delta = ( target_pos - view_origin ).normalized( );
 
 		// note - dex; this is the 'YRES' macro from the source sdk.
-		radius = 200.f * ( g_cl.m_height / 480.f );
+		radius = g_menu.main.players.offscreen_dist.get( ) * ( g_cl.m_height / 480.f );
 
 		// get the data we need for rendering.
 		get_offscreen_data( delta, radius, offscreen_pos, offscreen_rotation );
@@ -653,62 +653,23 @@ void Visuals::OffScreen( Player* player, int alpha ) {
 		offscreen_rotation = -offscreen_rotation;
 
 		// setup vertices for the triangle.
-		verts[ 0 ] = { offscreen_pos.x, offscreen_pos.y };        // 0,  0
-		verts[ 1 ] = { offscreen_pos.x - 12.f, offscreen_pos.y + 24.f }; // -1, 1
-		verts[ 2 ] = { offscreen_pos.x + 12.f, offscreen_pos.y + 24.f }; // 1,  1
+		float size = g_menu.main.players.offscreen_size.get( );
 
-		// setup verts for the triangle's outline.
-		verts_outline[ 0 ] = { verts[ 0 ].m_pos.x - 1.f, verts[ 0 ].m_pos.y - 1.f };
-		verts_outline[ 1 ] = { verts[ 1 ].m_pos.x - 1.f, verts[ 1 ].m_pos.y + 1.f };
-		verts_outline[ 2 ] = { verts[ 2 ].m_pos.x + 1.f, verts[ 2 ].m_pos.y + 1.f };
+		verts[ 0 ] = { offscreen_pos.x, offscreen_pos.y };        // 0,  0
+		verts[ 1 ] = { offscreen_pos.x - size, offscreen_pos.y + size * 2 }; // -1, 1
+		verts[ 2 ] = { offscreen_pos.x + size, offscreen_pos.y + size * 2 }; // 1,  1
 
 		// rotate all vertices to point towards our target.
 		verts[ 0 ] = render::RotateVertex( offscreen_pos, verts[ 0 ], offscreen_rotation );
 		verts[ 1 ] = render::RotateVertex( offscreen_pos, verts[ 1 ], offscreen_rotation );
 		verts[ 2 ] = render::RotateVertex( offscreen_pos, verts[ 2 ], offscreen_rotation );
-		// verts_outline[ 0 ] = render::RotateVertex( offscreen_pos, verts_outline[ 0 ], offscreen_rotation );
-		// verts_outline[ 1 ] = render::RotateVertex( offscreen_pos, verts_outline[ 1 ], offscreen_rotation );
-		// verts_outline[ 2 ] = render::RotateVertex( offscreen_pos, verts_outline[ 2 ], offscreen_rotation );
-
-		// todo - dex; finish this, i want it.
-		// auto &damage_data = m_offscreen_damage[ player->index( ) ];
-		// 
-		// // the local player was damaged by another player recently.
-		// if( damage_data.m_time > 0.f ) {
-		//     // // only a small amount of time left, start fading into white again.
-		//     // if( damage_data.m_time < 1.f ) {
-		//     //     // calculate step needed to reach 255 in 1 second.
-		//     //     // float step = UINT8_MAX / ( 1000.f * g_csgo.m_globals->m_frametime );
-		//     //     float step = ( 1.f / g_csgo.m_globals->m_frametime ) / UINT8_MAX;
-		//     //     
-		//     //     // increment the new value for the color.
-		//     //     // if( damage_data.m_color_step < 255.f )
-		//     //         damage_data.m_color_step += step;
-		//     // 
-		//     //     math::clamp( damage_data.m_color_step, 0.f, 255.f );
-		//     // 
-		//     //     damage_data.m_color.g( ) = (uint8_t)damage_data.m_color_step;
-		//     //     damage_data.m_color.b( ) = (uint8_t)damage_data.m_color_step;
-		//     // }
-		//     // 
-		//     // g_cl.print( "%f %f %u %u %u\n", damage_data.m_time, damage_data.m_color_step, damage_data.m_color.r( ), damage_data.m_color.g( ), damage_data.m_color.b( ) );
-		//     
-		//     // decrement timer.
-		//     damage_data.m_time -= g_csgo.m_globals->m_frametime;
-		// }
-		// 
-		// else
-		//     damage_data.m_color = colors::white;
 
 		// render!
-		color = g_menu.main.players.offscreen_color.get( ); // damage_data.m_color;
+		color = g_menu.main.players.offscreen_color.get();
 		color.a( ) = ( alpha == 255 ) ? alpha : alpha / 2;
 
 		g_csgo.m_surface->DrawSetColor( color );
 		g_csgo.m_surface->DrawTexturedPolygon( 3, verts );
-
-		// g_csgo.m_surface->DrawSetColor( colors::black );
-		// g_csgo.m_surface->DrawTexturedPolyLine( 3, verts_outline );
 	}
 }
 
@@ -767,6 +728,7 @@ void Visuals::DrawPlayer( Player* player ) {
 	// calculate alpha channels.
 	int alpha = ( int ) ( 255.f * opacity );
 	int low_alpha = ( int ) ( 179.f * opacity );
+	int very_low_alpha = (int)(75.f * opacity);
 
 	// get color based on enemy or not.
 	color = enemy ? g_menu.main.players.box_enemy.get( ) : g_menu.main.players.box_friendly.get( );
@@ -774,6 +736,7 @@ void Visuals::DrawPlayer( Player* player ) {
 	if( dormant && dormant_esp ) {
 		alpha = 112;
 		low_alpha = 80;
+		very_low_alpha = 30;
 
 		// fade.
 		if( dt > DORMANT_FADE_TIME ) {
@@ -845,21 +808,25 @@ void Visuals::DrawPlayer( Player* player ) {
 		int hp = std::min( 100, player->m_iHealth( ) );
 
 		// calculate hp bar color.
-		int r = std::min( ( 510 * ( 100 - hp ) ) / 100, 255 );
-		int g = std::min( ( 510 * hp ) / 100, 255 );
+		Color bar = { std::min((510 * (100 - hp)) / 100, 255), std::min((510 * hp) / 100, 255), 0 };
+		
+		if ( g_menu.main.players.health_color_override.get() )
+			bar = g_menu.main.players.health_color.get( );
+
+		bar.a( ) = alpha;
 
 		// get hp bar height.
 		int fill = ( int ) std::round( hp * h / 100.f );
 
 		// render background.
-		render::rect_filled( box.x - 6, y - 1, 4, h + 2, { 10, 10, 10, low_alpha } );
+		render::rect_filled( box.x - 6, y - 1, 4, h + 2, { 10, 10, 10, very_low_alpha } );
 
 		// render actual bar.
-		render::rect( box.x - 5, y + h - fill, 2, fill, { r, g, 0, alpha } );
+		render::rect( box.x - 5, y + h - fill, 2, fill, bar );
 
 		// if hp is below max, draw a string.
 		if( hp < 100 )
-			render::esp_small.string( box.x - 5, y + ( h - fill ) - 5, { 255, 255, 255, low_alpha }, std::to_string( hp ), render::ALIGN_CENTER );
+			render::esp_small.string( box.x - 5, y + ( h - fill ) - 5, { 255, 255, 255, alpha }, std::to_string( hp ), render::ALIGN_CENTER );
 	}
 
 	// draw flags.
@@ -990,7 +957,7 @@ void Visuals::DrawPlayer( Player* player ) {
 						bar = ( int ) std::round( ( box.w - 2 ) * scale );
 
 						// draw.
-						render::rect_filled( box.x, box.y + box.h + 2 + offset, box.w, 4, { 10, 10, 10, low_alpha } );
+						render::rect_filled( box.x, box.y + box.h + 2 + offset, box.w, 4, { 10, 10, 10, very_low_alpha } );
 
 						Color clr = g_menu.main.players.ammo_color.get( );
 						clr.a( ) = alpha;
@@ -998,7 +965,7 @@ void Visuals::DrawPlayer( Player* player ) {
 
 						// less then a 5th of the bullets left.
 						if( current <= ( int ) std::round( max / 5 ) && !reload )
-							render::esp_small.string( box.x + bar, box.y + box.h + offset, { 255, 255, 255, low_alpha }, std::to_string( current ), render::ALIGN_CENTER );
+							render::esp_small.string( box.x + bar, box.y + box.h + offset, { 255, 255, 255, alpha }, std::to_string( current ), render::ALIGN_CENTER );
 
 						offset += 6;
 					}
@@ -1011,7 +978,7 @@ void Visuals::DrawPlayer( Player* player ) {
 						// smallfonts needs upper case.
 						std::transform( name.begin( ), name.end( ), name.begin( ), ::toupper );
 
-						render::esp_small.string( box.x + box.w / 2, box.y + box.h + offset, { 255, 255, 255, low_alpha }, name, render::ALIGN_CENTER );
+						render::esp_small.string( box.x + box.w / 2, box.y + box.h + offset, { 255, 255, 255, alpha }, name, render::ALIGN_CENTER );
 					}
 
 					// icons.
@@ -1021,7 +988,7 @@ void Visuals::DrawPlayer( Player* player ) {
 						offset -= 5;
 
 						std::string icon = tfm::format( XOR( "%c" ), m_weapon_icons[ weapon->m_iItemDefinitionIndex( ) ] );
-						render::cs.string( box.x + box.w / 2, box.y + box.h + offset, { 255, 255, 255, low_alpha }, icon, render::ALIGN_CENTER );
+						render::cs.string( box.x + box.w / 2, box.y + box.h + offset, { 255, 255, 255, alpha }, icon, render::ALIGN_CENTER );
 					}
 				}
 			}
@@ -1030,7 +997,7 @@ void Visuals::DrawPlayer( Player* player ) {
 }
 
 void Visuals::DrawPlantedC4( ) {
-	bool        mode_2d, mode_3d, is_visible;
+	bool        is_visible;
 	float       explode_time_diff, dist, range_damage;
 	vec3_t      dst, to_target;
 	int         final_damage;
@@ -1055,12 +1022,6 @@ void Visuals::DrawPlantedC4( ) {
 
 		return std::max( 0, ( int ) std::floor( damage ) );
 	};
-
-	// store menu vars for later.
-	mode_2d = g_menu.main.visuals.planted_c4.get( 0 );
-	mode_3d = g_menu.main.visuals.planted_c4.get( 1 );
-	if( !mode_2d && !mode_3d )
-		return;
 
 	// bomb not currently active, do nothing.
 	if( !m_c4_planted )
@@ -1098,29 +1059,20 @@ void Visuals::DrawPlantedC4( ) {
 	// finally do all of our rendering.
 	is_visible = render::WorldToScreen( m_planted_c4_explosion_origin, screen_pos );
 
-	// 'on screen (2D)'.
-	if( mode_2d ) {
-		// g_cl.m_height - 80 - ( 30 * i )
-		// 80 - ( 30 * 2 ) = 20
+	// render 2d operations.
+	if( g_menu.main.visuals.planted_c4.get(0) && explode_time_diff > 0.f )
+		render::esp.string( 2, 65, colors::white, time_str, render::ALIGN_LEFT );
 
-		// render::menu_shade.string( 60, g_cl.m_height - 20 - ( render::hud_size.m_height / 2 ), 0xff0000ff, "", render::hud );
-
-		// todo - dex; move this next to indicators?
-
-		if( explode_time_diff > 0.f )
-			render::esp.string( 2, 65, colors::white, time_str, render::ALIGN_LEFT );
-
-		if( g_cl.m_local->alive( ) )
-			render::esp.string( 2, 65 + render::esp.m_size.m_height, damage_color, damage_str, render::ALIGN_LEFT );
-	}
+	if( g_menu.main.visuals.planted_c4.get(2) && g_cl.m_local->alive( ) )
+		render::esp.string( 2, 65 + render::esp.m_size.m_height, damage_color, damage_str, render::ALIGN_LEFT );
 
 	// 'on bomb (3D)'.
-	if( mode_3d && is_visible ) {
-		if( explode_time_diff > 0.f )
+	if( is_visible ) {
+		if( g_menu.main.visuals.planted_c4.get(1) && explode_time_diff > 0.f )
 			render::esp_small.string( screen_pos.x, screen_pos.y, colors::white, time_str, render::ALIGN_CENTER );
 
 		// only render damage string if we're alive.
-		if( g_cl.m_local->alive( ) )
+		if( g_menu.main.visuals.planted_c4.get(3) && g_cl.m_local->alive( ) )
 			render::esp_small.string( screen_pos.x, ( int ) screen_pos.y + render::esp_small.m_size.m_height, damage_color, damage_str, render::ALIGN_CENTER );
 	}
 }

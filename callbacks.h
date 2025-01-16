@@ -47,6 +47,10 @@ namespace callbacks {
 	bool IsFakeAntiAimRelative( );
 	bool IsFakeAntiAimJitter( );
 	
+	bool IsOffscreenOn( );
+	bool IsHealthOn( );
+	bool IsHealthOverrideOn( );
+
 	bool IsItemsOn( );
 	bool IsAmmoOn( );
 	bool IsAmmoBarOn( );

@@ -76,7 +76,7 @@ public:
 	//void                     GetScreenSize( int& w, int& h );
 	void                     SceneEnd( );
 	void                     DrawModelExecute( uintptr_t ctx, const DrawModelState_t& state, const ModelRenderInfo_t& info, matrix3x4_t* bone );
-	void                     ComputeShadowDepthTextures( const CViewSetup& view, bool unk );
+	void                     ComputeShadowDepthTextures( const CViewSetup& view, bool setup );
 	bool                     DebugSpreadGetBool( );
 	void                     DoExtraBoneProcessing( int a2, int a3, int a4, int a5, int a6, int a7 );
 	void                     BuildTransformations( int a2, int a3, int a4, int a5, int a6, int a7 );

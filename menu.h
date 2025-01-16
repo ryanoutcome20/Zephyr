@@ -409,9 +409,13 @@ public:
 	Checkbox      dormant;
 	Checkbox      offscreen;
 	Colorpicker   offscreen_color;
+	Slider			 offscreen_dist;
+	Slider			 offscreen_size;
 	MultiDropdown name;
 	Colorpicker   name_color;
 	MultiDropdown health;
+	Checkbox			   health_color_override;
+	Colorpicker		   health_color;
 	MultiDropdown flags_enemy;
 	MultiDropdown flags_friendly;
 	MultiDropdown weapon;
@@ -471,6 +475,14 @@ public:
 		offscreen_color.setup(XOR("offscreen esp color"), XOR("offscreen_color"), colors::white);
 		RegisterElement(&offscreen_color);
 
+		offscreen_dist.setup( "", XOR("offscreen_distance"), 30.f, 300.f, false, 0, 250.f, 5.f);
+		offscreen_dist.AddShowCallback( callbacks::IsOffscreenOn );
+		RegisterElement(&offscreen_dist);
+
+		offscreen_size.setup( "", XOR("offscreen_size"), 6.f, 18.f, false, 0.f, 12.f);
+		offscreen_size.AddShowCallback( callbacks::IsOffscreenOn );
+		RegisterElement(&offscreen_size);
+
 		name.setup(XOR("name"), XOR("name"), { XOR("enemy"), XOR("friendly") });
 		RegisterElement(&name);
 
@@ -479,6 +491,14 @@ public:
 
 		health.setup(XOR("health"), XOR("health"), { XOR("enemy"), XOR("friendly") });
 		RegisterElement(&health);
+
+		health_color_override.setup( XOR("override color"), XOR("health_color_override") );
+		health_color_override.AddShowCallback( callbacks::IsHealthOn );
+		RegisterElement( &health_color_override );
+
+		health_color.setup( XOR("color"), XOR("health_color"), colors::burgundy );
+		health_color.AddShowCallback( callbacks::IsHealthOverrideOn );
+		RegisterElement( &health_color );
 
 		flags_enemy.setup(XOR("flags enemy"), XOR("flags_enemy"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb") });
 		RegisterElement(&flags_enemy);
@@ -599,7 +619,6 @@ public:
 	MultiDropdown proj_range;
 	Colorpicker   proj_range_color;
 	MultiDropdown planted_c4;
-	Checkbox      disableteam;
 	Dropdown	  world;
 	Checkbox      transparent_props;
 	Checkbox      enemy_radar;
@@ -676,11 +695,8 @@ public:
 		enemy_radar.setup(XOR("force enemies on radar"), XOR("enemy_radar"));
 		RegisterElement(&enemy_radar);
 
-		planted_c4.setup(XOR("planted c4"), XOR("planted_c4"), { XOR("on screen (2D)"), XOR("on bomb (3D)") });
+		planted_c4.setup(XOR("planted c4"), XOR("planted_c4"), { XOR("timer (2D)"), XOR("timer (3D)"), XOR("damage (2D)"), XOR("damage (3D)") });
 		RegisterElement(&planted_c4);
-
-		disableteam.setup(XOR("do not render teammates"), XOR("disableteam"));
-		RegisterElement(&disableteam);
 
 		world.setup(XOR("world"), XOR("world"), { XOR("off"), XOR("night"), XOR("fullbright") });
 		world.SetCallback(Visuals::ModulateWorld);
@@ -699,7 +715,8 @@ public:
 			XOR("particles"),
 			XOR("post-processing"),
 			XOR("flash"),
-			XOR("scope")
+			XOR("scope"),
+			XOR("teammates")
 		});
 		RegisterElement(&removals, 1);
 
@@ -2018,7 +2035,7 @@ public:
 		buy_money.AddShowCallback(callbacks::IsAutoBuyOn);
 		RegisterElement(&buy_money);
 
-		buy_money_amt.setup("", XOR("buy_money_amt"), 0.f, 16000.f, false, 0, 16000.f, 100.f, XOR(L"$"));
+		buy_money_amt.setup("", XOR("buy_money_amt"), 0.f, 16000.f, false, 0, 16000.f, 500.f, XOR(L"$"));
 		buy_money_amt.AddShowCallback(callbacks::IsAutoBuyOn);
 		RegisterElement(&buy_money_amt);
 

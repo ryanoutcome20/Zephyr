@@ -199,6 +199,21 @@ bool callbacks::IsFakeAntiAimJitter( ) {
 	return g_menu.main.antiaim.fake_yaw.get( ) == 3;
 }
 
+bool callbacks::IsOffscreenOn()
+{
+	return g_menu.main.players.offscreen.get( );
+}
+
+bool callbacks::IsHealthOn()
+{
+	return g_menu.main.players.health.get( 0 ) || g_menu.main.players.health.get( 1 );
+}
+
+bool callbacks::IsHealthOverrideOn()
+{
+	return g_menu.main.players.health_color_override.get( );
+}
+
 bool callbacks::IsItemsOn()
 {
 	return g_menu.main.visuals.items.get( );

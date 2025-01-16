@@ -159,8 +159,13 @@ class IClientShadowMgr {
 public:
 	enum indices : size_t {
 		UNLOCKALLSHADOWDEPTHTEXTURES = 30,
+		SETSHADOWDISTANCE							= 35,
 		COMPUTESHADOWDEPTHTEXTURES   = 43,
 	};
+
+	__forceinline void SetShadowDistance( float max_distance ) {
+		return util::get_method< void(__thiscall*)(void*, float) >(this, SETSHADOWDISTANCE)(this, max_distance);
+	}
 };
 
 class IMaterial {

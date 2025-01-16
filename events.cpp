@@ -27,7 +27,6 @@ void events::round_start( IGameEvent* evt ) {
 	// reset dormant esp.
     g_visuals.m_draw.fill( false );
 	g_visuals.m_opacities.fill( 0.f );
-    g_visuals.m_offscreen_damage.fill( OffScreenDamageData_t() );
 
 	// update all players.
 	for( int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i  ) {
@@ -88,21 +87,8 @@ void events::round_end( IGameEvent* evt ) {
 }
 
 void events::player_hurt( IGameEvent* evt ) {
-    int attacker, victim;
-
 	// forward event to resolver / shots hurt processing.
-	// g_resolver.hurt( evt );
 	g_shots.OnHurt( evt );
-
-    // offscreen esp damage stuff.
-    if( evt ) {
-        attacker = g_csgo.m_engine->GetPlayerForUserID( evt->m_keys->FindKey( HASH( "attacker" ) )->GetInt( ) );
-        victim   = g_csgo.m_engine->GetPlayerForUserID( evt->m_keys->FindKey( HASH( "userid" ) )->GetInt( ) );
-
-        // a player damaged the local player.
-        if( attacker > 0 && attacker < 64 && victim == g_csgo.m_engine->GetLocalPlayer( ) )
-            g_visuals.m_offscreen_damage[ attacker ] = { 3.f, 0.f, colors::red };
-    }
 }
 
 void events::bullet_impact( IGameEvent* evt ) {
