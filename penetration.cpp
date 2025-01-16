@@ -357,40 +357,57 @@ bool penetration::run( PenetrationInput_t* in, PenetrationOutput_t* out ) {
 		exit_surface  = g_csgo.m_phys_props->GetSurfaceData( exit_trace.m_surface.m_surface_props );
         exit_material = exit_surface->m_game.m_material;
 
-        // todo - dex; check for CHAR_TEX_FLESH and ff_damage_bullet_penetration / ff_damage_reduction_bullets convars?
-        //             also need to check !isbasecombatweapon too.
-		if( enter_material == CHAR_TEX_GRATE || enter_material == CHAR_TEX_GLASS ) {
-			total_pen_mod = 3.f;
-			damage_mod    = 0.05f;
-		}
+		// we might want to convert this all into an optional opt in type thing since the base game code is accurate but
+		// very unoptimized.
+	
+		// calculate penetration fall off through materials.
+		// https://gitlab.com/KittenPopo/csgo-2018-source/-/blob/main/game/shared/cstrike15/cs_player_shared.cpp
+		float flDamLostPercent = 0.16; // flat change through any material.
+		float flPenetrationModifier = 0.f;
 
-		else if( nodraw || grate ) {
-			total_pen_mod = 1.f;
-			damage_mod    = 0.16f;
+		// scale with materials.
+		if ( grate || nodraw || enter_material == CHAR_TEX_GLASS || enter_material == CHAR_TEX_GRATE ) {
+			if ( enter_material == CHAR_TEX_GLASS || enter_material == CHAR_TEX_GRATE )
+			{
+				flPenetrationModifier = 3.0f;
+				flDamLostPercent = 0.05;
+			}
+			else
+				flPenetrationModifier = 1.0f;
 		}
-
 		else {
-			total_pen_mod = ( enter_surface->m_game.m_penetration_modifier + exit_surface->m_game.m_penetration_modifier ) * 0.5f;
-			damage_mod    = 0.16f;
+			flPenetrationModifier = (enter_surface->m_game.m_penetration_modifier + exit_surface->m_game.m_penetration_modifier) / 2.f;
 		}
 
-		// thin metals, wood and plastic get a penetration bonus.
-		if( enter_material == exit_material ) {
-			if( exit_material == CHAR_TEX_CARDBOARD || exit_material == CHAR_TEX_WOOD )
-				total_pen_mod = 3.f;
-
-			else if( exit_material == CHAR_TEX_PLASTIC )
-				total_pen_mod = 2.f;
+		if ( enter_material == exit_material ) { // hollow material, give penetration bonus.
+			if ( exit_material == CHAR_TEX_WOOD || exit_material == CHAR_TEX_CARDBOARD )
+			{
+				flPenetrationModifier = 3.f;
+			}
+			else if ( exit_material == CHAR_TEX_PLASTIC )
+			{
+				flPenetrationModifier = 2.f;
+			}
 		}
 
-		// set some local vars.
-		trace_len   = ( exit_trace.m_endpos - trace.m_endpos ).length( );
-		modifier    = std::max( 0.f, 1.f / total_pen_mod );
-		damage_lost = ( ( modifier * 3.f ) * penetration_mod + ( damage * damage_mod ) ) + ( ( ( trace_len * trace_len ) * modifier ) / 24.f );
+		// calculate distance stuff.
+		float flTraceDistance = (exit_trace.m_endpos - trace.m_endpos).length();
+		float flPenMod = fmaxf(0, (1 / flPenetrationModifier));
+		float flLostDamageObject = ((flPenMod * (flTraceDistance * flTraceDistance)) / 24);
 
-		// subtract from damage.
-		damage -= std::max( 0.f, damage_lost );
-		if( damage < 1.f )
+		// calculate actual penetration stuff.
+		float flPenWepMod = (damage * flDamLostPercent) + fmaxf(0, (3 / penetration) * 1.25) * (flPenMod * 3.0);
+
+		float flTotalLostDamage = flPenWepMod + flLostDamageObject;
+
+		// calculate if we penetrated
+		if ( flTotalLostDamage > damage )
+			return false;
+
+		if ( flTotalLostDamage > 0.f )
+			damage -= flTotalLostDamage;
+
+		if ( damage < 1.f )
 			return false;
 
 		// set new start pos for successive trace.
