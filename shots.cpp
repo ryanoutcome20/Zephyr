@@ -112,9 +112,7 @@ void Shots::OnImpact( IGameEvent *evt ) {
 	impact.m_shot = shot;
 	impact.m_tick = g_cl.m_local->m_nTickBase( );
 	impact.m_pos = pos;
-
-	//g_cl.print( "imp %x time: %f lat: %f dmg: %f\n", shot->m_record, shot->m_time, shot->m_lat, shot->m_damage );
-
+	
 	// add to track.
 	m_impacts.push_front( impact );
 
@@ -302,56 +300,8 @@ void Shots::OnHurt( IGameEvent *evt ) {
 	hit.m_group = group;
 	hit.m_damage = damage;
 
-	//g_cl.print( "hit %x time: %f lat: %f dmg: %f\n", impact->m_shot->m_record, impact->m_shot->m_time, impact->m_shot->m_lat, impact->m_shot->m_damage );
-
 	m_hits.push_front( hit );
 
 	while ( m_hits.size( ) > 128 )
 		m_hits.pop_back( );
-
-	AimPlayer *data = &g_aimbot.m_players[ target->index( ) - 1 ];
-	if ( !data )
-		return;
-
-	// we hit, reset missed shots counter.
-	data->m_missed_shots = 0;
-
-	size_t mode = impact->m_shot->m_record->m_mode;
-
-	// if we miss a shot on body update.
-	// we can chose to stop shooting at them.
-	if ( mode == Resolver::Modes::RESOLVE_BODY && data->m_body_index > 0 )
-		--data->m_body_index;
-
-	else if ( mode == Resolver::Modes::RESOLVE_STAND && data->m_stand_index > 0 )
-		--data->m_stand_index;
-
-	else if ( mode == Resolver::Modes::RESOLVE_STAND2 && data->m_stand_index2 > 0 )
-		--data->m_stand_index2;
-
-	// if we hit head
-	// shoot at this 5 more times.
-	if ( group == HITGROUP_HEAD ) {
-		LagRecord *record = hit.m_impact->m_shot->m_record;
-
-		//switch( record->m_mode ) {
-		//case Resolver::Modes::RESOLVE_STAND:
-		//	data->m_prefer_stand.clear( );
-		//	data->m_prefer_stand.push_front( math::NormalizedAngle( record->m_eye_angles.y - record->m_lbyt ) );
-		//	break;
-
-		//case Resolver::Modes::RESOLVE_AIR:
-		//	if( g_menu.main.config.mode.get( ) == 1 ) {
-		//		data->m_prefer_air.clear( );
-		//		data->m_prefer_air.push_front( math::NormalizedAngle( record->m_eye_angles.y - record->m_away ) );
-		//
-		//		g_notify.add( tfm::format( "air hit %f\n", data->m_prefer_air.front( ) ) );
-		//	}
-		//
-		//	break;
-
-		//default:
-		//	break;
-		//}
-	}
 }
