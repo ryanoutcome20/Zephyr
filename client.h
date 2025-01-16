@@ -56,6 +56,7 @@ public:
 	Player*          m_local;
 	bool	         m_processing;
 	int	             m_flags;
+	int				 m_movetype;
 	vec3_t	         m_shoot_pos;
 	bool	         m_player_fire;
 	bool	         m_shot;

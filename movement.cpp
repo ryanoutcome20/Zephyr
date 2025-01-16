@@ -3,9 +3,6 @@
 Movement g_movement{ };;
 
 void Movement::JumpRelated( ) {
-	if( g_cl.m_local->m_MoveType( ) == MOVETYPE_NOCLIP )
-		return;
-
 	if( ( g_cl.m_cmd->m_buttons & IN_JUMP ) && !( g_cl.m_flags & FL_ONGROUND ) ) {
 		// bhop.
 		if( g_menu.main.movement.bhop.get( ) )
@@ -20,10 +17,6 @@ void Movement::JumpRelated( ) {
 void Movement::Strafe( ) {
 	vec3_t velocity;
 	float  delta, abs_delta, velocity_angle, velocity_delta, correct;
-
-	// don't strafe while noclipping or on ladders..
-	if( g_cl.m_local->m_MoveType( ) == MOVETYPE_NOCLIP || g_cl.m_local->m_MoveType( ) == MOVETYPE_LADDER )
-		return;
 
 	// disable strafing while pressing shift.
 	// don't strafe if not holding primary jump key.
@@ -263,7 +256,7 @@ void Movement::FixMove( CUserCmd *cmd, const ang_t &wish_angles ) {
 	g_cl.m_cmd->m_buttons &= ~( IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT );
 
 	// fix ladder and noclip.
-	if( g_cl.m_local->m_MoveType( ) == MOVETYPE_LADDER ) {
+	if( g_cl.m_movetype == MOVETYPE_LADDER ) {
 		// invert directon for up and down.
 		if( cmd->m_view_angles.x >= 45.f && wish_angles.x < 45.f && std::abs( delta ) <= 65.f )
 			dir.x = -dir.x;

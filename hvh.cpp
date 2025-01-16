@@ -288,9 +288,6 @@ bool HVH::DoEdgeAntiAim( Player *player, ang_t &out ) {
 	CGameTrace trace;
 	static CTraceFilterSimple_game filter{ };
 
-	if( player->m_MoveType( ) == MOVETYPE_LADDER )
-		return false;
-
 	// skip this player in our traces.
 	filter.SetPassEntity( player );
 
@@ -623,7 +620,10 @@ void HVH::AntiAim( ) {
 	}
 
 	// disable conditions.
-	if( g_csgo.m_gamerules->m_bFreezePeriod( ) || ( g_cl.m_flags & FL_FROZEN ) || g_cl.m_round_end || ( g_cl.m_cmd->m_buttons & IN_USE ) )
+	if( g_csgo.m_gamerules->m_bFreezePeriod( ) || ( g_cl.m_flags & FL_FROZEN ) || ( g_cl.m_cmd->m_buttons & IN_USE ) )
+		return;
+
+	if ( g_cl.m_movetype == MOVETYPE_NOCLIP || g_cl.m_movetype == MOVETYPE_LADDER )
 		return;
 
 	// grenade throwing

@@ -147,7 +147,8 @@ void Client::StartMove(CUserCmd* cmd) {
 	g_inputpred.update();
 
 	// store some stuff about the local player.
-	m_flags = m_local->m_fFlags();
+	m_flags = m_local->m_fFlags( );
+	m_movetype = m_local->m_MoveType( );
 
 	// ...
 	m_shot = false;
@@ -183,10 +184,12 @@ void Client::DoMove() {
 	penetration::PenetrationOutput_t tmp_pen_data{ };
 
 	// run movement code before input prediction.
-	g_movement.JumpRelated();
-	g_movement.Strafe();
-	g_movement.FakeWalk();
-	g_movement.AutoPeek();
+	if ( m_movetype != MOVETYPE_NOCLIP && m_movetype != MOVETYPE_LADDER ) {
+		g_movement.JumpRelated();
+		g_movement.Strafe();
+		g_movement.FakeWalk();
+		g_movement.AutoPeek();
+	}
 
 	// backup strafe angles (we need them for input prediction)
 	m_strafe_angles = m_cmd->m_view_angles;
