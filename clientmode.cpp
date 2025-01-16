@@ -1,12 +1,16 @@
 #include "includes.h"
 
 bool Hooks::ShouldDrawParticles() {
+	// remove particles.
+	if( g_menu.main.visuals.removals.get(4) )
+		return false;
+
 	return g_hooks.m_client_mode.GetOldMethod< ShouldDrawParticles_t >(IClientMode::SHOULDDRAWPARTICLES)(this);
 }
 
 bool Hooks::ShouldDrawFog() {
 	// remove fog.
-	if (g_menu.main.visuals.nofog.get())
+	if ( g_menu.main.visuals.removals.get(3))
 		return false;
 
 	return g_hooks.m_client_mode.GetOldMethod< ShouldDrawFog_t >(IClientMode::SHOULDDRAWFOG)(this);
@@ -23,9 +27,11 @@ void Hooks::OverrideView(CViewSetup* view) {
 	g_hooks.m_client_mode.GetOldMethod< OverrideView_t >(IClientMode::OVERRIDEVIEW)(this, view);
 
 	// remove scope edge blur.
-	if (g_menu.main.visuals.noscope.get()) {
-		if (g_cl.m_local && g_cl.m_local->m_bIsScoped())
-			view->m_edge_blur = 0;
+	if ( g_menu.main.visuals.removals.get(5) ) {
+		view->m_edge_blur = 0;
+	}
+	else {
+		view->m_edge_blur = 4;
 	}
 }
 

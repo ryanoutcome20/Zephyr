@@ -183,7 +183,7 @@ void Visuals::NoSmoke( ) {
 	if( !smoke4 )
 		smoke4 = g_csgo.m_material_system->FindMaterial( XOR( "particle/vistasmokev1/vistasmokev1_emods_impactdust" ), XOR( "Other textures" ) );
 
-	if( g_menu.main.visuals.nosmoke.get( ) ) {
+	if( g_menu.main.visuals.removals.get( 2 ) ) {
 		if( !smoke1->GetFlag( MATERIAL_VAR_NO_DRAW ) )
 			smoke1->SetFlag( MATERIAL_VAR_NO_DRAW, true );
 
@@ -220,7 +220,7 @@ void Visuals::think( ) {
 	if( !g_csgo.m_engine->IsInGame( ) )
 		return;
 
-	if( g_menu.main.visuals.noscope.get( )
+	if( g_menu.main.visuals.removals.get(7)
 		&& g_cl.m_local->alive( )
 		&& g_cl.m_local->GetActiveWeapon( )
 		&& g_cl.m_local->GetActiveWeapon( )->GetWpnData( )->m_weapon_type == CSWeaponType::WEAPONTYPE_SNIPER_RIFLE
@@ -538,7 +538,7 @@ void Visuals::DrawItem( Weapon* item ) {
 	if( data->m_weapon_type == WEAPONTYPE_GRENADE || data->m_weapon_type == WEAPONTYPE_KNIFE )
 		return;
 
-	if( item->m_iItemDefinitionIndex( ) == 0 || item->m_iItemDefinitionIndex( ) == C4 )
+	if( item->m_iItemDefinitionIndex( ) == NULL || item->m_iItemDefinitionIndex( ) == C4 )
 		return;
 
 	// render ammo text.

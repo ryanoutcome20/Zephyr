@@ -605,11 +605,7 @@ public:
 	Checkbox      enemy_radar;
 
 	// col2.
-	Checkbox      novisrecoil;
-	Checkbox      nosmoke;
-	Checkbox      nofog;
-	Checkbox      noflash;
-	Checkbox      noscope;
+	MultiDropdown removals;
 	Checkbox      fov;
 	Slider        fov_amt;
 	Checkbox      fov_scoped;
@@ -638,37 +634,47 @@ public:
 		RegisterElement(&items);
 
 		item_color.setup(XOR("color"), XOR("item_color"), colors::white);
+		item_color.AddShowCallback( callbacks::IsItemsOn );
 		RegisterElement(&item_color);
 
 		ammo.setup(XOR("dropped weapons ammo"), XOR("ammo"));
 		RegisterElement(&ammo);
 
 		ammo_color.setup(XOR("color"), XOR("ammo_color"), colors::white);
+		ammo_color.AddShowCallback( callbacks::IsAmmoOn );
 		RegisterElement(&ammo_color);
 
 		ammo_bar.setup(XOR("dropped weapons ammo bar"), XOR("ammo_bar"));
 		RegisterElement(&ammo_bar);
 
 		ammo_bar_color.setup(XOR("color"), XOR("ammo_bar_color"), colors::burgundy);
+		ammo_bar_color.AddShowCallback( callbacks::IsAmmoBarOn );
 		RegisterElement(&ammo_bar_color);
 
 		dropped_c4.setup( XOR("dropped c4"), XOR("dropped_c4"));
 		RegisterElement(&dropped_c4);
 
 		dropped_c4_color.setup(XOR("color"), XOR("dropped_c4_color"), colors::burgundy);
+		dropped_c4_color.AddShowCallback( callbacks::IsDroppedC4On );
 		RegisterElement(&dropped_c4_color);
 
 		proj.setup(XOR("projectiles"), XOR("proj"));
 		RegisterElement(&proj);
 
 		proj_color.setup(XOR("color"), XOR("proj_color"), colors::white);
+		proj_color.AddShowCallback( callbacks::IsProjectileOn );
 		RegisterElement(&proj_color);
 
 		proj_range.setup(XOR("projectile range"), XOR("proj_range"), { XOR("frag"), XOR("molly") });
+		proj_range.AddShowCallback( callbacks::IsProjectileOn );
 		RegisterElement(&proj_range);
 
 		proj_range_color.setup(XOR("color"), XOR("proj_range_color"), colors::burgundy);
+		proj_range_color.AddShowCallback( callbacks::IsProjectileOn );
 		RegisterElement(&proj_range_color);
+
+		enemy_radar.setup(XOR("force enemies on radar"), XOR("enemy_radar"));
+		RegisterElement(&enemy_radar);
 
 		planted_c4.setup(XOR("planted c4"), XOR("planted_c4"), { XOR("on screen (2D)"), XOR("on bomb (3D)") });
 		RegisterElement(&planted_c4);
@@ -684,24 +690,18 @@ public:
 		transparent_props.SetCallback(Visuals::ModulateWorld);
 		RegisterElement(&transparent_props);
 
-		enemy_radar.setup(XOR("force enemies on radar"), XOR("enemy_radar"));
-		RegisterElement(&enemy_radar);
-
 		// col2.
-		novisrecoil.setup(XOR("remove visual recoil"), XOR("novisrecoil"));
-		RegisterElement(&novisrecoil, 1);
-
-		nosmoke.setup(XOR("remove smoke grenades"), XOR("nosmoke"));
-		RegisterElement(&nosmoke, 1);
-
-		nofog.setup(XOR("remove fog"), XOR("nofog"));
-		RegisterElement(&nofog, 1);
-
-		noflash.setup(XOR("remove flashbangs"), XOR("noflash"));
-		RegisterElement(&noflash, 1);
-
-		noscope.setup(XOR("remove scope"), XOR("noscope"));
-		RegisterElement(&noscope, 1);
+		removals.setup( XOR("removals"), XOR("removals"), { 
+			XOR("visual kick"), 
+			XOR("visual punch"), 
+			XOR("smoke"),
+			XOR("fog"),
+			XOR("particles"),
+			XOR("post-processing"),
+			XOR("flash"),
+			XOR("scope")
+		});
+		RegisterElement(&removals, 1);
 
 		fov.setup(XOR("override fov"), XOR("fov"));
 		RegisterElement(&fov, 1);
@@ -746,12 +746,15 @@ public:
 		RegisterElement(&impact_beams, 1);
 
 		impact_beams_color.setup(XOR("impact beams color"), XOR("impact_beams_color"), colors::light_blue);
+		impact_beams_color.AddShowCallback( callbacks::IsImpactBeamsOn );
 		RegisterElement(&impact_beams_color, 1);
 
 		impact_beams_hurt_color.setup(XOR("impact beams hurt color"), XOR("impact_beams_hurt_color"), colors::red);
+		impact_beams_hurt_color.AddShowCallback( callbacks::IsImpactBeamsOn );
 		RegisterElement(&impact_beams_hurt_color, 1);
 
 		impact_beams_time.setup(XOR("impact beams time"), XOR("impact_beams_time"), 1.f, 10.f, true, 0, 1.f, 1.f, XOR(L"s"));
+		impact_beams_time.AddShowCallback( callbacks::IsImpactBeamsOn );
 		RegisterElement(&impact_beams_time, 1);
 
 		thirdperson.setup(XOR("thirdperson"), XOR("thirdperson"));

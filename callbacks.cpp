@@ -199,6 +199,36 @@ bool callbacks::IsFakeAntiAimJitter( ) {
 	return g_menu.main.antiaim.fake_yaw.get( ) == 3;
 }
 
+bool callbacks::IsItemsOn()
+{
+	return g_menu.main.visuals.items.get( );
+}
+
+bool callbacks::IsAmmoOn()
+{
+	return g_menu.main.visuals.ammo.get();
+}
+
+bool callbacks::IsAmmoBarOn()
+{
+	return g_menu.main.visuals.ammo_bar.get();
+}
+
+bool callbacks::IsDroppedC4On()
+{
+	return g_menu.main.visuals.dropped_c4.get();
+}
+
+bool callbacks::IsProjectileOn()
+{
+	return g_menu.main.visuals.proj.get( );
+}
+
+bool callbacks::IsImpactBeamsOn()
+{
+	return g_menu.main.visuals.impact_beams.get( );
+}
+
 bool callbacks::IsAutoBuyOn()
 {
 	return g_menu.main.misc.buy.get( );

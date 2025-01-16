@@ -16,9 +16,9 @@ void Hooks::OnRenderStart() {
 		if ( g_menu.main.visuals.fov_scoped.get() && weapon ) {
 			if ( weapon->m_zoomLevel() != 2 ) {
 				if ( fov_override && 90.f >= fov_amount )
-					g_csgo.m_view_render->m_view.m_fov = 90.f;
-				else
 					g_csgo.m_view_render->m_view.m_fov = fov_amount;
+				else
+					g_csgo.m_view_render->m_view.m_fov = 90.f;
 			}
 			else {
 				g_csgo.m_view_render->m_view.m_fov += 45.f;
@@ -43,12 +43,14 @@ void Hooks::RenderView( const CViewSetup &view, const CViewSetup &hud_view, int 
 }
 
 void Hooks::Render2DEffectsPostHUD( const CViewSetup &setup ) {
-	if( !g_menu.main.visuals.noflash.get( ) )
+	// do note render flashbang overlay.
+	if( !g_menu.main.visuals.removals.get(6) )
 		g_hooks.m_view_render.GetOldMethod< Render2DEffectsPostHUD_t >( CViewRender::RENDER2DEFFECTSPOSTHUD )( this, setup );
 }
 
 void Hooks::RenderSmokeOverlay( bool unk ) {
 	// do not render smoke overlay.
-	if( !g_menu.main.visuals.nosmoke.get( ) )
+	
+	if( !g_menu.main.visuals.removals.get( 2 ) )
 		g_hooks.m_view_render.GetOldMethod< RenderSmokeOverlay_t >( CViewRender::RENDERSMOKEOVERLAY )( this, unk );
 }

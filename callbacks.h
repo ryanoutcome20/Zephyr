@@ -47,6 +47,13 @@ namespace callbacks {
 	bool IsFakeAntiAimRelative( );
 	bool IsFakeAntiAimJitter( );
 	
+	bool IsItemsOn( );
+	bool IsAmmoOn( );
+	bool IsAmmoBarOn( );
+	bool IsDroppedC4On( );
+	bool IsProjectileOn( );
+	bool IsImpactBeamsOn( );
+
 	bool IsAutoBuyOn( );
 
 	bool IsConfigMM( );
