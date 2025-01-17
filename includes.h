@@ -17,7 +17,6 @@
 using ulong_t = unsigned long;
 
 // windows / stl includes.
-#include <Windows.h>
 #include <cstdint>
 #include <intrin.h>
 #include <xmmintrin.h>

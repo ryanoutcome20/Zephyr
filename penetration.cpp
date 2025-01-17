@@ -198,7 +198,7 @@ bool penetration::run( PenetrationInput_t* in, PenetrationOutput_t* out ) {
     static CTraceFilterSkipTwoEntities_game filter{};
 
 	int			  pen{ 4 }, enter_material, exit_material;
-	float		  damage, penetration, penetration_mod, player_damage, remaining, trace_len{}, total_pen_mod, damage_mod, modifier, damage_lost;
+	float		  damage, penetration, penetration_mod, player_damage, remaining, trace_len{};
 	surfacedata_t *enter_surface, *exit_surface;
 	bool		  nodraw, grate;
 	vec3_t		  start, dir, end, pen_end;
