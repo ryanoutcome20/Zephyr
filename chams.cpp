@@ -329,13 +329,13 @@ void Chams::RenderPlayer(Player* player) {
 	if (enemy && g_menu.main.players.chams_enemy.get(0)) {
 		if (g_menu.main.players.chams_enemy.get(1)) {
 
-			SetAlpha(g_menu.main.players.chams_enemy_blend.get() / 100.f);
+			SetAlpha(g_menu.main.players.chams_enemy_invis_blend.get() / 100.f);
 			SetupMaterial(debugambientcube, g_menu.main.players.chams_enemy_invis.get(), true);
 
 			player->DrawModel();
 		}
 
-		SetAlpha(g_menu.main.players.chams_enemy_blend.get() / 100.f);
+		SetAlpha(g_menu.main.players.chams_enemy_vis_blend.get() / 100.f);
 		SetupMaterial(debugambientcube, g_menu.main.players.chams_enemy_vis.get(), false);
 
 		player->DrawModel();
@@ -344,13 +344,13 @@ void Chams::RenderPlayer(Player* player) {
 	else if (!enemy && g_menu.main.players.chams_friendly.get(0) && !player->m_bIsLocalPlayer()) {
 		if (g_menu.main.players.chams_friendly.get(1)) {
 
-			SetAlpha(g_menu.main.players.chams_friendly_blend.get() / 100.f);
+			SetAlpha(g_menu.main.players.chams_friendly_invis_blend.get() / 100.f);
 			SetupMaterial(debugambientcube, g_menu.main.players.chams_friendly_invis.get(), true);
 
 			player->DrawModel();
 		}
 
-		SetAlpha(g_menu.main.players.chams_friendly_blend.get() / 100.f);
+		SetAlpha(g_menu.main.players.chams_friendly_vis_blend.get() / 100.f);
 		SetupMaterial(debugambientcube, g_menu.main.players.chams_friendly_vis.get(), false);
 
 		player->DrawModel();

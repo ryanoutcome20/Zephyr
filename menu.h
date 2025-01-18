@@ -437,17 +437,23 @@ public:
 	Colorpicker   glow_enemy;
 	Colorpicker   glow_friendly;
 	Slider        glow_blend;
+	Dropdown chams_selection;
+
 	MultiDropdown chams_enemy;
 	Colorpicker   chams_enemy_vis;
+	Slider        chams_enemy_vis_blend;
 	Colorpicker   chams_enemy_invis;
-	Slider        chams_enemy_blend;
+	Slider        chams_enemy_invis_blend;
 	Checkbox      chams_enemy_history;
 	Colorpicker   chams_enemy_history_col;
 	Slider        chams_enemy_history_blend;
+
 	MultiDropdown chams_friendly;
 	Colorpicker   chams_friendly_vis;
+	Slider        chams_friendly_vis_blend;
 	Colorpicker   chams_friendly_invis;
-	Slider        chams_friendly_blend;
+	Slider        chams_friendly_invis_blend;
+
 	MultiDropdown chams_local;
 	Colorpicker   chams_local_col;
 	Slider        chams_local_blend;
@@ -557,60 +563,86 @@ public:
 		glow_blend.setup("", XOR("glow_blend"), 10.f, 100.f, false, 0, 60.f, 1.f, XOR(L"%"));
 		RegisterElement(&glow_blend, 1);
 
+		chams_selection.setup( XOR("selection"), XOR("chams_selection"), { XOR("enemy"), XOR("friendly"), XOR("local") });
+		RegisterElement(&chams_selection, 1);
+
+		// enemy-sub tab.
 		chams_enemy.setup(XOR("chams enemy"), XOR("chams_enemy"), { XOR("visible"), XOR("invisible") });
+		chams_enemy.AddShowCallback( callbacks::IsChamsEnemy );
 		RegisterElement(&chams_enemy, 1);
 
 		chams_enemy_vis.setup(XOR("color visible"), XOR("chams_enemy_vis"), { 150, 200, 60 });
+		chams_enemy_vis.AddShowCallback(callbacks::IsChamsEnemy);
 		RegisterElement(&chams_enemy_vis, 1);
 
+		chams_enemy_vis_blend.setup("", XOR("chams_enemy_vis_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_enemy_vis_blend.AddShowCallback(callbacks::IsChamsEnemy);
+		RegisterElement(&chams_enemy_vis_blend, 1);
+
 		chams_enemy_invis.setup(XOR("color invisible"), XOR("chams_enemy_invis"), { 60, 180, 225 });
+		chams_enemy_invis.AddShowCallback(callbacks::IsChamsEnemy);
 		RegisterElement(&chams_enemy_invis, 1);
 
-		chams_enemy_blend.setup("", XOR("chams_enemy_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
-		RegisterElement(&chams_enemy_blend, 1);
+		chams_enemy_invis_blend.setup("", XOR("chams_enemy_invis_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_enemy_invis_blend.AddShowCallback(callbacks::IsChamsEnemy);
+		RegisterElement(&chams_enemy_invis_blend, 1);
 
 		chams_enemy_history.setup(XOR("chams history"), XOR("chams_history"));
+		chams_enemy_history.AddShowCallback(callbacks::IsChamsEnemy);
 		RegisterElement(&chams_enemy_history, 1);
 
 		chams_enemy_history_col.setup(XOR("color"), XOR("chams_history_col"), { 255, 255, 200 });
+		chams_enemy_history_col.AddShowCallback(callbacks::IsChamsEnemy);
 		RegisterElement(&chams_enemy_history_col, 1);
 
 		chams_enemy_history_blend.setup("", XOR("chams_history_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_enemy_history_blend.AddShowCallback(callbacks::IsChamsEnemy);
 		RegisterElement(&chams_enemy_history_blend, 1);
 
+		// friendly sub-tab.
 		chams_friendly.setup(XOR("chams friendly"), XOR("chams_friendly"), { XOR("visible"), XOR("invisible") });
+		chams_friendly.AddShowCallback(callbacks::IsChamsFriendly);
 		RegisterElement(&chams_friendly, 1);
 
 		chams_friendly_vis.setup(XOR("color visible"), XOR("chams_friendly_vis"), { 255, 200, 0 });
+		chams_friendly_vis.AddShowCallback(callbacks::IsChamsFriendly);
 		RegisterElement(&chams_friendly_vis, 1);
 
+		chams_friendly_vis_blend.setup("", XOR("chams_friendly_vis_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_friendly_vis_blend.AddShowCallback(callbacks::IsChamsFriendly);
+		RegisterElement(&chams_friendly_vis_blend, 1);
+
 		chams_friendly_invis.setup(XOR("color invisible"), XOR("chams_friendly_invis"), { 255, 50, 0 });
+		chams_friendly_invis.AddShowCallback(callbacks::IsChamsFriendly);
 		RegisterElement(&chams_friendly_invis, 1);
 
+		chams_friendly_invis_blend.setup("", XOR("chams_friendly_invis_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_friendly_invis_blend.AddShowCallback(callbacks::IsChamsFriendly);
+		RegisterElement(&chams_friendly_invis_blend, 1);
 
-		chams_local.setup(XOR("chams local"), XOR("chams_local"), { XOR("real"), XOR("fake") }); //fakekk
+		// local sub-tab.
+		chams_local.setup(XOR("chams local"), XOR("chams_local"), { XOR("real"), XOR("fake") });
+		chams_local.AddShowCallback(callbacks::IsChamsLocal);
 		RegisterElement(&chams_local, 1);
 
-
-		chams_friendly_blend.setup("", XOR("chams_friendly_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
-		RegisterElement(&chams_friendly_blend, 1);
-
-
 		chams_local_col.setup(XOR("color"), XOR("chams_local_col"), { 255, 255, 200 });
+		chams_local_col.AddShowCallback(callbacks::IsChamsLocal);
 		RegisterElement(&chams_local_col, 1);
 
 		chams_local_blend.setup("", XOR("chams_local_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_local_blend.AddShowCallback(callbacks::IsChamsLocal);
 		RegisterElement(&chams_local_blend, 1);
 
-
 		chams_local_ghost_col.setup(XOR("fake color"), XOR("chams_local_ghost_col"), { 255, 255, 200 });
+		chams_local_ghost_col.AddShowCallback(callbacks::IsChamsLocal);
 		RegisterElement(&chams_local_ghost_col, 1);
 
 		chams_local_ghost_blend.setup("", XOR("chams_local_ghost_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_local_ghost_blend.AddShowCallback(callbacks::IsChamsLocal);
 		RegisterElement(&chams_local_ghost_blend, 1);
 
-
 		chams_local_scope.setup(XOR("blend when scoped"), XOR("chams_local_scope"));
+		chams_local_scope.AddShowCallback(callbacks::IsChamsLocal);
 		RegisterElement(&chams_local_scope, 1);
 	}
 };
@@ -726,8 +758,7 @@ public:
 			XOR("particles"),
 			XOR("post-processing"),
 			XOR("flash"),
-			XOR("scope"),
-			XOR("teammates")
+			XOR("scope")
 		});
 		RegisterElement(&removals, 1);
 

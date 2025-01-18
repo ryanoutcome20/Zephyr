@@ -192,6 +192,21 @@ bool callbacks::IsFakeAntiAimJitter( ) {
 	return g_menu.main.antiaim.fake_yaw.get( ) == 3;
 }
 
+bool callbacks::IsChamsEnemy()
+{
+	return g_menu.main.players.chams_selection.get( ) == 0;
+}
+
+bool callbacks::IsChamsFriendly()
+{
+	return g_menu.main.players.chams_selection.get() == 1;
+}
+
+bool callbacks::IsChamsLocal()
+{
+	return g_menu.main.players.chams_selection.get() == 2;
+}
+
 bool callbacks::IsOffscreenOn()
 {
 	return g_menu.main.players.offscreen.get( );

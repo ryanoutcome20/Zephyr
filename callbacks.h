@@ -47,6 +47,10 @@ namespace callbacks {
 	bool IsFakeAntiAimRelative( );
 	bool IsFakeAntiAimJitter( );
 	
+	bool IsChamsEnemy( );
+	bool IsChamsFriendly( );
+	bool IsChamsLocal( );
+
 	bool IsOffscreenOn( );
 	bool IsHealthOn( );
 	bool IsHealthOverrideOn( );
