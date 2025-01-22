@@ -820,7 +820,7 @@ public:
 		thirdperson.SetToggleCallback(callbacks::ToggleThirdPerson);
 		RegisterElement(&thirdperson, 1);
 
-		thirdperson_distance.setup(XOR(" "), XOR("thirdperson_distance"), 50.f, 300.f, false, 0, 150.f, 1.f, XOR(L"°"));
+		thirdperson_distance.setup(XOR(" "), XOR("thirdperson_distance"), 50.f, 300.f, false, 0, 150.f, 5.f, XOR(L"°"));
 		RegisterElement(&thirdperson_distance, 1);
 	}
 };
