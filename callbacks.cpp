@@ -244,6 +244,30 @@ bool callbacks::IsWeaponLocal( ) {
 	return g_menu.main.players.weapon.get( 2 );
 }
 
+bool callbacks::IsGlowEnemy() {
+	return g_menu.main.players.glow.get( 0 );
+}
+
+bool callbacks::IsGlowFriendly( ) {
+	return g_menu.main.players.glow.get( 1 );
+}
+
+bool callbacks::IsGlowLocal( ) {
+	return g_menu.main.players.glow.get( 2 );
+}
+
+bool callbacks::IsSkeletonEnemy( ) {
+	return g_menu.main.players.skeleton.get( 0 );
+}
+
+bool callbacks::IsSkeletonFriendly( ) {
+	return g_menu.main.players.skeleton.get( 1 );
+}
+
+bool callbacks::IsSkeletonLocal( ) {
+	return g_menu.main.players.skeleton.get( 2 );
+}
+
 bool callbacks::IsOffscreenOn( ) {
 	return g_menu.main.players.offscreen.get( );
 }

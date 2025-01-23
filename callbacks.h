@@ -61,6 +61,12 @@ namespace callbacks {
 	bool IsWeaponEnemy( );
 	bool IsWeaponFriendly( );
 	bool IsWeaponLocal( );
+	bool IsGlowEnemy( );
+	bool IsGlowFriendly( );
+	bool IsGlowLocal( );
+	bool IsSkeletonEnemy( );
+	bool IsSkeletonFriendly( );
+	bool IsSkeletonLocal( );
 	bool IsOffscreenOn( );
 	bool IsHealthOn( );
 	bool IsHealthOverrideOn( );

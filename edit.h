@@ -48,6 +48,15 @@ public:
 			m_callback( );
 	}
 
+	__forceinline void sets( std::string val ) {
+		bool changed = val != gets();
+
+		m_text = val;
+
+		if ( changed && m_callback )
+			m_callback();
+	}
+
 protected:
 	std::string m_text;
 	size_t		m_limit;

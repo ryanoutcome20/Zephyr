@@ -431,19 +431,19 @@ public:
 	Colorpicker   offscreen_color;
 	Slider			 offscreen_dist;
 	Slider			 offscreen_size;
-	Checkbox      dormant;
-
-	// col2.
-	MultiDropdown skeleton;
-	Colorpicker   skeleton_enemy;
-	Colorpicker   skeleton_friendly;
-
 	MultiDropdown glow;
 	Colorpicker   glow_enemy;
 	Colorpicker   glow_friendly;
-	Slider        glow_blend;
-	Dropdown chams_selection;
+	Colorpicker   glow_local;
+	Slider		     glow_blend;
+	MultiDropdown skeleton;
+	Colorpicker   skeleton_enemy;
+	Colorpicker   skeleton_friendly;
+	Colorpicker   skeleton_local;
+	Checkbox      dormant;
 
+	// col2.
+	Dropdown		  chams_selection;
 	MultiDropdown chams_enemy;
 	Colorpicker   chams_enemy_vis;
 	Slider        chams_enemy_vis_blend;
@@ -573,31 +573,43 @@ public:
 		offscreen_size.AddShowCallback(callbacks::IsOffscreenOn);
 		RegisterElement(&offscreen_size);
 
+		glow.setup(XOR("glow"), XOR("glow"), { XOR("enemy"), XOR("friendly"), XOR("local") });
+		RegisterElement(&glow);
+
+		glow_enemy.setup(XOR("enemy color"), XOR("glow_enemy"), { 150, 200, 60 });
+		glow_enemy.AddShowCallback( callbacks::IsGlowEnemy );
+		RegisterElement(&glow_enemy);
+
+		glow_friendly.setup(XOR("friendly color"), XOR("glow_friendly"), { 150, 200, 60 });
+		glow_friendly.AddShowCallback(callbacks::IsGlowFriendly);
+		RegisterElement(&glow_friendly);
+		
+		glow_local.setup(XOR("local color"), XOR("glow_local"), { 150, 200, 60 });
+		glow_local.AddShowCallback(callbacks::IsGlowLocal);
+		RegisterElement(&glow_local);
+
+		glow_blend.setup("", XOR("glow_blend"), 10.f, 100.f, false, 0, 60.f, 1.f, XOR(L"%"));
+		RegisterElement(&glow_blend);
+
+		skeleton.setup(XOR("skeleton"), XOR("skeleton"), { XOR("enemy"), XOR("friendly"), XOR("local") });
+		RegisterElement(&skeleton);
+
+		skeleton_enemy.setup(XOR("enemy color"), XOR("skeleton_enemy"), { 255, 255, 255 });
+		skeleton_enemy.AddShowCallback(callbacks::IsSkeletonEnemy);
+		RegisterElement(&skeleton_enemy);
+
+		skeleton_friendly.setup(XOR("friendly color"), XOR("skeleton_friendly"), { 255, 255, 255 });
+		skeleton_friendly.AddShowCallback(callbacks::IsSkeletonFriendly);
+		RegisterElement(&skeleton_friendly);
+
+		skeleton_local.setup(XOR("local color"), XOR("skeleton_local"), { 255, 255, 255 });
+		skeleton_local.AddShowCallback(callbacks::IsSkeletonLocal);
+		RegisterElement(&skeleton_local);
+
 		dormant.setup(XOR("dormant enemies"), XOR("dormant"));
 		RegisterElement(&dormant);
 
 		// col2.
-		skeleton.setup(XOR("skeleton"), XOR("skeleton"), { XOR("enemy"), XOR("friendly") });
-		RegisterElement(&skeleton, 1);
-
-		skeleton_enemy.setup(XOR("enemy color"), XOR("skeleton_enemy"), { 255, 255, 255 });
-		RegisterElement(&skeleton_enemy, 1);
-
-		skeleton_friendly.setup(XOR("friendly color"), XOR("skeleton_friendly"), { 255, 255, 255 });
-		RegisterElement(&skeleton_friendly, 1);
-
-		glow.setup(XOR("glow"), XOR("glow"), { XOR("enemy"), XOR("friendly") });
-		RegisterElement(&glow, 1);
-
-		glow_enemy.setup(XOR("enemy color"), XOR("glow_enemy"), { 150, 200, 60 });
-		RegisterElement(&glow_enemy, 1);
-
-		glow_friendly.setup(XOR("friendly color"), XOR("glow_friendly"), { 150, 200, 60 });
-		RegisterElement(&glow_friendly, 1);
-
-		glow_blend.setup("", XOR("glow_blend"), 10.f, 100.f, false, 0, 60.f, 1.f, XOR(L"%"));
-		RegisterElement(&glow_blend, 1);
-
 		chams_selection.setup( XOR("selection"), XOR("chams_selection"), { XOR("enemy"), XOR("friendly"), XOR("local") });
 		RegisterElement(&chams_selection, 1);
 

@@ -202,7 +202,7 @@ void Config::load(const Form* form, const std::string& name) {
 			}
 
 			case ElementTypes::EDIT:
-				static_cast<Edit*>(element)->set(e.value());
+				static_cast<Edit*>(element)->sets(e.value());
 				break;
 
 			default:
@@ -294,7 +294,7 @@ void Config::save(const Form* form, const std::string& name) {
 				break;
 
 			case ElementTypes::EDIT:
-				config[title][name] = static_cast<Edit*>(e)->get();
+				config[title][name] = static_cast<Edit*>(e)->gets();
 				break;
 
 			default:

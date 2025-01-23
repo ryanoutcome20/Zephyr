@@ -772,7 +772,7 @@ void Visuals::DrawPlayer( Player* player ) {
 
 	// DebugAimbotPoints( player );
 
-	bool bone_esp = ( enemy && g_menu.main.players.skeleton.get( 0 ) ) || ( !enemy && g_menu.main.players.skeleton.get( 1 ) );
+	bool bone_esp = ( local && g_menu.main.players.skeleton.get( 2 ) ) || ( enemy && g_menu.main.players.skeleton.get( 0 ) ) || ( !enemy && !local && g_menu.main.players.skeleton.get( 1 ) );
 	if( bone_esp )
 		DrawSkeleton( player, alpha );
 
@@ -1190,6 +1190,14 @@ void Visuals::DrawSkeleton( Player* player, int opacity ) {
 	if( !player->SetupBones( matrix, 128, BONE_USED_BY_ANYTHING, g_csgo.m_globals->m_curtime ) )
 		return;
 
+	// get our color
+	Color clr = player->enemy(g_cl.m_local) ? g_menu.main.players.skeleton_enemy.get() : g_menu.main.players.skeleton_friendly.get();
+
+	if ( player->m_bIsLocalPlayer() )
+		clr = g_menu.main.players.skeleton_local.get();
+
+	clr.a() = opacity;
+
 	for( int i{ }; i < hdr->m_num_bones; ++i ) {
 		// get bone.
 		bone = hdr->GetBone( i );
@@ -1204,9 +1212,6 @@ void Visuals::DrawSkeleton( Player* player, int opacity ) {
 		// resolve main bone and parent bone positions.
 		matrix->get_bone( bone_pos, i );
 		matrix->get_bone( parent_pos, parent );
-
-		Color clr = player->enemy( g_cl.m_local ) ? g_menu.main.players.skeleton_enemy.get( ) : g_menu.main.players.skeleton_friendly.get( );
-		clr.a( ) = opacity;
 
 		// world to screen both the bone parent bone then draw.
 		if( render::WorldToScreen( bone_pos, bone_pos_screen ) && render::WorldToScreen( parent_pos, parent_pos_screen ) )
@@ -1236,8 +1241,8 @@ void Visuals::RenderGlow( ) {
 		// get player ptr.
 		player = obj->m_entity->as< Player* >( );
 
-		if( player->m_bIsLocalPlayer( ) )
-			continue;
+		// get local.
+		bool local = player->m_bIsLocalPlayer( );
 
 		// get reference to array variable.
 		float& opacity = m_opacities[ player->index( ) - 1 ];
@@ -1247,14 +1252,21 @@ void Visuals::RenderGlow( ) {
 		if( enemy && !g_menu.main.players.glow.get( 0 ) )
 			continue;
 
-		if( !enemy && !g_menu.main.players.glow.get( 1 ) )
+		if( !enemy && !local && !g_menu.main.players.glow.get( 1 ) )
 			continue;
 
-		// enemy color
+		if( local && !g_menu.main.players.glow.get( 2 )  )
+			continue;
+
+		// enemy color.
 		if( enemy )
 			color = g_menu.main.players.glow_enemy.get( );
 
-		// friendly color
+		// local color.
+		else if( local )
+			color = g_menu.main.players.glow_local.get( );
+
+		// friendly color.
 		else
 			color = g_menu.main.players.glow_friendly.get( );
 
