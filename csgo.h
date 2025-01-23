@@ -62,7 +62,6 @@ public:
 	IVDebugOverlay *m_debug_overlay;
 	IPhysicsSurfaceProps *m_phys_props;
 	IGameEventManager2 *m_game_events;
-	CMatchFramework *m_match_framework;
 	ILocalize *m_localize;
 	INetworkStringTableContainer *m_networkstringtable;
 	IEngineSound *m_sound;

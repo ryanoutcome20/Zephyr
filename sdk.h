@@ -43,7 +43,6 @@ struct CBaseTrace;
 #include "trace.h"
 #include "studiorender.h"
 #include "gameevents.h"
-#include "matchframework.h"
 #include "hud.h"
 #include "localize.h"
 #include "beams.h"

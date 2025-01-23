@@ -107,7 +107,6 @@ public:
 	VMT m_model_render;
 	VMT m_shadow_mgr;
 	VMT m_view_render;
-	VMT m_match_framework;
 	VMT m_material_system;
 	VMT m_fire_bullets;
 	VMT m_net_show_fragments;

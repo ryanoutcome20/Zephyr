@@ -258,9 +258,6 @@
     <ClInclude Include="keybind.h">
       <Filter>Header Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="matchframework.h">
-      <Filter>Header Files\sdk</Filter>
-    </ClInclude>
     <ClInclude Include="hud.h">
       <Filter>Header Files\sdk</Filter>
     </ClInclude>

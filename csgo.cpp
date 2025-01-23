@@ -70,7 +70,6 @@ bool CSGO::init( ) {
 	m_debug_overlay      = interfaces.get< IVDebugOverlay* >( HASH( "VDebugOverlay" ) );
 	m_phys_props         = interfaces.get< IPhysicsSurfaceProps* >( HASH( "VPhysicsSurfaceProps" ) );
 	m_game_events        = interfaces.get< IGameEventManager2* >( HASH( "GAMEEVENTSMANAGER" ), 1 );
-	m_match_framework    = interfaces.get< CMatchFramework* >( HASH( "MATCHFRAMEWORK_" ) );
 	m_localize           = interfaces.get< ILocalize* >( HASH( "Localize_" ) );
     m_networkstringtable = interfaces.get< INetworkStringTableContainer* >( HASH( "VEngineClientStringTable" ) );
 	m_sound              = interfaces.get< IEngineSound* >( HASH( "IEngineSoundClient" ) );
