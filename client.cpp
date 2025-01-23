@@ -7,7 +7,6 @@ Client g_cl{ };
 ulong_t __stdcall Client::init(void* arg) {
 	// set our username and config file location.
 	g_cl.m_user = XOR("user");
-	g_cl.m_save_location = XOR("configs"); // I would set this to "zephyr" but that is actually where I keep this project :(
 
 	// stop here if we failed to acquire all the data needed from csgo.
 	if (!g_csgo.init())
@@ -190,6 +189,7 @@ void Client::DoMove() {
 		g_movement.Strafe();
 		g_movement.FakeWalk();
 		g_movement.AutoPeek();
+		g_movement.DuckDelay();
 	}
 
 	// backup strafe angles (we need them for input prediction)

@@ -409,3 +409,10 @@ void Movement::FakeWalk( ) {
 		g_cl.m_cmd->m_forward_move = g_cl.m_cmd->m_side_move = 0.f;
 	}
 }
+
+void Movement::DuckDelay() {
+	if( !g_menu.main.movement.duck_delay.get( ) )
+		return;
+
+	g_cl.m_cmd->m_buttons |= IN_BULLRUSH;
+}

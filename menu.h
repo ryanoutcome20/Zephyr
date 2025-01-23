@@ -406,13 +406,11 @@ public:
 	MultiDropdown box;
 	Colorpicker   box_enemy;
 	Colorpicker   box_friendly;
-	Checkbox      dormant;
-	Checkbox      offscreen;
-	Colorpicker   offscreen_color;
-	Slider			 offscreen_dist;
-	Slider			 offscreen_size;
+	Colorpicker   box_local;
 	MultiDropdown name;
-	Colorpicker   name_color;
+	Colorpicker   name_enemy;
+	Colorpicker   name_friendly;
+	Colorpicker   name_local;
 	MultiDropdown health;
 	Checkbox			   health_color_override;
 	Colorpicker		   health_color;
@@ -421,12 +419,19 @@ public:
 	MultiDropdown weapon;
 	Dropdown      weapon_mode;
 	Checkbox      ammo;
-	Colorpicker   ammo_color;
+	Colorpicker   ammo_enemy;
+	Colorpicker   ammo_friendly;
+	Colorpicker   ammo_local;
 	Checkbox      lby_update;
 	Colorpicker   lby_update_color;
 	Checkbox		 shot_matrix;
 	Colorpicker   shot_matrix_color;
 	Slider			 shot_matrix_time;
+	Checkbox      offscreen;
+	Colorpicker   offscreen_color;
+	Slider			 offscreen_dist;
+	Slider			 offscreen_size;
+	Checkbox      dormant;
 
 	// col2.
 	MultiDropdown skeleton;
@@ -465,39 +470,37 @@ public:
 	void init() {
 		SetTitle(XOR("players"));
 
-		box.setup(XOR("boxes"), XOR("box"), { XOR("enemy"), XOR("friendly") });
+		box.setup(XOR("boxes"), XOR("box"), { XOR("enemy"), XOR("friendly"), XOR("local") });
 		RegisterElement(&box);
 
 		box_enemy.setup(XOR("box enemy color"), XOR("box_enemy"), { 150, 200, 60 });
+		box_enemy.AddShowCallback( callbacks::IsBoxEnemy );
 		RegisterElement(&box_enemy);
 
 		box_friendly.setup(XOR("box friendly color"), XOR("box_friendly"), { 255, 200, 0 });
+		box_friendly.AddShowCallback( callbacks::IsBoxFriendly );
 		RegisterElement(&box_friendly);
+		
+		box_local.setup(XOR("box local color"), XOR("box_local"), { 225, 69, 0 });
+		box_local.AddShowCallback( callbacks::IsBoxLocal );
+		RegisterElement(&box_local);
 
-		dormant.setup(XOR("dormant enemies"), XOR("dormant"));
-		RegisterElement(&dormant);
-
-		offscreen.setup(XOR("enemy offscreen esp"), XOR("offscreen"));
-		RegisterElement(&offscreen);
-
-		offscreen_color.setup(XOR("offscreen esp color"), XOR("offscreen_color"), colors::white);
-		RegisterElement(&offscreen_color);
-
-		offscreen_dist.setup( "", XOR("offscreen_distance"), 30.f, 300.f, false, 0, 250.f, 5.f);
-		offscreen_dist.AddShowCallback( callbacks::IsOffscreenOn );
-		RegisterElement(&offscreen_dist);
-
-		offscreen_size.setup( "", XOR("offscreen_size"), 6.f, 18.f, false, 0.f, 12.f);
-		offscreen_size.AddShowCallback( callbacks::IsOffscreenOn );
-		RegisterElement(&offscreen_size);
-
-		name.setup(XOR("name"), XOR("name"), { XOR("enemy"), XOR("friendly") });
+		name.setup(XOR("name"), XOR("name"), { XOR("enemy"), XOR("friendly"), XOR("local") });
 		RegisterElement(&name);
 
-		name_color.setup(XOR("name color"), XOR("name_color"), colors::white);
-		RegisterElement(&name_color);
+		name_enemy.setup(XOR("name enemy color"), XOR("name_enemy"), colors::white);
+		name_enemy.AddShowCallback( callbacks::IsNameEnemy );
+		RegisterElement(&name_enemy);
 
-		health.setup(XOR("health"), XOR("health"), { XOR("enemy"), XOR("friendly") });
+		name_friendly.setup(XOR("name friendly color"), XOR("name_friendly"), colors::white);
+		name_friendly.AddShowCallback( callbacks::IsNameFriendly );
+		RegisterElement(&name_friendly);
+
+		name_local.setup(XOR("name local color"), XOR("name_local"), colors::white);
+		name_local.AddShowCallback( callbacks::IsNameLocal );
+		RegisterElement(&name_local);
+
+		health.setup(XOR("health"), XOR("health"), { XOR("enemy"), XOR("friendly"), XOR("local") });
 		RegisterElement(&health);
 
 		health_color_override.setup( XOR("override color"), XOR("health_color_override") );
@@ -514,32 +517,64 @@ public:
 		flags_friendly.setup(XOR("flags friendly"), XOR("flags_friendly"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb") });
 		RegisterElement(&flags_friendly);
 
-		weapon.setup(XOR("weapon"), XOR("weapon"), { XOR("enemy"), XOR("friendly") });
+		weapon.setup(XOR("weapon"), XOR("weapon"), { XOR("enemy"), XOR("friendly"), XOR("local") });
 		RegisterElement(&weapon);
 
 		weapon_mode.setup("", XOR("weapon_mode"), { XOR("text"), XOR("icon") }, false);
+		weapon_mode.AddShowCallback( callbacks::IsWeaponOn );
 		RegisterElement(&weapon_mode);
 
 		ammo.setup(XOR("ammo"), XOR("ammo"));
+		ammo.AddShowCallback( callbacks::IsWeaponOn );
 		RegisterElement(&ammo);
 
-		ammo_color.setup(XOR("color"), XOR("ammo_color"), colors::burgundy);
-		RegisterElement(&ammo_color);
+		ammo_enemy.setup(XOR("ammo enemy color"), XOR("ammo_enemy"), colors::light_blue);
+		ammo_enemy.AddShowCallback( callbacks::IsWeaponEnemy );
+		RegisterElement(&ammo_enemy);
+		
+		ammo_friendly.setup(XOR("ammo friendly color"), XOR("ammo_friendly"), colors::burgundy);
+		ammo_friendly.AddShowCallback( callbacks::IsWeaponFriendly );
+		RegisterElement(&ammo_friendly);
+		
+		ammo_local.setup(XOR("ammo local color"), XOR("ammo_local"), colors::white);
+		ammo_local.AddShowCallback( callbacks::IsWeaponLocal );
+		RegisterElement(&ammo_local);
 
 		lby_update.setup(XOR("lby update"), XOR("lby_update"));
 		RegisterElement(&lby_update);
 
 		lby_update_color.setup(XOR("color"), XOR("lby_update_color"), colors::orange);
+		lby_update_color.AddShowCallback( callbacks::IsLBYUpdateOn );
 		RegisterElement(&lby_update_color);
 
 		shot_matrix.setup(XOR("shot matrix"), XOR("shot_matrix"));
 		RegisterElement(&shot_matrix);
 
 		shot_matrix_color.setup(XOR("color"), XOR("shot_matrix_color"), colors::white);
+		shot_matrix_color.AddShowCallback( callbacks::IsShotMatrixOn );
 		RegisterElement(&shot_matrix_color);
 
 		shot_matrix_time.setup( XOR("shot matrix time"), XOR("shot_matrix_time"), 0.1f, 10.f, true, 1, 2.f, 0.1f, XOR(L"s"));
+		shot_matrix_time.AddShowCallback( callbacks::IsShotMatrixOn );
 		RegisterElement(&shot_matrix_time);
+
+		offscreen.setup(XOR("enemy offscreen esp"), XOR("offscreen"));
+		RegisterElement(&offscreen);
+
+		offscreen_color.setup(XOR("offscreen esp color"), XOR("offscreen_color"), colors::white);
+		offscreen_color.AddShowCallback(callbacks::IsOffscreenOn);
+		RegisterElement(&offscreen_color);
+
+		offscreen_dist.setup("", XOR("offscreen_distance"), 30.f, 300.f, false, 0, 250.f, 5.f);
+		offscreen_dist.AddShowCallback(callbacks::IsOffscreenOn);
+		RegisterElement(&offscreen_dist);
+
+		offscreen_size.setup("", XOR("offscreen_size"), 6.f, 18.f, false, 0.f, 12.f);
+		offscreen_size.AddShowCallback(callbacks::IsOffscreenOn);
+		RegisterElement(&offscreen_size);
+
+		dormant.setup(XOR("dormant enemies"), XOR("dormant"));
+		RegisterElement(&dormant);
 
 		// col2.
 		skeleton.setup(XOR("skeleton"), XOR("skeleton"), { XOR("enemy"), XOR("friendly") });
@@ -828,11 +863,12 @@ public:
 class MovementTab : public Tab {
 public:
 	Checkbox bhop;
-	Checkbox airduck;
 	Checkbox autostrafe;
 	Keybind  snakestrafe;
 	Slider   snake_freq;
 	Slider   snake_dist;
+	Checkbox airduck;
+	Checkbox duck_delay;
 
 	Keybind  fakewalk;
 	Keybind  autopeek;
@@ -843,11 +879,9 @@ public:
 	void init() {
 		SetTitle(XOR("movement"));
 
+		// col1.
 		bhop.setup(XOR("automatic jump"), XOR("bhop"));
 		RegisterElement(&bhop);
-
-		airduck.setup(XOR("duck in air"), XOR("airduck"));
-		RegisterElement(&airduck);
 
 		autostrafe.setup(XOR("automatic strafe"), XOR("autostrafe"));
 		RegisterElement(&autostrafe);
@@ -861,6 +895,13 @@ public:
 		snake_dist.setup("", XOR("snake_dist"), 1.f, 100.f, false, 0, 20.f, 0.5f, XOR(L"%"));
 		RegisterElement(&snake_dist);
 
+		airduck.setup(XOR("duck in air"), XOR("airduck"));
+		RegisterElement(&airduck);
+
+		duck_delay.setup(XOR("remove duck delay"), XOR("duck_delay"));
+		RegisterElement(&duck_delay);
+
+		// col2.
 		fakewalk.setup(XOR("fake-walk"), XOR("fakewalk"));
 		RegisterElement(&fakewalk, 1);
 
@@ -2220,7 +2261,7 @@ public:
 public:
 	void init() {
 		SetPosition(50, 50);
-		SetSize(630, 630);
+		SetSize(630, 750);
 
 		// aim.
 		RegisterTab(&aimbot);

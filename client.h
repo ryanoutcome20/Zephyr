@@ -120,9 +120,6 @@ public:
 	
 	// hack username.
 	std::string m_user;
-
-	// hack save location.
-	std::string m_save_location;
 };
 
 extern Client g_cl;

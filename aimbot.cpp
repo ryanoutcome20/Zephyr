@@ -904,6 +904,8 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 	// get player hp.
 	int hp = std::min(100, m_player->m_iHealth());
 	int half_hp = hp / 2;
+
+	// calculate basic minimums.
 	if (g_cl.m_weapon_id == ZEUS) {
 		dmg = pendmg = hp;
 		pen = true;
@@ -935,6 +937,10 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 		}
 		pen = g_menu.main.aimbot.penetrate.get();
 	}
+
+	// clamp our minimums.
+	dmg = std::clamp( dmg, 0.f, (float)hp );
+	pendmg = std::clamp( dmg, 0.f, (float)hp );
 
 	// write all data of this record l0l.
 	record->cache();

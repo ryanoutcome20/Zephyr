@@ -51,9 +51,21 @@ namespace callbacks {
 	bool IsChamsFriendly( );
 	bool IsChamsLocal( );
 
+	bool IsBoxEnemy( );
+	bool IsBoxFriendly( );
+	bool IsBoxLocal( );
+	bool IsNameEnemy( );
+	bool IsNameFriendly( );
+	bool IsNameLocal( );
+	bool IsWeaponOn( );
+	bool IsWeaponEnemy( );
+	bool IsWeaponFriendly( );
+	bool IsWeaponLocal( );
 	bool IsOffscreenOn( );
 	bool IsHealthOn( );
 	bool IsHealthOverrideOn( );
+	bool IsLBYUpdateOn( );
+	bool IsShotMatrixOn( );
 
 	bool IsItemsOn( );
 	bool IsAmmoOn( );

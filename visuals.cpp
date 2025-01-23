@@ -431,9 +431,6 @@ void Visuals::draw( Entity* ent ) {
 		if( !player->alive( ) )
 			return;
 
-		if( player->m_bIsLocalPlayer( ) )
-			return;
-
 		// draw player esp.
 		DrawPlayer( player );
 	}
@@ -694,6 +691,9 @@ void Visuals::DrawPlayer( Player* player ) {
 	// the increment / decrement per frame.
 	float step = frequency * g_csgo.m_globals->m_frametime;
 
+	// is player local.
+	bool local = player->m_bIsLocalPlayer( );
+
 	// is player enemy.
 	bool enemy = player->enemy( g_cl.m_local );
 	bool dormant = player->dormant( );
@@ -733,6 +733,9 @@ void Visuals::DrawPlayer( Player* player ) {
 	// get color based on enemy or not.
 	color = enemy ? g_menu.main.players.box_enemy.get( ) : g_menu.main.players.box_friendly.get( );
 
+	if( local )
+		color = g_menu.main.players.box_local.get( );
+
 	if( dormant && dormant_esp ) {
 		alpha = 112;
 		low_alpha = 80;
@@ -760,13 +763,12 @@ void Visuals::DrawPlayer( Player* player ) {
 		return;
 
 	// run offscreen ESP.
-	OffScreen( player, alpha );
+	if( !local )
+		OffScreen( player, alpha );
 
 	// attempt to get player box.
-	if( !GetPlayerBoxRect( player, box ) ) {
-		// OffScreen( player );
+	if( !GetPlayerBoxRect( player, box ) )
 		return;
-	}
 
 	// DebugAimbotPoints( player );
 
@@ -775,14 +777,14 @@ void Visuals::DrawPlayer( Player* player ) {
 		DrawSkeleton( player, alpha );
 
 	// is box esp enabled for this player.
-	bool box_esp = ( enemy && g_menu.main.players.box.get( 0 ) ) || ( !enemy && g_menu.main.players.box.get( 1 ) );
+	bool box_esp = ( local && g_menu.main.players.box.get( 2 ) ) || ( enemy && g_menu.main.players.box.get( 0 ) ) || ( !enemy && !local && g_menu.main.players.box.get( 1 ) );
 
 	// render box if specified.
 	if( box_esp )
 		render::rect_outlined( box.x, box.y, box.w, box.h, color, { 10, 10, 10, low_alpha } );
 
 	// is name esp enabled for this player.
-	bool name_esp = ( enemy && g_menu.main.players.name.get( 0 ) ) || ( !enemy && g_menu.main.players.name.get( 1 ) );
+	bool name_esp = ( local && g_menu.main.players.name.get( 2 ) ) ||  ( enemy && g_menu.main.players.name.get( 0 ) ) || ( !enemy && !local && g_menu.main.players.name.get( 1 ) );
 
 	// draw name.
 	if( name_esp ) {
@@ -790,7 +792,11 @@ void Visuals::DrawPlayer( Player* player ) {
 		// the point of this is overflowing unicode compares with hardcoded buffers, good hvh strat
 		std::string name{ std::string( info.m_name ).substr( 0, 24 ) };
 
-		Color clr = g_menu.main.players.name_color.get( );
+		Color clr = player->enemy(g_cl.m_local) ? g_menu.main.players.name_enemy.get() : g_menu.main.players.name_friendly.get();
+
+		if( local )
+			clr = g_menu.main.players.name_local.get( );
+
 		// override alpha.
 		clr.a( ) = low_alpha;
 
@@ -798,7 +804,7 @@ void Visuals::DrawPlayer( Player* player ) {
 	}
 
 	// is health esp enabled for this player.
-	bool health_esp = ( enemy && g_menu.main.players.health.get( 0 ) ) || ( !enemy && g_menu.main.players.health.get( 1 ) );
+	bool health_esp = ( local && g_menu.main.players.health.get( 2 ) ) || ( enemy && g_menu.main.players.health.get( 0 ) ) || ( !enemy && !local && g_menu.main.players.health.get( 1 ) );
 
 	if( health_esp ) {
 		int y = box.y + 1;
@@ -830,7 +836,7 @@ void Visuals::DrawPlayer( Player* player ) {
 	}
 
 	// draw flags.
-	{
+	if ( !local ) {
 		std::vector< std::pair< std::string, Color > > flags;
 
 		auto items = enemy ? g_menu.main.players.flags_enemy.GetActiveIndices( ) : g_menu.main.players.flags_friendly.GetActiveIndices( );
@@ -925,7 +931,7 @@ void Visuals::DrawPlayer( Player* player ) {
 		}
 
 		// draw weapon.
-		if( ( enemy && g_menu.main.players.weapon.get( 0 ) ) || ( !enemy && g_menu.main.players.weapon.get( 1 ) ) ) {
+		if( ( local && g_menu.main.players.weapon.get( 2 ) ) || ( enemy && g_menu.main.players.weapon.get( 0 ) ) || ( !enemy && !local && g_menu.main.players.weapon.get( 1 ) ) ) {
 			Weapon* weapon = player->GetActiveWeapon( );
 			if( weapon ) {
 				WeaponInfo* data = weapon->GetWpnData( );
@@ -959,7 +965,11 @@ void Visuals::DrawPlayer( Player* player ) {
 						// draw.
 						render::rect_filled( box.x, box.y + box.h + 2 + offset, box.w, 4, { 10, 10, 10, very_low_alpha } );
 
-						Color clr = g_menu.main.players.ammo_color.get( );
+						Color clr = player->enemy(g_cl.m_local) ? g_menu.main.players.ammo_enemy.get() : g_menu.main.players.ammo_friendly.get();
+
+						if ( local )
+							clr = g_menu.main.players.ammo_local.get();
+
 						clr.a( ) = alpha;
 						render::rect( box.x + 1, box.y + box.h + 3 + offset, bar, 2, clr );
 
@@ -1061,10 +1071,10 @@ void Visuals::DrawPlantedC4( ) {
 
 	// render 2d operations.
 	if( g_menu.main.visuals.planted_c4.get(0) && explode_time_diff > 0.f )
-		render::esp.string( 2, 65, colors::white, time_str, render::ALIGN_LEFT );
+		render::indicator.string( 4, 85, colors::white, time_str, render::ALIGN_LEFT );
 
 	if( g_menu.main.visuals.planted_c4.get(2) && g_cl.m_local->alive( ) )
-		render::esp.string( 2, 65 + render::esp.m_size.m_height, damage_color, damage_str, render::ALIGN_LEFT );
+		render::indicator.string( 4, 85 + render::indicator.m_size.m_height, damage_color, damage_str, render::ALIGN_LEFT );
 
 	// 'on bomb (3D)'.
 	if( is_visible ) {

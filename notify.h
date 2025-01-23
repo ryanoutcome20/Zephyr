@@ -22,8 +22,11 @@ public:
 
 	__forceinline void add( const std::string& text, Color color = colors::white, float time = 8.f, bool console = true ) {
 		// modelled after 'CConPanel::AddToNotify'
-		m_notify_text.push_back( std::make_shared< NotifyText >( text, color, time ) );
+		while( m_notify_text.size( ) >= 6 )
+			m_notify_text.erase( m_notify_text.begin( ) );
 
+		m_notify_text.push_back( std::make_shared< NotifyText >( text, color, time ) );
+		 
 		if( console )
 		    g_cl.print( text );
 	}

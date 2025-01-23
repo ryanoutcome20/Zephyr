@@ -262,7 +262,7 @@ void Chams::RenderGhostChams(Player* player) {
 
 
 	// set material and color.
-	SetupMaterial(debugambientcube, g_menu.main.players.chams_local_ghost_col.get(), true);
+	SetupMaterial(debugambientcube, g_menu.main.players.chams_local_ghost_col.get(), false);
 
 	g_cl.SetAngles2(ang_t(0.f, g_cl.m_radar.y, 0.f));
 	player->DrawModel();

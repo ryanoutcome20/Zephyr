@@ -23,6 +23,7 @@ public:
 	void AutoPeek( );
 	void QuickStop( );
 	void FakeWalk( );
+	void DuckDelay();
 };
 
 extern Movement g_movement;

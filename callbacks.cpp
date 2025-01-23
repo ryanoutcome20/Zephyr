@@ -192,68 +192,103 @@ bool callbacks::IsFakeAntiAimJitter( ) {
 	return g_menu.main.antiaim.fake_yaw.get( ) == 3;
 }
 
-bool callbacks::IsChamsEnemy()
-{
+bool callbacks::IsChamsEnemy( ) {
 	return g_menu.main.players.chams_selection.get( ) == 0;
 }
 
-bool callbacks::IsChamsFriendly()
-{
+bool callbacks::IsChamsFriendly( ) {
 	return g_menu.main.players.chams_selection.get() == 1;
 }
 
-bool callbacks::IsChamsLocal()
-{
+bool callbacks::IsChamsLocal( ) {
 	return g_menu.main.players.chams_selection.get() == 2;
 }
 
-bool callbacks::IsOffscreenOn()
-{
+bool callbacks::IsBoxEnemy( ) {
+	return g_menu.main.players.box.get( 0 );
+}
+
+bool callbacks::IsBoxFriendly( ) {
+	return g_menu.main.players.box.get( 1 );
+}
+
+bool callbacks::IsBoxLocal( ) {
+	return g_menu.main.players.box.get( 2 );
+}
+
+bool callbacks::IsNameEnemy( ) {
+	return g_menu.main.players.name.get( 0 );
+}
+
+bool callbacks::IsNameFriendly( ) {
+	return g_menu.main.players.name.get( 1 );
+}
+
+bool callbacks::IsNameLocal( ) {
+	return g_menu.main.players.name.get( 2 );
+}
+
+bool callbacks::IsWeaponOn() {
+	return g_menu.main.players.weapon.get( 0 ) || g_menu.main.players.weapon.get( 1 ) || g_menu.main.players.weapon.get( 2 );
+}
+
+bool callbacks::IsWeaponEnemy( ) {
+	return g_menu.main.players.weapon.get( 0 );
+}
+
+bool callbacks::IsWeaponFriendly( ) {
+	return g_menu.main.players.weapon.get( 1 );
+}
+
+bool callbacks::IsWeaponLocal( ) {
+	return g_menu.main.players.weapon.get( 2 );
+}
+
+bool callbacks::IsOffscreenOn( ) {
 	return g_menu.main.players.offscreen.get( );
 }
 
-bool callbacks::IsHealthOn()
-{
+bool callbacks::IsHealthOn( ) {
 	return g_menu.main.players.health.get( 0 ) || g_menu.main.players.health.get( 1 );
 }
 
-bool callbacks::IsHealthOverrideOn()
-{
+bool callbacks::IsHealthOverrideOn( ) {
 	return g_menu.main.players.health_color_override.get( );
 }
 
-bool callbacks::IsItemsOn()
-{
+bool callbacks::IsLBYUpdateOn( ) {
+	return g_menu.main.players.lby_update.get( );
+}
+
+bool callbacks::IsShotMatrixOn( ) {
+	return g_menu.main.players.shot_matrix.get( );
+}
+
+bool callbacks::IsItemsOn( ) {
 	return g_menu.main.visuals.items.get( );
 }
 
-bool callbacks::IsAmmoOn()
-{
+bool callbacks::IsAmmoOn( ) {
 	return g_menu.main.visuals.ammo.get();
 }
 
-bool callbacks::IsAmmoBarOn()
-{
+bool callbacks::IsAmmoBarOn( ) {
 	return g_menu.main.visuals.ammo_bar.get();
 }
 
-bool callbacks::IsDroppedC4On()
-{
+bool callbacks::IsDroppedC4On( ) {
 	return g_menu.main.visuals.dropped_c4.get();
 }
 
-bool callbacks::IsProjectileOn()
-{
+bool callbacks::IsProjectileOn( ) {
 	return g_menu.main.visuals.proj.get( );
 }
 
-bool callbacks::IsImpactBeamsOn()
-{
+bool callbacks::IsImpactBeamsOn( ) {
 	return g_menu.main.visuals.impact_beams.get( );
 }
 
-bool callbacks::IsAutoBuyOn()
-{
+bool callbacks::IsAutoBuyOn( ) {
 	return g_menu.main.misc.buy.get( );
 }
 
