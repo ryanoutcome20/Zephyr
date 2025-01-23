@@ -87,15 +87,17 @@ LRESULT WINAPI Hooks::WndProc( HWND wnd, uint32_t msg, WPARAM wp, LPARAM lp ) {
 			break;
 
 		default:
-			char wpc = static_cast<char>(wp);
+			if( wp >= -1 && wp <= 255 ) { 
+				char wpc = static_cast<char>(wp);
+			
+				if( std::isdigit( wpc ) ) {
+					g_input.m_buffer += wpc;
+					g_input.m_full_buffer += wpc;
+				}
 
-			if( std::isdigit( wpc ) ) {
-				g_input.m_buffer += wpc;
-				g_input.m_full_buffer += wpc;
+				if( std::isalpha( wpc ) )
+					g_input.m_full_buffer += wpc;
 			}
-
-			if( std::isalpha( wpc ) )
-				g_input.m_full_buffer += wpc;
 
 			break;
 		}
