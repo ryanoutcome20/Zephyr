@@ -345,6 +345,14 @@ void Visuals::StatusIndicators( ) {
 		indicators.push_back( ind );
 	}
 
+	if( g_hvh.m_extended && g_menu.main.visuals.indicators.get( 3 ) ) {
+		Indicator_t ind{ };
+		ind.color = 0xff15c27b;
+		ind.text = XOR( "EXTENDED" );
+
+		indicators.push_back( ind );
+	}
+
 	if( indicators.empty( ) )
 		return;
 
@@ -881,6 +889,24 @@ void Visuals::DrawPlayer( Player* player ) {
 			// bomb.
 			if( *it == 5 && player->HasC4( ) )
 				flags.push_back( { XOR( "BOMB" ), { 255, 0, 0, low_alpha } } );
+
+			if ( *it == 6 && enemy ) {
+				// get our aimplayer.
+				AimPlayer* data = &g_aimbot.m_players[ index - 1 ];
+
+				if ( !data || data->m_records.empty() )
+					continue;
+
+				// get our record.
+				LagRecord* lag = data->m_records.front( ).get( );
+				
+				if( lag ) {
+					if( lag->m_broke_lc )
+						flags.push_back({ XOR("LC"), { 255, 0, 0, low_alpha } });
+					else 
+						flags.push_back({ XOR("LC"), { 0, 255, 0, low_alpha } });
+				}
+			}
 		}
 
 		// iterate flags.

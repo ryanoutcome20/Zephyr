@@ -49,6 +49,8 @@ public:
 	float  m_auto_last;
 	float  m_view;
 
+	bool  m_extended;
+
 public:
 	void IdealPitch( );
 	void AntiAimPitch( );

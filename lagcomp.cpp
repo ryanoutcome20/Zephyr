@@ -165,57 +165,6 @@ bool LagCompensation::StartPrediction(AimPlayer* data) {
 			record->m_pred_velocity.x = std::cos(math::deg_to_rad(dir)) * hyp;
 			record->m_pred_velocity.y = std::sin(math::deg_to_rad(dir)) * hyp;
 
-			// we hit the ground, set the upwards impulse and apply CS:GO speed restrictions.
-			if (record->m_pred_flags & FL_ONGROUND) {
-				if (!g_csgo.sv_enablebunnyhopping->GetInt()) {
-
-					// 260 x 1.1 = 286 units/s.
-					float max = data->m_player->m_flMaxspeed() * 1.1f;
-
-					// get current velocity.
-					float speed = record->m_pred_velocity.length();
-
-					// reset velocity to 286 units/s.
-					if (max > 0.f && speed > max)
-						record->m_pred_velocity *= (max / speed);
-				}
-
-				// assume the player is bunnyhopping here so set the upwards impulse.
-				record->m_pred_velocity.z = g_csgo.sv_jump_impulse->GetFloat();
-			}
-
-			// we are not on the ground
-			// apply gravity and airaccel.
-			else {
-				// apply one tick of gravity.
-				record->m_pred_velocity.z -= g_csgo.sv_gravity->GetFloat() * g_csgo.m_globals->m_interval;
-
-				// compute the ideal strafe angle for this velocity.
-				float speed2d = record->m_pred_velocity.length_2d();
-				float ideal = (speed2d > 0.f) ? math::rad_to_deg(std::asin(15.f / speed2d)) : 90.f;
-				math::clamp(ideal, 0.f, 90.f);
-
-				float smove = 0.f;
-				float abschange = std::abs(change);
-
-				if (abschange <= ideal || abschange >= 30.f) {
-					static float mod{ 1.f };
-
-					dir += (ideal * mod);
-					smove = 450.f * mod;
-					mod *= -1.f;
-				}
-
-				else if (change > 0.f)
-					smove = -450.f;
-
-				else
-					smove = 450.f;
-
-				// apply air accel.
-				AirAccelerate(record, ang_t{ 0.f, dir, 0.f }, 0.f, smove);
-			}
-
 			// predict player.
 			// convert newly computed velocity
 			// to origin and flags.
@@ -301,71 +250,6 @@ void LagCompensation::PlayerMove(LagRecord* record) {
 	// add back onground flag if we are onground.
 	if (trace.m_fraction != 1.f && trace.m_plane.m_normal.z > 0.7f)
 		record->m_pred_flags |= FL_ONGROUND;
-}
-
-void LagCompensation::AirAccelerate(LagRecord* record, ang_t angle, float fmove, float smove) {
-	vec3_t fwd, right, wishvel, wishdir;
-	float  maxspeed, wishspd, wishspeed, currentspeed, addspeed, accelspeed;
-
-	// determine movement angles.
-	math::AngleVectors(angle, &fwd, &right);
-
-	// zero out z components of movement vectors.
-	fwd.z = 0.f;
-	right.z = 0.f;
-
-	// normalize remainder of vectors.
-	fwd.normalize();
-	right.normalize();
-
-
-	for (int i{}; i < 2; ++i)       // Determine x and y parts of velocity
-		wishvel[i] = fwd[i] * fmove + right[i] * smove;
-	wishvel[2] = 0;             // Zero out z part of velocity
-	// zero out z part of velocity.
-	//wishvel.z = 0.f;
-
-	// determine maginitude of speed of move.
-	wishdir = wishvel;
-	wishspeed = wishdir.normalize();
-
-	// get maxspeed.
-	// TODO; maybe global this or whatever its 260 anyway always.
-	maxspeed = record->m_player->m_flMaxspeed();
-
-	// clamp to server defined max speed.
-	if (wishspeed != 0.f && wishspeed > maxspeed)
-		wishspeed = maxspeed;
-
-	// make copy to preserve original variable.
-	wishspd = wishspeed;
-
-	// cap speed.
-	if (wishspd > 30.f)
-		wishspd = 30.f;
-
-	// determine veer amount.
-	currentspeed = record->m_pred_velocity.dot(wishdir);
-
-	// see how much to add.
-	addspeed = wishspd - currentspeed;
-
-	// if not adding any, done.
-	if (addspeed <= 0)
-		return;
-
-	// Determine acceleration speed after acceleration
-	accelspeed = g_csgo.sv_airaccelerate->GetFloat() * wishspeed * g_csgo.m_globals->m_frametime * record->m_player->m_surfaceFriction();
-
-	// cap it.
-	if (accelspeed > addspeed)
-		accelspeed = addspeed;
-
-	for (int i = 0; i < 3; i++)
-	{
-		record->m_pred_velocity[i] += (accelspeed * wishdir[i]);
-	}
-	//record->m_pred_velocity += (accelspeed * wishdir);
 }
 
 void LagCompensation::PredictAnimations(CCSGOPlayerAnimState* state, LagRecord* record) {

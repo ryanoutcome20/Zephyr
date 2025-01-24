@@ -12,6 +12,10 @@ void callbacks::ForceFullUpdate( ) {
 	g_csgo.m_cl->m_delta_tick = -1;
 }
 
+void callbacks::ToggleExtendedLag( ) {
+	g_hvh.m_extended = !g_hvh.m_extended;
+}
+
 void callbacks::ToggleThirdPerson( ) {
 	g_visuals.m_thirdperson = !g_visuals.m_thirdperson;
 }
@@ -190,6 +194,10 @@ bool callbacks::IsFakeAntiAimRelative( ) {
 
 bool callbacks::IsFakeAntiAimJitter( ) {
 	return g_menu.main.antiaim.fake_yaw.get( ) == 3;
+}
+
+bool callbacks::IsFakeLagOn() {
+	return g_menu.main.antiaim.lag_enable.get( );
 }
 
 bool callbacks::IsChamsEnemy( ) {

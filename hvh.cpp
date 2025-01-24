@@ -718,10 +718,20 @@ void HVH::SendPacket( ) {
 	if( !*g_cl.m_final_packet )
 		*g_cl.m_packet = false;
 
+	// revolver disable.
+	if( g_menu.main.antiaim.lag_revolver.get( ) && g_cl.m_weapon_id == REVOLVER ) {
+		// anti-aim is ran after this so this really doesn't effect anything else.
+		*g_cl.m_packet = true;
+		return;	
+	}
+
 	// fake-lag enabled.
 	if( g_menu.main.antiaim.lag_enable.get( ) && !g_csgo.m_gamerules->m_bFreezePeriod( ) && !( g_cl.m_flags & FL_FROZEN ) ) {
+		// raw input.
+		float input = m_extended ? g_menu.main.antiaim.lag_extended_limit.get( ) : g_menu.main.antiaim.lag_limit.get( );
+		
 		// limit of lag.
-		int limit = std::min( ( int )g_menu.main.antiaim.lag_limit.get( ), g_cl.m_max_lag );
+		int limit = std::min( ( int )input, g_cl.m_max_lag );
 
 		// indicates wether to lag or not.
 		bool active{ };

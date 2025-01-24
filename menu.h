@@ -188,7 +188,10 @@ public:
 	MultiDropdown lag_active;
 	Dropdown      lag_mode;
 	Slider        lag_limit;
+	Keybind		  lag_extend;
+	Slider			  lag_extended_limit;	
 	Checkbox      lag_land;
+	Checkbox      lag_revolver;
 
 public:
 	void init() {
@@ -388,16 +391,31 @@ public:
 		RegisterElement(&lag_enable, 1);
 
 		lag_active.setup("", XOR("lag_active"), { XOR("move"), XOR("air"), XOR("crouch") }, false);
+		lag_active.AddShowCallback( callbacks::IsFakeLagOn );
 		RegisterElement(&lag_active, 1);
 
 		lag_mode.setup("", XOR("lag_mode"), { XOR("max"), XOR("break"), XOR("random"), XOR("break step") }, false);
+		lag_mode.AddShowCallback( callbacks::IsFakeLagOn );
 		RegisterElement(&lag_mode, 1);
 
 		lag_limit.setup(XOR("limit"), XOR("lag_limit"), 2, 16, true, 0, 2, 1.f);
+		lag_limit.AddShowCallback( callbacks::IsFakeLagOn );
 		RegisterElement(&lag_limit, 1);
 
-		lag_land.setup(XOR("on land"), XOR("lag_land"));
+		lag_extend.setup(XOR("extend lag"), XOR("lag_extend"));
+		lag_extend.AddShowCallback( callbacks::IsFakeLagOn );
+		lag_extend.SetToggleCallback(callbacks::ToggleExtendedLag);
+		RegisterElement(&lag_extend, 1);
+
+		lag_extended_limit.setup("", XOR("lag_extended_limit"), 2, 16, false, 0, 2, 1.f);
+		lag_extended_limit.AddShowCallback( callbacks::IsFakeLagOn );
+		RegisterElement(&lag_extended_limit, 1);
+
+		lag_land.setup(XOR("fake-lag on land"), XOR("lag_land"));
 		RegisterElement(&lag_land, 1);
+
+		lag_revolver.setup(XOR("disable on revolver"), XOR("lag_revolver"));
+		RegisterElement(&lag_revolver, 1);
 	}
 };
 
@@ -511,7 +529,7 @@ public:
 		health_color.AddShowCallback( callbacks::IsHealthOverrideOn );
 		RegisterElement( &health_color );
 
-		flags_enemy.setup(XOR("flags enemy"), XOR("flags_enemy"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb") });
+		flags_enemy.setup(XOR("flags enemy"), XOR("flags_enemy"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb"), XOR("lc") });
 		RegisterElement(&flags_enemy);
 
 		flags_friendly.setup(XOR("flags friendly"), XOR("flags_friendly"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb") });
@@ -842,7 +860,7 @@ public:
 		pen_crosshair.setup(XOR("penetration crosshair"), XOR("pen_xhair"));
 		RegisterElement(&pen_crosshair, 1);
 
-		indicators.setup(XOR("indicators"), XOR("indicators"), { XOR("lby"), XOR("lag compensation"), XOR("fake latency") });
+		indicators.setup(XOR("indicators"), XOR("indicators"), { XOR("lby"), XOR("lag compensation"), XOR("fake latency"), XOR("fake lag extended") });
 		RegisterElement(&indicators, 1);
 
 		tracers.setup(XOR("grenade simulation"), XOR("tracers"));

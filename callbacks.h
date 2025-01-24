@@ -3,6 +3,7 @@
 namespace callbacks {
 	void SkinUpdate( );
 	void ForceFullUpdate( );
+	void ToggleExtendedLag( );
 	void ToggleThirdPerson( );
 	void ToggleFakeLatency( );
     void ToggleKillfeed( );
@@ -46,6 +47,7 @@ namespace callbacks {
 	bool IsAirDirCustom( );
 	bool IsFakeAntiAimRelative( );
 	bool IsFakeAntiAimJitter( );
+	bool IsFakeLagOn( );
 	
 	bool IsChamsEnemy( );
 	bool IsChamsFriendly( );
