@@ -38,6 +38,7 @@ public:
 	PE::Module m_engine_dll;
 	PE::Module m_vstdlib_dll;
 	PE::Module m_tier0_dll;
+	PE::Module m_vguimatsurface_dll;
 	PE::Module m_serverbrowser_dll;
 
 public:

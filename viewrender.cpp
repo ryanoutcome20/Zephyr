@@ -43,14 +43,13 @@ void Hooks::RenderView( const CViewSetup &view, const CViewSetup &hud_view, int 
 }
 
 void Hooks::Render2DEffectsPostHUD( const CViewSetup &setup ) {
-	// do note render flashbang overlay.
+	// do not render flashbang overlay.
 	if( !g_menu.main.visuals.removals.get(6) )
 		g_hooks.m_view_render.GetOldMethod< Render2DEffectsPostHUD_t >( CViewRender::RENDER2DEFFECTSPOSTHUD )( this, setup );
 }
 
 void Hooks::RenderSmokeOverlay( bool unk ) {
 	// do not render smoke overlay.
-	
 	if( !g_menu.main.visuals.removals.get( 2 ) )
 		g_hooks.m_view_render.GetOldMethod< RenderSmokeOverlay_t >( CViewRender::RENDERSMOKEOVERLAY )( this, unk );
 }
