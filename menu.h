@@ -33,6 +33,9 @@ public:
 	MultiDropdown baim2;
 	Slider        baim_hp;
 	Keybind       baim_key;
+	Keybind		minimal_damage_override;
+	Slider		  minimal_damage_override_damage;
+	Slider		  minimal_damage_override_penetrate_damage;
 
 public:
 	void init() {
@@ -131,8 +134,19 @@ public:
 		baim_hp.AddShowCallback(callbacks::IsBaimHealth);
 		RegisterElement(&baim_hp, 1);
 
-		baim_key.setup(XOR("body aim on key"), XOR("body aim on key"));
+		baim_key.setup(XOR("body aim on key"), XOR("baim_key"));
 		RegisterElement(&baim_key, 1);
+
+		minimal_damage_override.setup(XOR("minimal damage override"), XOR("minimal_damage_override"));
+		minimal_damage_override.SetToggleCallback( callbacks::ToggleMinimalDamageOverride );
+		RegisterElement(&minimal_damage_override, 1);
+
+		minimal_damage_override_damage.setup(XOR("minimal damage"), XOR("minimal_damage_override_damage"), 1.f, 100.f, true, 0, 40.f, 1.f);
+		RegisterElement(&minimal_damage_override_damage, 1);
+
+		minimal_damage_override_penetrate_damage.setup(XOR("penetrate damage"), XOR("minimal_damage_override_penetrate_damage"), 1.f, 100.f, true, 0, 30.f, 1.f);
+		minimal_damage_override_penetrate_damage.AddShowCallback(callbacks::IsPenetrationOn);
+		RegisterElement(&minimal_damage_override_penetrate_damage, 1);
 	}
 };
 
@@ -861,7 +875,7 @@ public:
 		pen_crosshair.setup(XOR("penetration crosshair"), XOR("pen_xhair"));
 		RegisterElement(&pen_crosshair, 1);
 
-		indicators.setup(XOR("indicators"), XOR("indicators"), { XOR("lby"), XOR("lag compensation"), XOR("fake latency"), XOR("fake lag extended") });
+		indicators.setup(XOR("indicators"), XOR("indicators"), { XOR("lby"), XOR("lag compensation"), XOR("fake latency"), XOR("fake lag extended"), XOR("minimal damage") });
 		RegisterElement(&indicators, 1);
 
 		tracers.setup(XOR("grenade simulation"), XOR("tracers"));

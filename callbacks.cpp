@@ -12,6 +12,10 @@ void callbacks::ForceFullUpdate( ) {
 	g_csgo.m_cl->m_delta_tick = -1;
 }
 
+void callbacks::ToggleMinimalDamageOverride() {
+	g_aimbot.m_override = !g_aimbot.m_override;
+}
+
 void callbacks::ToggleExtendedLag( ) {
 	g_hvh.m_extended = !g_hvh.m_extended;
 }

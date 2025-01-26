@@ -353,6 +353,14 @@ void Visuals::StatusIndicators( ) {
 		indicators.push_back( ind );
 	}
 
+	if ( g_aimbot.m_override && g_menu.main.visuals.indicators.get( 4 ) ) {
+		Indicator_t ind{ };
+		ind.color = colors::white;
+		ind.text = XOR("MINIMUM");
+
+		indicators.push_back(ind);
+	}
+
 	if( indicators.empty( ) )
 		return;
 

@@ -3,6 +3,7 @@
 namespace callbacks {
 	void SkinUpdate( );
 	void ForceFullUpdate( );
+	void ToggleMinimalDamageOverride( );
 	void ToggleExtendedLag( );
 	void ToggleThirdPerson( );
 	void ToggleFakeLatency( );

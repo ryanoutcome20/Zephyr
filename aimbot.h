@@ -132,6 +132,7 @@ public:
 	vec3_t     m_aim;
 	float      m_damage;
 	LagRecord* m_record;
+	bool m_override;
 
 	// fake latency stuff.
 	bool       m_fake_latency;

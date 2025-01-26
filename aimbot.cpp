@@ -911,6 +911,11 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 		pen = true;
 	}
 
+	else if ( g_aimbot.m_override ) {
+		dmg = g_menu.main.aimbot.minimal_damage_override_damage.get( ); 
+		pendmg = g_menu.main.aimbot.minimal_damage_override_penetrate_damage.get( );
+	}
+
 	else {
 		dmg = g_menu.main.aimbot.minimal_damage.get();
 		if (g_menu.main.aimbot.minimal_damage_hp.get())
