@@ -50,6 +50,10 @@ public:
 			m_callback( );
 	}
 
+	__forceinline void update( std::vector< std::string >& items ) {
+		m_items = items;
+	}
+
 	// get name of active item.
 	__forceinline std::string GetActiveItem( ) {
 		// check bounds

@@ -201,9 +201,10 @@ bool CSGO::init( ) {
 	g_listener.init( );
 	render::init( );
 	g_menu.init( );
-	g_config.LoadHotkeys( );
 	g_chams.init( );
 	g_hooks.init( );
+
+	g_config.update( &g_menu.main );
 
     // if we injected and we're ingame, run map load func.
 	if( m_engine->IsInGame( ) ) {

@@ -8,15 +8,12 @@ namespace callbacks {
 	void ToggleThirdPerson( );
 	void ToggleFakeLatency( );
     void ToggleKillfeed( );
-	void SaveHotkeys( );
-	void ConfigLoad1( );
-	void ConfigLoad2( );
-	void ConfigLoad3( );
-	void ConfigLoad4( );
-	void ConfigLoad5( );
-	void ConfigLoad6( );
+
 	void ConfigLoad( );
 	void ConfigSave( );
+	void ConfigCreate();
+	void ConfigDelete();
+	void ConfigRefresh();
 
 	bool IsBaimHealth( );
 	bool IsFovOn( );
@@ -92,12 +89,6 @@ namespace callbacks {
 
 	bool IsConfigMM( );
 	bool IsConfigNS( );
-	bool IsConfig1( );
-	bool IsConfig2( );
-	bool IsConfig3( );
-	bool IsConfig4( );
-	bool IsConfig5( );
-	bool IsConfig6( );
 
 	// weapon cfgs.
 	bool DEAGLE( );

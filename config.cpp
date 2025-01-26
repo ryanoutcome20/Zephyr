@@ -24,75 +24,6 @@ void Config::init() {
 	m_init = true;
 }
 
-void Config::LoadHotkeys() {
-	if ( !m_init )
-		return;
-
-	// make copy of parent dir.
-	std::string file{ m_path };
-
-	// append filename.
-	g_winapi.PathAppendA((char*)file.c_str(), XOR("keys.sup"));
-
-	// construct incoming file stream.
-	std::ifstream in{ file };
-	if ( !in.is_open() || in.fail() ) {
-		in.close();
-		return;
-	}
-
-	// read file into string.
-	std::string data;
-	in.seekg(0, std::ios::end);
-	data.resize(in.tellg());
-	in.seekg(0, std::ios::beg);
-	in.read(&data[0], data.size());
-	in.close();
-
-	// decrypt config and convert to json obj.
-	nlohmann::json config{ nlohmann::json::parse(crypto::base64_decode(data)) };
-
-	// load all keys from the json.
-	g_menu.main.config.key1.set(config[g_menu.main.config.key1.m_file_id]);
-	g_menu.main.config.key2.set(config[g_menu.main.config.key2.m_file_id]);
-	g_menu.main.config.key3.set(config[g_menu.main.config.key3.m_file_id]);
-	g_menu.main.config.key4.set(config[g_menu.main.config.key4.m_file_id]);
-	g_menu.main.config.key5.set(config[g_menu.main.config.key5.m_file_id]);
-	g_menu.main.config.key6.set(config[g_menu.main.config.key6.m_file_id]);
-}
-
-void Config::SaveHotkeys() {
-	if ( !m_init )
-		return;
-
-	nlohmann::json config{};
-
-	// make copy of parent dir.
-	std::string file{ m_path };
-
-	// append filename.
-	g_winapi.PathAppendA((char*)file.c_str(), XOR("keys.sup"));
-
-	// construct outgoing file stream.
-	std::ofstream stream{ file };
-	if ( !stream.is_open() || stream.fail() ) {
-		stream.close();
-		return;
-	}
-
-	// save all keys to the json.
-	config[g_menu.main.config.key1.m_file_id] = g_menu.main.config.key1.get();
-	config[g_menu.main.config.key2.m_file_id] = g_menu.main.config.key2.get();
-	config[g_menu.main.config.key3.m_file_id] = g_menu.main.config.key3.get();
-	config[g_menu.main.config.key4.m_file_id] = g_menu.main.config.key4.get();
-	config[g_menu.main.config.key5.m_file_id] = g_menu.main.config.key5.get();
-	config[g_menu.main.config.key6.m_file_id] = g_menu.main.config.key6.get();
-
-	// write to file.
-	stream << crypto::base64_encode(config.dump());
-	stream.close();
-}
-
 void Config::load(const Form* form, const std::string& name) {
 	if ( !m_init )
 		return;
@@ -305,4 +236,68 @@ void Config::save(const Form* form, const std::string& name) {
 
 	stream << crypto::base64_encode(config.dump());
 	stream.close();
+}
+
+void Config::remove(const Form* form, const std::string& name) {
+	if ( !m_init )
+		return;
+
+	// nothing to delete.
+	if ( form->m_tabs.empty() )
+		return;
+
+	// make copy of parent dir.
+	std::string file{ m_path };
+
+	// append filename.
+	g_winapi.PathAppendA((char*)file.c_str(), name.c_str());
+
+	// remove file.
+	std::remove( file.c_str( ) );
+}
+
+void Config::update( const Form* form ) 	{
+	if ( !m_init )
+		return;
+
+	// nothing to update.
+	if ( form->m_tabs.empty() )
+		return;
+	
+	// make copy of parent dir.
+	std::string file{ m_path };
+
+	// append filename.
+	g_winapi.PathAppendA((char*)file.c_str(), "\\*");
+
+	// item set.
+	std::vector<std::string> items;
+
+	// get our handle.
+	WIN32_FIND_DATA find;
+	HANDLE handle = FindFirstFile(file.c_str(), &find);
+
+	if ( handle == INVALID_HANDLE_VALUE ) {
+		return;
+	}
+
+	// do our loop.
+	do {
+		const std::string name = find.cFileName;
+
+		if ( !(find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ) {
+			items.push_back(name);
+		}
+	} while ( FindNextFile(handle, &find) != 0 );
+
+	// close our handle.
+	FindClose(handle);
+
+	// make sure we have the default config if we have nothing else.
+	if( items.empty( ) )
+		items.push_back("default");
+
+	// send our update to the config dropdown.
+	g_menu.main.config.config.update( items );
+	g_menu.main.config.config.select( 0 );
 }

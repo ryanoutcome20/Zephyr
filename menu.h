@@ -2241,74 +2241,36 @@ public:
 class ConfigTab : public Tab {
 public:
 	Colorpicker menu_color;
-
 	Dropdown mode;
+
 	Dropdown config;
-	Keybind  key1;
-	Keybind  key2;
-	Keybind  key3;
-	Keybind  key4;
-	Keybind  key5;
-	Keybind  key6;
+	Edit			  config_edit;
 	Button   save;
 	Button   load;
+	Button   create;
+	Button   remove;
+	Button   refresh;
 
 public:
 
 	void init() {
 		SetTitle(XOR("config"));
 
+		// col1.
 		menu_color.setup(XOR("menu color"), XOR("menu_color"), colors::burgundy, &g_gui.m_color);
 		RegisterElement(&menu_color);
-
+		
 		mode.setup(XOR("safety mode"), XOR("mode"), { XOR("matchmaking"), XOR("no-spread") });
-		RegisterElement(&mode, 1);
+		RegisterElement(&mode);
 
-		config.setup(XOR("configuration"), XOR("cfg"), { XOR("1"), XOR("2"), XOR("3"), XOR("4"), XOR("5"), XOR("6") });
+		// col2.
+		config.setup(XOR("configuration"), XOR("cfg"), { });
 		config.RemoveFlags(ElementFlags::SAVE);
 		RegisterElement(&config, 1);
 
-		key1.setup(XOR("configuration key 1"), XOR("cfg_key1"));
-		key1.RemoveFlags(ElementFlags::SAVE);
-		key1.SetCallback(callbacks::SaveHotkeys);
-		key1.AddShowCallback(callbacks::IsConfig1);
-		key1.SetToggleCallback(callbacks::ConfigLoad1);
-		RegisterElement(&key1, 1);
-
-		key2.setup(XOR("configuration key 2"), XOR("cfg_key2"));
-		key2.RemoveFlags(ElementFlags::SAVE);
-		key2.SetCallback(callbacks::SaveHotkeys);
-		key2.AddShowCallback(callbacks::IsConfig2);
-		key2.SetToggleCallback(callbacks::ConfigLoad2);
-		RegisterElement(&key2, 1);
-
-		key3.setup(XOR("configuration key 3"), XOR("cfg_key3"));
-		key3.RemoveFlags(ElementFlags::SAVE);
-		key3.SetCallback(callbacks::SaveHotkeys);
-		key3.AddShowCallback(callbacks::IsConfig3);
-		key3.SetToggleCallback(callbacks::ConfigLoad3);
-		RegisterElement(&key3, 1);
-
-		key4.setup(XOR("configuration key 4"), XOR("cfg_key4"));
-		key4.RemoveFlags(ElementFlags::SAVE);
-		key4.SetCallback(callbacks::SaveHotkeys);
-		key4.AddShowCallback(callbacks::IsConfig4);
-		key4.SetToggleCallback(callbacks::ConfigLoad4);
-		RegisterElement(&key4, 1);
-
-		key5.setup(XOR("configuration key 5"), XOR("cfg_key5"));
-		key5.RemoveFlags(ElementFlags::SAVE);
-		key5.SetCallback(callbacks::SaveHotkeys);
-		key5.AddShowCallback(callbacks::IsConfig5);
-		key5.SetToggleCallback(callbacks::ConfigLoad5);
-		RegisterElement(&key5, 1);
-
-		key6.setup(XOR("configuration key 6"), XOR("cfg_key6"));
-		key6.RemoveFlags(ElementFlags::SAVE);
-		key6.SetCallback(callbacks::SaveHotkeys);
-		key6.AddShowCallback(callbacks::IsConfig6);
-		key6.SetToggleCallback(callbacks::ConfigLoad6);
-		RegisterElement(&key6, 1);
+		config_edit.setup("", XOR("config_edit"), 32u, false, "", true);
+		config_edit.RemoveFlags(ElementFlags::SAVE);
+		RegisterElement(&config_edit, 1);
 
 		save.setup(XOR("save"));
 		save.SetCallback(callbacks::ConfigSave);
@@ -2317,6 +2279,18 @@ public:
 		load.setup(XOR("load"));
 		load.SetCallback(callbacks::ConfigLoad);
 		RegisterElement(&load, 1);
+
+		create.setup(XOR("create"));
+		create.SetCallback(callbacks::ConfigCreate);
+		RegisterElement(&create, 1);
+
+		remove.setup(XOR("delete"));
+		remove.SetCallback(callbacks::ConfigDelete);
+		RegisterElement(&remove, 1);
+
+		refresh.setup(XOR("refresh"));
+		refresh.SetCallback(callbacks::ConfigRefresh);
+		RegisterElement(&refresh, 1);
 	}
 };
 

@@ -34,54 +34,40 @@ void callbacks::ToggleKillfeed( ) {
         g_csgo.ClearNotices( feed );
 }
 
-void callbacks::SaveHotkeys( ) {
-	g_config.SaveHotkeys( );
-}
-
-void callbacks::ConfigLoad1( ) {
-	g_config.load( &g_menu.main, XOR( "1.sup" ) );
-	g_menu.main.config.config.select( 0 );
-}
-
-void callbacks::ConfigLoad2( ) {
-	g_config.load( &g_menu.main, XOR( "2.sup" ) );
-	g_menu.main.config.config.select( 1 );
-}
-
-void callbacks::ConfigLoad3( ) {
-	g_config.load( &g_menu.main, XOR( "3.sup" ) );
-	g_menu.main.config.config.select( 2 );
-}
-
-void callbacks::ConfigLoad4( ) {
-	g_config.load( &g_menu.main, XOR( "4.sup" ) );
-	g_menu.main.config.config.select( 3 );
-}
-
-void callbacks::ConfigLoad5( ) {
-	g_config.load( &g_menu.main, XOR( "5.sup" ) );
-	g_menu.main.config.config.select( 4 );
-}
-
-void callbacks::ConfigLoad6( ) {
-	g_config.load( &g_menu.main, XOR( "6.sup" ) );
-	g_menu.main.config.config.select( 5 );
-}
-
 void callbacks::ConfigLoad( ) {
 	std::string config = g_menu.main.config.config.GetActiveItem( );
-	std::string file   = tfm::format( XOR( "%s.sup" ), config.data( ) );
 
-	g_config.load( &g_menu.main, file );
+	g_config.load( &g_menu.main, config.data( ) );
 	g_notify.add( tfm::format( XOR( "Loaded config %s\n" ), config.data( ) ) );
 }
 
 void callbacks::ConfigSave( ) {
 	std::string config = g_menu.main.config.config.GetActiveItem( );
-	std::string file   = tfm::format( XOR( "%s.sup" ), config.data( ) );
 
-	g_config.save( &g_menu.main, file );
+	g_config.save( &g_menu.main, config.data( ) );
 	g_notify.add( tfm::format( XOR( "Saved config %s\n" ), config.data( ) ) );
+}
+
+void callbacks::ConfigCreate( ) {
+	std::string config = g_menu.main.config.config_edit.gets( );
+
+	g_config.save( &g_menu.main, config );
+	g_notify.add(tfm::format(XOR("Created config %s\n"), config ));
+
+	g_config.update(&g_menu.main);
+}
+
+void callbacks::ConfigDelete() {
+	std::string config = g_menu.main.config.config.GetActiveItem();
+
+	g_config.remove( &g_menu.main, config.data( ) );
+	g_notify.add(tfm::format(XOR("Removed config %s\n"), config.data( ) ));
+
+	g_config.update(&g_menu.main);
+}
+
+void callbacks::ConfigRefresh( ) {
+	g_config.update(&g_menu.main);
 }
 
 bool callbacks::IsBaimHealth( ) {
@@ -354,30 +340,6 @@ bool callbacks::IsConfigMM( ) {
 
 bool callbacks::IsConfigNS( ) {
 	return g_menu.main.config.mode.get( ) == 1;
-}
-
-bool callbacks::IsConfig1( ) {
-	return g_menu.main.config.config.get( ) == 0;
-}
-
-bool callbacks::IsConfig2( ) {
-	return g_menu.main.config.config.get( ) == 1;
-}
-
-bool callbacks::IsConfig3( ) {
-	return g_menu.main.config.config.get( ) == 2;
-}
-
-bool callbacks::IsConfig4( ) {
-	return g_menu.main.config.config.get( ) == 3;
-}
-
-bool callbacks::IsConfig5( ) {
-	return g_menu.main.config.config.get( ) == 4;
-}
-
-bool callbacks::IsConfig6( ) {
-	return g_menu.main.config.config.get( ) == 5;
 }
 
 // weaponcfgs callbacks.

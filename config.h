@@ -3,10 +3,10 @@
 class Config {
 public:
 	void init( );
-	void LoadHotkeys( );
-	void SaveHotkeys( );
 	void load( const Form* form, const std::string& name );
 	void save( const Form* form, const std::string& name );
+	void remove( const Form* form, const std::string& name);
+	void update( const Form* form );
 
 private:
 	bool m_init;
