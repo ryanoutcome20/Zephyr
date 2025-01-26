@@ -319,6 +319,11 @@ void Client::EndMove(CUserCmd* cmd) {
 	// store some values for next tick.
 	m_old_packet = *m_packet;
 	m_old_shot = m_shot;
+
+	// run our dropping if needed.
+	if ( m_dropping == m_local->m_nTickBase( ) ) {
+		g_csgo.m_engine->ExecuteClientCmd("drop");
+	}
 }
 
 void Client::OnTick(CUserCmd* cmd) {

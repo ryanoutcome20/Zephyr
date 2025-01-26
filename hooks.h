@@ -58,7 +58,7 @@ public:
 	bool                     CreateMove( float input_sample_time, CUserCmd* cmd );
 	void                     LevelInitPostEntity( );
 	void                     LevelShutdown( );
-	//int                      IN_KeyEvent( int event, int key, const char* bind );
+	int                      IN_KeyEvent( int event, int key, const char* bind );
 	void                     LevelInitPreEntity( const char* map );
 	void                     FrameStageNotify( Stage_t stage );
 	void                     UpdateClientSideAnimation( );

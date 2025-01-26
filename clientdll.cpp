@@ -36,26 +36,18 @@ void Hooks::LevelShutdown( ) {
 	g_hooks.m_client.GetOldMethod< LevelShutdown_t >( CHLClient::LEVELSHUTDOWN )( this );
 }
 
-/*int Hooks::IN_KeyEvent( int evt, int key, const char* bind ) {
+int Hooks::IN_KeyEvent( int evt, int key, const char* bind ) {
 	// see if this key event was fired for the drop bind.
-	/*if( bind && FNV1a::get( bind ) == HASH( "drop" ) ) {
-		// down.
-		if( evt ) {
-			g_cl.m_drop = true;
-			g_cl.m_drop_query = 2;
-			g_cl.print( "drop\n" );
+	if( bind && evt && FNV1a::get( bind ) == HASH( "drop" ) ) {
+		// delay our drop by one tick, we'll manually drop later on in EndMove.
+		if( g_cl.m_local ) {
+			g_cl.m_dropping = g_cl.m_local->m_nTickBase( ) + 1;
+			return 0;
 		}
-
-		// up.
-		else 
-			g_cl.m_drop = false;
-
-		// ignore the event.
-		return 0;
 	}
 
 	return g_hooks.m_client.GetOldMethod< IN_KeyEvent_t >( CHLClient::INKEYEVENT )( this, evt, key, bind );
-}*/
+}
 
 void Hooks::FrameStageNotify( Stage_t stage ) {
 	// save stage.

@@ -61,6 +61,7 @@ public:
 	bool	         m_player_fire;
 	bool	         m_shot;
 	bool	         m_old_shot;
+	float			 m_dropping;
 	float            m_abs_yaw;
 	float            m_poses[ 24 ];
 
