@@ -20,6 +20,7 @@ public:
 	Checkbox	  penetrate_minimal_damage_hp;
 	Checkbox      knifebot;
 	Checkbox	  zeusbot;
+	Checkbox	  ignore_moving_limbs;
 
 	// col2.
 	Dropdown      zoom;
@@ -98,6 +99,9 @@ public:
 		zeusbot.setup(XOR("aimbot with taser"), XOR("zeusbot"));
 		RegisterElement(&zeusbot);
 
+		ignore_moving_limbs.setup(XOR("ignore moving limbs"), XOR("ignore_moving_limbs"));
+		RegisterElement(&ignore_moving_limbs);
+
 		// col2.
 		zoom.setup(XOR("auto scope"), XOR("zoom"), { XOR("off"), XOR("always"), XOR("hitchance fail") });
 		RegisterElement(&zoom, 1);
@@ -169,6 +173,9 @@ public:
 	Checkbox dir_lock;
 	Dropdown base_angle_stand;
 	Dropdown body_fake_stand;
+	Slider		  body_fake_stand_custom;
+	Checkbox	  body_fake_stand_custom_double;
+	Slider		  body_fake_stand_custom_double_amount;
 
 	Dropdown pitch_walk;
 	Dropdown yaw_walk;
@@ -206,6 +213,7 @@ public:
 	Slider			  lag_extended_limit;	
 	Checkbox      lag_land;
 	Checkbox      lag_revolver;
+	Checkbox		  anti_lastmove;
 
 public:
 	void init() {
@@ -276,10 +284,29 @@ public:
 		dir_lock.AddShowCallback(callbacks::HasStandYaw);
 		RegisterElement(&dir_lock);
 
-		body_fake_stand.setup(XOR("fake body"), XOR("body_fake_stnd"), { XOR("off"), XOR("left"), XOR("right"), XOR("opposite"), XOR("z") });
+		body_fake_stand.setup(XOR("fake body"), XOR("body_fake_stnd"), { XOR("off"), XOR("left"), XOR("right"), XOR("opposite"), XOR("z"), XOR("custom") });
 		body_fake_stand.AddShowCallback(callbacks::IsAntiAimModeStand);
 		body_fake_stand.AddShowCallback(callbacks::HasStandYaw);
 		RegisterElement(&body_fake_stand);
+
+		body_fake_stand_custom.setup("", XOR("body_fake_stand_custom"), -180.f, 180.f, false, 0, 90.f, 5.f, XOR(L"°"));
+		body_fake_stand_custom.AddShowCallback(callbacks::IsAntiAimModeStand);
+		body_fake_stand_custom.AddShowCallback(callbacks::HasStandYaw);
+		body_fake_stand_custom.AddShowCallback(callbacks::IsStandBodyCustom);
+		RegisterElement(&body_fake_stand_custom);
+
+		body_fake_stand_custom_double.setup(XOR("early flick"), XOR("body_fake_stand_custom_double"));
+		body_fake_stand_custom_double.AddShowCallback(callbacks::IsAntiAimModeStand);
+		body_fake_stand_custom_double.AddShowCallback(callbacks::HasStandYaw);
+		body_fake_stand_custom_double.AddShowCallback(callbacks::IsStandBodyCustom);
+		RegisterElement(&body_fake_stand_custom_double);
+
+		body_fake_stand_custom_double_amount.setup("", XOR("body_fake_stand_custom_double_amount"), -180.f, 180.f, false, 0, -90.f, 5.f, XOR(L"°"));
+		body_fake_stand_custom_double_amount.AddShowCallback(callbacks::IsAntiAimModeStand);
+		body_fake_stand_custom_double_amount.AddShowCallback(callbacks::HasStandYaw);
+		body_fake_stand_custom_double_amount.AddShowCallback(callbacks::IsStandBodyCustom);
+		body_fake_stand_custom_double_amount.AddShowCallback(callbacks::IsStandBodyDouble);
+		RegisterElement(&body_fake_stand_custom_double_amount);
 
 		// walk.
 		pitch_walk.setup(XOR("pitch"), XOR("pitch_walk"), { XOR("off"), XOR("down"), XOR("up"), XOR("random"), XOR("ideal") });
@@ -400,7 +427,6 @@ public:
 		fake_jitter_range.AddShowCallback(callbacks::IsFakeAntiAimJitter);
 		RegisterElement(&fake_jitter_range, 1);
 
-		// col 2.
 		lag_enable.setup(XOR("fake-lag"), XOR("lag_enable"));
 		RegisterElement(&lag_enable, 1);
 
@@ -430,6 +456,9 @@ public:
 
 		lag_revolver.setup(XOR("disable on revolver"), XOR("lag_revolver"));
 		RegisterElement(&lag_revolver, 1);
+
+		anti_lastmove.setup(XOR("anti-lastmove"), XOR("anti_lastmove"));
+		RegisterElement( &anti_lastmove, 1 );
 	}
 };
 

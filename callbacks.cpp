@@ -122,6 +122,14 @@ bool callbacks::IsStandDirCustom( ) {
 	return g_menu.main.antiaim.dir_stand.get( ) == 4;
 }
 
+bool callbacks::IsStandBodyCustom() {
+	return g_menu.main.antiaim.body_fake_stand.get( ) == 5;
+}
+
+bool callbacks::IsStandBodyDouble() {
+	return g_menu.main.antiaim.body_fake_stand_custom_double.get( );
+}
+
 bool callbacks::IsAntiAimModeWalk( ) {
 	return g_menu.main.antiaim.mode.get( ) == 1;
 }

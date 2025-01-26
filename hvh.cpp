@@ -414,8 +414,13 @@ bool HVH::DoEdgeAntiAim( Player *player, ang_t &out ) {
 }
 
 void HVH::DoRealAntiAim( ) {
+
+	if ( g_menu.main.antiaim.anti_lastmove.get( ) && g_cl.m_speed < 15.f && m_mode != AntiAimMode::STAND ) {
+		g_cl.m_cmd->m_view_angles.y = -m_direction;
+	}
+
 	// if we have a yaw antaim.
-	if( m_yaw > 0 ) {
+	else if( m_yaw > 0 ) {
 
 		// if we have a yaw active, which is true if we arrived here.
 		// set the yaw to the direction before applying any other operations.
@@ -429,6 +434,10 @@ void HVH::DoRealAntiAim( ) {
 			// z mode.
 			if( g_menu.main.antiaim.body_fake_stand.get( ) == 4 )
 				g_cl.m_cmd->m_view_angles.y -= 90.f;
+
+			// custom mode.
+			else if( g_menu.main.antiaim.body_fake_stand.get( ) == 5 && g_menu.main.antiaim.body_fake_stand_custom_double.get( ) )
+				g_cl.m_cmd->m_view_angles.y += g_menu.main.antiaim.body_fake_stand_custom_double_amount.get();
 		}
 
 		// check if we will have a lby fake this tick.
@@ -455,6 +464,11 @@ void HVH::DoRealAntiAim( ) {
 					// z.
 				case 4:
 					g_cl.m_cmd->m_view_angles.y += 90.f;
+					break;
+
+					// custom.
+				case 5:
+					g_cl.m_cmd->m_view_angles.y += g_menu.main.antiaim.body_fake_stand_custom.get( );
 					break;
 				}
 			}

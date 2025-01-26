@@ -322,6 +322,9 @@ void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
 	// reset hitboxes.
 	m_hitboxes.clear();
 
+	// valid limbs.
+	bool limbs = g_menu.main.aimbot.ignore_moving_limbs.get( ) ? record->m_velocity.length( ) < 0.1f : true;
+
 	if (g_cl.m_weapon_id == ZEUS) {
 		// hitboxes for the zeus.
 		m_hitboxes.push_back({ HITBOX_BODY, HitscanMode::PREFER });
@@ -408,13 +411,13 @@ void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
 		}
 
 		// arms.
-		if (h == 3) {
+		if (limbs && h == 3) {
 			m_hitboxes.push_back({ HITBOX_L_UPPER_ARM, HitscanMode::NORMAL });
 			m_hitboxes.push_back({ HITBOX_R_UPPER_ARM, HitscanMode::NORMAL });
 		}
 
 		// legs.
-		if (h == 4) {
+		if (limbs && h == 4) {
 			m_hitboxes.push_back({ HITBOX_L_THIGH, HitscanMode::NORMAL });
 			m_hitboxes.push_back({ HITBOX_R_THIGH, HitscanMode::NORMAL });
 			m_hitboxes.push_back({ HITBOX_L_CALF, HitscanMode::NORMAL });
