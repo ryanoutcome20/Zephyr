@@ -151,7 +151,7 @@ void Shots::OnHurt( IGameEvent *evt ) {
 	if ( !g_csgo.m_engine->GetPlayerInfo(victim, &info) )
 		return;
 
-	// get player name;
+	// get player name.
 	name = std::string(info.m_name).substr(0, 24);
 
 	// get damage reported by the server.
@@ -170,10 +170,8 @@ void Shots::OnHurt( IGameEvent *evt ) {
 	}
 
 	// print this shit.
-	if ( g_menu.main.misc.notifications.get(0) ) {
-		std::string out = tfm::format(XOR("Hit %s in the %s for %i (%i remaining)\n"), name, m_groups[ hitgroup ], (int)damage, hp);
-		g_notify.add(out);
-	}
+	if ( g_menu.main.misc.notifications.get(0) )
+		g_notify.add(tfm::format(XOR("Hit %s in the %s for %i (%i remaining)\n"), name, m_groups[ hitgroup ], (int)damage, hp));
 
 	// get our real time.
 	time = g_csgo.m_globals->m_realtime;
@@ -279,8 +277,10 @@ void Shots::Think() {
 		g_csgo.m_engine_trace->ClipRayToEntity(Ray(start, end), MASK_SHOT, target, &trace);
 
 		// we did not hit this player.
-		if ( !trace.m_entity || !trace.m_entity->IsPlayer() || trace.m_entity != target )
-			g_notify.add(XOR("Missed shot due to spread\n"));
+		if ( !trace.m_entity || !trace.m_entity->IsPlayer() || trace.m_entity != target ) {
+			if( g_menu.main.misc.notifications.get( 4 ) )
+				g_notify.add(XOR("Missed shot due to spread\n"));
+		}
 
 		// we should have 100% hit this player..
 		// this is a miss due to wrong angles.
@@ -298,6 +298,20 @@ void Shots::Think() {
 				++data->m_stand_index2;
 
 			++data->m_missed_shots;
+		}
+
+		// print out our debug information.
+		if ( g_menu.main.misc.extend_logs.get() ) {
+			// get player info.
+			player_info_t info;
+
+			if( g_csgo.m_engine->GetPlayerInfo(target->index(), &info) ) {
+				// get player name.
+				std::string name = std::string(info.m_name).substr(0, 24);
+			
+				// output data.
+				g_notify.add(tfm::format("[dbg] target: %s; mode: %s; target damage: %s; ping: %s\n", name, shot.m_record->m_mode, shot.m_damage, std::max(5.f, g_cl.m_latency * 1000.f)));
+			}
 		}
 
 		// restore player to his original state.

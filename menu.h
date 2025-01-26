@@ -2066,6 +2066,7 @@ public:
 	Slider				   buy_money_amt;
 
 	MultiDropdown notifications;
+	Checkbox			  extend_logs;
 	Keybind       last_tick_defuse;
 
 	Checkbox    fake_latency_always;
@@ -2154,6 +2155,10 @@ public:
 
 		notifications.setup(XOR("notifications"), XOR("notifications"), { XOR("damage"), XOR("purchases"), XOR("bomb"), XOR("defuse"), XOR("spread") });
 		RegisterElement(&notifications);
+
+		extend_logs.setup( XOR("extend miss logs"), XOR("extend_logs"));
+		extend_logs.AddShowCallback( callbacks::IsNotificationsOn );
+		RegisterElement(&extend_logs);
 
 		last_tick_defuse.setup(XOR("last tick defuse"), XOR("last_tick_defuse"));
 		RegisterElement(&last_tick_defuse);

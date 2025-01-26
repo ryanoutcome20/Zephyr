@@ -83,6 +83,7 @@ namespace callbacks {
 	bool IsImpactBeamsOn( );
 
 	bool IsAutoBuyOn( );
+	bool IsNotificationsOn( );
 
 	bool IsConfigMM( );
 	bool IsConfigNS( );
