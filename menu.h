@@ -2145,6 +2145,9 @@ public:
 	Keybind       fake_latency;
 	Slider		  fake_latency_amt;
 
+	Colorpicker console_color;
+	Slider		   console_blend;
+
 	// col2.
 	Checkbox unlock;
 	Checkbox hitmarker;
@@ -2245,6 +2248,12 @@ public:
 		fake_latency_always.setup(XOR("fake latency always on"), XOR("fake_latency_always"));
 		RegisterElement(&fake_latency_always);
 
+		console_color.setup(XOR("console color"), XOR("console_color"), colors::white);
+		RegisterElement(&console_color);
+
+		console_blend.setup("", XOR("console_blend"), 10.f, 100.f, false, 0, 65.f, 1.f, XOR(L"%"));
+		RegisterElement(&console_blend);
+
 		// col2.
 		unlock.setup(XOR("unlock inventory in-game"), XOR("unlock_inventory"));
 		RegisterElement(&unlock, 1);
@@ -2288,7 +2297,7 @@ public:
 		// col1.
 		menu_color.setup(XOR("menu color"), XOR("menu_color"), colors::burgundy, &g_gui.m_color);
 		RegisterElement(&menu_color);
-		
+
 		mode.setup(XOR("safety mode"), XOR("mode"), { XOR("matchmaking"), XOR("no-spread") });
 		RegisterElement(&mode);
 

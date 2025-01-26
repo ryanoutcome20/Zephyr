@@ -113,7 +113,6 @@ void Hooks::init( ) {
 	m_client_mode.add( IClientMode::DOPOSTSPACESCREENEFFECTS, util::force_cast( &Hooks::DoPostScreenSpaceEffects ) );
 
 	m_surface.init( g_csgo.m_surface );
-	//m_surface.add( ISurface::GETSCREENSIZE, util::force_cast( &Hooks::GetScreenSize ) );
 	m_surface.add( ISurface::LOCKCURSOR, util::force_cast( &Hooks::LockCursor ) );
 	m_surface.add( ISurface::PLAYSOUND, util::force_cast( &Hooks::PlaySound ) );
 	m_surface.add( ISurface::ONSCREENSIZECHANGED, util::force_cast( &Hooks::OnScreenSizeChanged ) );

@@ -41,7 +41,7 @@ int Hooks::IN_KeyEvent( int evt, int key, const char* bind ) {
 	if( bind && evt && FNV1a::get( bind ) == HASH( "drop" ) ) {
 		// delay our drop by one tick, we'll manually drop later on in EndMove.
 		if( g_cl.m_local ) {
-			g_cl.m_dropping = g_cl.m_local->m_nTickBase( ) + 1;
+			g_hvh.m_dropping = g_cl.m_local->m_nTickBase( ) + 1;
 			return 0;
 		}
 	}

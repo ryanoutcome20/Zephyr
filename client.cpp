@@ -325,7 +325,7 @@ void Client::EndMove(CUserCmd* cmd) {
 	m_old_shot = m_shot;
 
 	// run our dropping if needed.
-	if ( m_dropping == m_local->m_nTickBase( ) ) {
+	if ( g_hvh.m_dropping == m_local->m_nTickBase( ) ) {
 		g_csgo.m_engine->ExecuteClientCmd("drop");
 	}
 }

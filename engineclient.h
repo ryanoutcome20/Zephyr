@@ -170,6 +170,7 @@ public:
 		GETSCREENSIZE            = 5,
 		GETPLAYERINFO            = 8,
 		GETPLAYERFORUSERID       = 9,
+		CONSOLEVISIBLE				= 11,
 		GETLOCALPLAYER           = 12,
 		GETLASTTIMESTAMP         = 14,
 		GETVIEWANGLES            = 18,
@@ -198,6 +199,10 @@ public:
 
 	__forceinline int GetPlayerForUserID( int uid ) {
 		return util::get_method< int( __thiscall* )( decltype( this ), int ) >( this, GETPLAYERFORUSERID )( this, uid );
+	}
+
+	__forceinline bool IsConsoleVisible( ) {
+		return util::get_method< bool(__thiscall*)(decltype(this)) >(this, CONSOLEVISIBLE)(this);
 	}
 
 	__forceinline int GetLocalPlayer( ) {

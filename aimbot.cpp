@@ -923,7 +923,6 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 		dmg = g_menu.main.aimbot.minimal_damage.get();
 		if (g_menu.main.aimbot.minimal_damage_hp.get())
 		{
-			//std::ceil((dmg / 100.f) * hp);
 			if (hp < dmg)
 				dmg = hp + 5;
 			else if (half_hp < dmg)
@@ -935,7 +934,6 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 		pendmg = g_menu.main.aimbot.penetrate_minimal_damage.get();
 		if (g_menu.main.aimbot.penetrate_minimal_damage_hp.get())
 		{
-			//std::ceil((pendmg / 100.f) * hp);
 			if (hp < pendmg)
 				pendmg = hp + 5;
 			else if (half_hp < pendmg)
@@ -948,7 +946,7 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 
 	// clamp our minimums.
 	dmg = std::fmin( dmg, (float)hp );
-	pendmg = std::fmin( dmg, (float)hp );
+	pendmg = std::fmin( pendmg, (float)hp );
 
 	// write all data of this record l0l.
 	record->cache();

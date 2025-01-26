@@ -25,6 +25,8 @@ public:
 
     int bullet_counter;
 
+    bool m_reset_console;
+
     std::unordered_map< int, char > m_weapon_icons = {
     	{ DEAGLE, 'F' },
     	{ ELITE, 'S' },
@@ -83,6 +85,7 @@ public:
 
 public:
 	static void ModulateWorld( );
+    void ModulateConsole( bool reset );
 	void ThirdpersonThink( );
 	void Hitmarker( );
 	void NoSmoke( );

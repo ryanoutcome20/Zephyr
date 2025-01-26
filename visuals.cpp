@@ -74,6 +74,28 @@ void Visuals::ModulateWorld( ) {
 	}
 }
 
+void Visuals::ModulateConsole( bool reset ) {
+	// get our materials.
+	std::vector< IMaterial* > console = g_materials.Get({ "vgui_white", "800corner1", "800corner2", "800corner3", "800corner4" });
+
+	// run our reset if needed.
+	if ( reset ) {
+		g_materials.Modulate(console);
+		m_reset_console = false;
+		return;
+	}
+
+	// reset our updater.
+	m_reset_console = true;
+
+	// get color.
+	Color color = g_menu.main.misc.console_color.get( );
+	color.a( ) = g_menu.main.misc.console_blend.get( ) * 2.55f;
+
+	// modulate materials.
+	g_materials.Modulate( console, color, false );
+}
+
 void Visuals::ThirdpersonThink( ) {
 	ang_t                          offset;
 	vec3_t                         origin, forward;

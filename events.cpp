@@ -19,6 +19,7 @@ void events::round_start( IGameEvent* evt ) {
 	// reset hvh / aa stuff.
 	g_hvh.m_next_random_update = 0.f;
 	g_hvh.m_auto_last = 0.f;
+	g_hvh.m_dropping = g_cl.m_local->m_nTickBase( );
 
 	// reset bomb stuff.
 	g_visuals.m_c4_planted = false;

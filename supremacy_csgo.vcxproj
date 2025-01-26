@@ -218,6 +218,7 @@
     <ClInclude Include="lagrecord.h" />
     <ClInclude Include="events.h" />
     <ClInclude Include="localize.h" />
+    <ClInclude Include="materials.h" />
     <ClInclude Include="math.h" />
     <ClInclude Include="matrix.h" />
     <ClInclude Include="memalloc.h" />
@@ -276,6 +277,7 @@
     <ClCompile Include="events.cpp" />
     <ClCompile Include="firebullets.cpp" />
     <ClCompile Include="keybind.cpp" />
+    <ClCompile Include="materials.cpp" />
     <ClCompile Include="materialsystem.cpp" />
     <ClCompile Include="shadowmgr.cpp" />
     <ClCompile Include="csgo.cpp" />

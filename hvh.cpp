@@ -640,7 +640,7 @@ void HVH::AntiAim( ) {
 	if ( g_cl.m_movetype == MOVETYPE_NOCLIP || g_cl.m_movetype == MOVETYPE_LADDER )
 		return;
 
-	if( g_cl.m_dropping >= g_cl.m_local->m_nTickBase(  ) )
+	if( m_dropping >= g_cl.m_local->m_nTickBase(  ) )
 		return;
 
 	// grenade throwing

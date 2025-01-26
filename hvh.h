@@ -48,6 +48,7 @@ public:
 	float  m_auto_dist;
 	float  m_auto_last;
 	float  m_view;
+	float  m_dropping;
 
 	bool  m_extended;
 
