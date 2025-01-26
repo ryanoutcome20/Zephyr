@@ -823,7 +823,8 @@ public:
 			XOR("particles"),
 			XOR("post-processing"),
 			XOR("flash"),
-			XOR("scope")
+			XOR("scope"),
+			XOR("shadows")
 		});
 		RegisterElement(&removals, 1);
 

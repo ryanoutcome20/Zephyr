@@ -152,4 +152,15 @@ void Hooks::init( ) {
 	g_netvars.SetProxy( HASH( "DT_CSPlayer" ), HASH( "m_angEyeAngles[0]" ), Pitch_proxy, m_Pitch_original );
 	g_netvars.SetProxy( HASH( "DT_CSPlayer" ), HASH( "m_flLowerBodyYawTarget" ), Body_proxy, m_Body_original );
 	g_netvars.SetProxy( HASH( "DT_CSRagdoll" ), HASH( "m_vecForce" ), Force_proxy, m_Force_original );
+
+	// unlock hidden cvars.
+	auto list = g_csgo.m_cvar->GetCommands( );
+	
+	if( list ) { 
+		for ( auto it = list; it != nullptr; it = it->m_next ) {
+			it->m_flags &= ~FCVAR_DEVELOPMENTONLY;
+			it->m_flags &= ~FCVAR_HIDDEN;
+			it->m_flags &= ~FCVAR_CHEAT;
+		}
+	}
 }

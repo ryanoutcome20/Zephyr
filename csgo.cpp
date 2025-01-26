@@ -104,6 +104,8 @@ bool CSGO::init( ) {
     weapon_accuracy_shotgun_spread_patterns = m_cvar->FindVar( HASH( "weapon_accuracy_shotgun_spread_patterns" ) );
 	cl_ragdoll_gravity											= m_cvar->FindVar(HASH("cl_ragdoll_gravity"));
 	developer													= m_cvar->FindVar(HASH("developer"));
+	cl_csm_shadows											= m_cvar->FindVar(HASH("cl_csm_shadows"));
+	cl_foot_contact_shadows								= m_cvar->FindVar(HASH("cl_foot_contact_shadows"));
 
 	// hehe xd.
 	name->m_callbacks.RemoveAll( );

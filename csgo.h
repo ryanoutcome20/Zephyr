@@ -116,6 +116,8 @@ public:
 	ConVar *weapon_accuracy_shotgun_spread_patterns;
 	ConVar *cl_ragdoll_gravity;
 	ConVar *developer;
+	ConVar *cl_csm_shadows;
+	ConVar *cl_foot_contact_shadows;
 
 public:
 	// functions.
