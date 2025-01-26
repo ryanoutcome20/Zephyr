@@ -66,6 +66,9 @@ void Hooks::FrameStageNotify( Stage_t stage ) {
 
         // draw our custom beams.
         g_visuals.DrawBeams( );
+
+		// draw our bullet impacts.
+		g_visuals.DrawBulletImpacts( );
 	}
 
 	// call og.

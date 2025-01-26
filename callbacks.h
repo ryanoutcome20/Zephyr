@@ -81,7 +81,11 @@ namespace callbacks {
 	bool IsAmmoBarOn( );
 	bool IsDroppedC4On( );
 	bool IsProjectileOn( );
+	bool IsAutopeekVisualizeOn( );
 	bool IsImpactBeamsOn( );
+	bool IsImpactBoxesServer( );
+	bool IsImpactBoxesClient( );
+	bool IsImpactBoxesOn( );
 
 	bool IsAutoBuyOn( );
 	bool IsNotificationsOn( );

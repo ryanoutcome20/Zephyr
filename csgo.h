@@ -157,6 +157,7 @@ public:
 	size_t MostRecentModelBoneCounter;
 	size_t LastBoneSetupTime;
 	size_t IsLocalPlayer;
+	size_t BulletVerifyListClient;
 	size_t PlayerAnimState;
 	size_t studioHdr;
 

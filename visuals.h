@@ -23,6 +23,8 @@ public:
 	IMaterial* smoke3;
 	IMaterial* smoke4;
 
+    int bullet_counter;
+
     std::unordered_map< int, char > m_weapon_icons = {
     	{ DEAGLE, 'F' },
     	{ ELITE, 'S' },
@@ -87,6 +89,7 @@ public:
 	void think( );
 	void Spectators( );
 	void StatusIndicators( );
+    void AutopeekIndicator( );
 	void SpreadCrosshair( );
     void PenetrationCrosshair( );
     void DrawPlantedC4();
@@ -100,6 +103,7 @@ public:
 	void DrawSkeleton( Player* player, int opacity );
 	void RenderGlow( );
 	void DrawHitboxMatrix( LagRecord* record, Color col, float time );
+    void DrawBulletImpacts();
     void DrawBeams( );
 	void DebugAimbotPoints( Player* player );
 };

@@ -320,8 +320,24 @@ bool callbacks::IsProjectileOn( ) {
 	return g_menu.main.visuals.proj.get( );
 }
 
+bool callbacks::IsAutopeekVisualizeOn( ) {
+	return g_menu.main.visuals.autopeek_indicator.get( );
+}
+
 bool callbacks::IsImpactBeamsOn( ) {
 	return g_menu.main.visuals.impact_beams.get( );
+}
+
+bool callbacks::IsImpactBoxesServer( ) {
+	return g_menu.main.visuals.impact_boxes.get( 0 );
+}
+
+bool callbacks::IsImpactBoxesClient( ) {
+	return g_menu.main.visuals.impact_boxes.get( 1 );
+}
+
+bool callbacks::IsImpactBoxesOn( ) {
+	return g_menu.main.visuals.impact_boxes.get( 0 ) || g_menu.main.visuals.impact_boxes.get( 1 );
 }
 
 bool callbacks::IsAutoBuyOn( ) {

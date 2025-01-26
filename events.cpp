@@ -95,7 +95,7 @@ void events::player_hurt( IGameEvent* evt ) {
 }
 
 void events::bullet_impact( IGameEvent* evt ) {
-	// forward event to resolver impact processing.
+	// forward event to shot impact processing.
 	g_shots.OnImpact( evt );
 }
 

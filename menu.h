@@ -759,7 +759,13 @@ public:
 	Slider        spread_xhair_blend;
 	Checkbox      pen_crosshair;
 	MultiDropdown indicators;
-	Checkbox      tracers;
+	Checkbox           autopeek_indicator;
+	Colorpicker        autopeek_color;
+	Checkbox           tracers;
+	MultiDropdown impact_boxes;
+	Colorpicker		   impact_boxes_server;
+	Colorpicker		   impact_boxes_client;
+	Slider				   impact_boxes_time;
 	Checkbox      impact_beams;
 	Colorpicker   impact_beams_color;
 	Colorpicker   impact_beams_hurt_color;
@@ -878,8 +884,30 @@ public:
 		indicators.setup(XOR("indicators"), XOR("indicators"), { XOR("lby"), XOR("lag compensation"), XOR("fake latency"), XOR("fake lag extended"), XOR("minimal damage") });
 		RegisterElement(&indicators, 1);
 
+		autopeek_indicator.setup(XOR("visualize autopeek"), XOR("autopeek_indicator"));
+		RegisterElement(&autopeek_indicator, 1);
+
+		autopeek_color.setup(XOR("color"), XOR("autopeek_color"), colors::white);
+		autopeek_color.AddShowCallback(callbacks::IsAutopeekVisualizeOn);
+		RegisterElement(&autopeek_color, 1);
+
 		tracers.setup(XOR("grenade simulation"), XOR("tracers"));
 		RegisterElement(&tracers, 1);
+
+		impact_boxes.setup(XOR("impact boxes"), XOR("impact_boxes"), { XOR("server"), XOR("client") });
+		RegisterElement(&impact_boxes, 1);
+
+		impact_boxes_server.setup( XOR("server color"), XOR("impact_boxes_server"), colors::blue ); 
+		impact_boxes_server.AddShowCallback(callbacks::IsImpactBoxesServer);
+		RegisterElement(&impact_boxes_server, 1);
+
+		impact_boxes_client.setup(XOR("client color"), XOR("impact_boxes_client"), colors::red );
+		impact_boxes_client.AddShowCallback(callbacks::IsImpactBoxesClient);
+		RegisterElement(&impact_boxes_client, 1);
+
+		impact_boxes_time.setup(XOR("impact boxes time"), XOR("impact_boxes_time"), 1.f, 10.f, true, 0, 1.f, 1.f, XOR(L"s"));
+		impact_boxes_time.AddShowCallback(callbacks::IsImpactBoxesOn);
+		RegisterElement(&impact_boxes_time, 1);
 
 		impact_beams.setup(XOR("impact beams"), XOR("impact_beams"));
 		RegisterElement(&impact_beams, 1);

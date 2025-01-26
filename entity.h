@@ -517,6 +517,12 @@ public:
 	int        m_CachedBoneCount;
 };
 
+struct clientHitVerify_t {
+	vec3_t	vecPosition;
+	float	flTimestamp;
+	float	flExpireTime;
+};
+
 class Ragdoll : public Entity {
 public:
 	__forceinline Player* GetPlayer() {
@@ -598,6 +604,17 @@ public:
 		// .text:101E007A 674     74 17				   jz      short loc_101E0093; Jump if Zero( ZF = 1 )
 		// .text:101E007C 674     8A 83 F8 35 00 00	   mov     al, [ ebx + 35F8h ]
 		return get< bool >(g_csgo.IsLocalPlayer);
+	}
+
+	__forceinline CUtlVector< clientHitVerify_t > m_vecBulletVerifyListClient() {
+        //1036b9e8 f3 0f 10        MOVSS      XMM1,dword ptr [DAT_109ed0b8]                    = 3F800000h
+        //         0d b8 d0 
+		//         9e 10
+		//1036b9f0 03 f8           ADD        EDI,EAX
+		//1036b9f2 8b 86 84        MOV        EAX,dword ptr [ESI + 0xba84]
+        //         ba 00 00
+
+		return get< CUtlVector< clientHitVerify_t > >(g_csgo.BulletVerifyListClient);
 	}
 
 	__forceinline CCSGOPlayerAnimState* m_PlayerAnimState() {

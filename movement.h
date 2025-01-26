@@ -12,7 +12,8 @@ public:
 	int    m_strafe_index;
 	float  m_old_yaw;
 	float  m_circle_yaw;
-	bool   m_invert;
+	bool		m_autopeek_active;
+	vec3_t m_autopeek_origin;
 
 public:
 	void JumpRelated( );

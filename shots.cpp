@@ -65,6 +65,14 @@ void Shots::OnImpact( IGameEvent *evt ) {
 		evt->m_keys->FindKey(HASH("z"))->GetFloat()
 	};
 
+	// check if we are supposed to draw impact boxes.
+	if ( g_menu.main.visuals.impact_boxes.get(0) ) {
+		Color col = g_menu.main.visuals.impact_boxes_server.get();
+		float time = g_menu.main.visuals.impact_boxes_time.get();
+
+		g_csgo.m_debug_overlay->AddBoxOverlay( pos, vec3_t(-2, -2, -2), vec3_t(2, 2, 2), ang_t(0, 0, 0), col.r(), col.g(), col.b(), 127, time );
+	}
+
 	// get real time.
 	time = g_csgo.m_globals->m_realtime;
 

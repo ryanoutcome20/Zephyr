@@ -191,12 +191,16 @@ void Client::DoMove() {
 		g_movement.JumpRelated();
 		g_movement.Strafe();
 		g_movement.FakeWalk();
-		g_movement.AutoPeek();
 		g_movement.DuckDelay();
 	}
 
 	// backup strafe angles (we need them for input prediction)
 	m_strafe_angles = m_cmd->m_view_angles;
+
+	// run any strafe angle required movement code.
+	if ( m_movetype != MOVETYPE_NOCLIP && m_movetype != MOVETYPE_LADDER ) {
+		g_movement.AutoPeek( );
+	}
 
 	// predict input.
 	g_inputpred.run();

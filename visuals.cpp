@@ -256,6 +256,7 @@ void Visuals::think( ) {
 	// draw everything else.
 	SpreadCrosshair( );
 	StatusIndicators( );
+	AutopeekIndicator( );
 	Spectators( );
 	PenetrationCrosshair( );
 	Hitmarker( );
@@ -369,6 +370,18 @@ void Visuals::StatusIndicators( ) {
 		auto& indicator = indicators[ i ];
 
 		render::indicator.string( 20, g_cl.m_height - 80 - ( 30 * i ), indicator.color, indicator.text );
+	}
+}
+
+void Visuals::AutopeekIndicator( ) {
+	if ( !g_cl.m_processing )
+		return;
+
+	if ( !g_menu.main.visuals.autopeek_indicator.get() )
+		return;
+
+	if ( g_input.GetKeyState(g_menu.main.movement.autopeek.get()) ) {
+		render::sphere( g_movement.m_autopeek_origin, 5.f, 5.f, 1.f, g_menu.main.visuals.autopeek_color.get( ) );
 	}
 }
 
@@ -1378,6 +1391,27 @@ void Visuals::DrawHitboxMatrix( LagRecord* record, Color col, float time ) {
 			g_csgo.m_debug_overlay->AddCapsuleOverlay( mins, maxs, bbox->m_radius, col.r( ), col.g( ), col.b( ), col.a( ), time, 0, 0 );
 		}
 	}
+}
+
+void Visuals::DrawBulletImpacts( ) 	{
+	// handles drawing the clientside bullet impacts.
+	if( !g_cl.m_processing )
+		return;
+
+	auto impacts = g_cl.m_local->m_vecBulletVerifyListClient( );
+
+	if( g_menu.main.visuals.impact_boxes.get( 1 ) ) { 
+		Color col = g_menu.main.visuals.impact_boxes_client.get( );
+		float time = g_menu.main.visuals.impact_boxes_time.get( );
+
+		for ( int i = impacts.Count(); i > bullet_counter; i-- )
+		{
+			g_csgo.m_debug_overlay->AddBoxOverlay( impacts[ i - 1 ].vecPosition, vec3_t(-2, -2, -2), vec3_t(2, 2, 2), ang_t(0, 0, 0), col.r( ), col.g( ), col.b( ), 127, time );
+		}
+	}
+
+	if ( impacts.Count() != bullet_counter )
+		bullet_counter = impacts.Count();
 }
 
 void Visuals::DrawBeams( ) {

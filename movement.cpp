@@ -305,25 +305,43 @@ void Movement::FixMove( CUserCmd *cmd, const ang_t &wish_angles ) {
 }
 
 void Movement::AutoPeek( ) {
-	// set to invert if we press the button.
-	if( g_input.GetKeyState( g_menu.main.movement.autopeek.get( ) ) ) {
+	if( !g_cl.m_processing )
+		return;
+
+	if ( g_input.GetKeyState( g_menu.main.movement.autopeek.get( ) ) ) {
 		if( g_cl.m_old_shot )
-			m_invert = true;
+			m_autopeek_active = true;
 
-		vec3_t move{ g_cl.m_cmd->m_forward_move, g_cl.m_cmd->m_side_move, 0.f };
+		if ( m_autopeek_active ) {
+			// get origin delta.
+			vec3_t delta = g_cl.m_local->GetAbsOrigin() - m_autopeek_origin;
 
-		if( m_invert ) {
-			move *= -1.f;
-			g_cl.m_cmd->m_forward_move = move.x;
-			g_cl.m_cmd->m_side_move = move.y;
+			// get the active angle we need for auto peek.
+			ang_t ang;
+			math::VectorAngles( delta, ang );
+
+			// adjust our strafe angles.
+			g_cl.m_strafe_angles.y = ang.y;
+
+			// adjust our movement to force us to walk that direction.
+			g_cl.m_cmd->m_forward_move = -360.f;
+			g_cl.m_cmd->m_side_move = 0.f;
+
+			// reset our active status if we are close to the end.
+			if ( delta.length_2d() <= 15.f ) {
+				// stop about 15 units away, should be plenty enough for momentum to carry us into it.
+				m_autopeek_active = false;
+			}
 		}
+	} 
+	else { 
+		m_autopeek_active = false;
+		m_autopeek_origin = g_cl.m_local->GetAbsOrigin( );
 	}
 
-	else m_invert = false;
-
-	bool can_stop = g_menu.main.movement.autostop_always_on.get( ) || ( !g_menu.main.movement.autostop_always_on.get( ) && g_input.GetKeyState( g_menu.main.movement.autostop.get( ) ) );
-	if( ( g_input.GetKeyState( g_menu.main.movement.autopeek.get( ) ) || can_stop ) && g_aimbot.m_stop ) {
-		Movement::QuickStop( );
+	bool can_stop = g_menu.main.movement.autostop_always_on.get() || (!g_menu.main.movement.autostop_always_on.get() && g_input.GetKeyState(g_menu.main.movement.autostop.get()));
+	if ( (g_input.GetKeyState(g_menu.main.movement.autopeek.get()) || can_stop) && g_aimbot.m_stop ) {
+		Movement::QuickStop();
 	}
 }
 
