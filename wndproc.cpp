@@ -87,7 +87,8 @@ LRESULT WINAPI Hooks::WndProc( HWND wnd, uint32_t msg, WPARAM wp, LPARAM lp ) {
 			break;
 
 		default:
-			if( wp >= -1 && wp <= 255 ) { 
+			// I don't know how but I managed to get an isdigit crash here from an alt code?
+			if( wp >= -1 || wp <= 255 ) { 
 				char wpc = static_cast<char>(wp);
 			
 				if( std::isdigit( wpc ) ) {

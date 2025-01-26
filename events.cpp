@@ -84,6 +84,9 @@ void events::round_end( IGameEvent* evt ) {
 
 	else if( g_cl.m_local->m_iTeamNum( ) == TEAM_TERRORISTS && reason == CSRoundEndReason::T_WIN )
 		g_cl.m_round_end = true;
+
+	// reset our shots.
+	g_shots.m_shots.clear( );
 }
 
 void events::player_hurt( IGameEvent* evt ) {

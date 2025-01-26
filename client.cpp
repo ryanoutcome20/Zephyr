@@ -152,6 +152,9 @@ void Client::StartMove(CUserCmd* cmd) {
 
 	// ...
 	m_shot = false;
+
+	// run our shot handler.
+	g_shots.Think( );
 }
 
 void Client::BackupPlayers(bool restore) {

@@ -105,6 +105,9 @@ void Hooks::FrameStageNotify( Stage_t stage ) {
 				continue;
 
 			AimPlayer* data = &g_aimbot.m_players[ i - 1 ];
+			if( !data )
+				continue;
+
 			data->OnNetUpdate( player );
 		}
 	}
