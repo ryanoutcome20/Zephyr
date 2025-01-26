@@ -939,8 +939,8 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 	}
 
 	// clamp our minimums.
-	dmg = std::clamp( dmg, 0.f, (float)hp );
-	pendmg = std::clamp( dmg, 0.f, (float)hp );
+	dmg = std::fmin( dmg, (float)hp );
+	pendmg = std::fmin( dmg, (float)hp );
 
 	// write all data of this record l0l.
 	record->cache();
