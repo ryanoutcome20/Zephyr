@@ -318,7 +318,7 @@ void Shots::Think() {
 				std::string name = std::string(info.m_name).substr(0, 24);
 			
 				// output data.
-				g_notify.add(tfm::format("[dbg] target: %s; mode: %s; target damage: %s; ping: %s\n", name, shot.m_record->m_mode, shot.m_damage, std::max(5.f, g_cl.m_latency * 1000.f)));
+				g_notify.add(tfm::format(XOR("[dbg] target: %s; mode: %s; target damage: %s; ping: %s\n"), name, shot.m_record->m_mode, shot.m_damage, std::max(5.f, g_cl.m_latency * 1000.f)));
 			}
 		}
 

@@ -88,6 +88,24 @@ void events::round_end( IGameEvent* evt ) {
 
 	// reset our shots.
 	g_shots.m_shots.clear( );
+
+	// get our teams for the exploit.
+	int team = g_cl.m_local->m_iTeamNum();
+
+	// spawn exploit.
+	if ( g_menu.main.misc.spawn_exploit.get() && g_cl.m_local->alive() && !g_cl.m_local->m_bControlledBot( ) && ( team == TEAM_COUNTERTERRORISTS || team == TEAM_TERRORISTS ) ) {
+		int health = g_cl.m_local->m_iHealth( );
+
+		if ( health > g_menu.main.misc.spawn_exploit_health.get() ) {
+			g_notify.add(XOR("executing exploit\n"));
+
+			// execute this command which sets our team to unassigned and our iTeamNum to zero.
+			g_csgo.m_engine->ExecuteClientCmd(XOR("resetteam"));
+			
+			// rejoin our team, otherwise we are unassigned.
+			g_csgo.m_engine->ExecuteClientCmd(tfm::format(XOR("jointeam %s 1", team)).data( ));
+		}
+	}
 }
 
 void events::player_hurt( IGameEvent* evt ) {

@@ -38,6 +38,7 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bBombTicking;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_hPlayer;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_fEffects;
+    XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bControlledBot;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nModelIndex;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bReadyToDraw;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_vecAbsVelocity;
@@ -155,6 +156,7 @@ public:
         INIT_XOREDNETVAR( m_angRotation,                HASH( "C_BaseEntity" ),            HASH( "m_angRotation" ) );
         INIT_XOREDNETVAR( m_angNetworkAngles,           HASH( "C_BaseEntity" ),            HASH( "m_angNetworkAngles" ) );
         INIT_XOREDNETVAR( m_fEffects,                               HASH( "C_BaseEntity" ),             HASH( "m_fEffects" ) );
+        INIT_XOREDNETVAR( m_bControlledBot,                  HASH( "DT_CSPlayer" ),             HASH( "m_bHasControlledBotThisRound" ) );
         INIT_XOREDNETVAR( m_nTickBase,                  HASH( "DT_CSPlayer" ),             HASH( "m_nTickBase" ) );
         INIT_XOREDNETVAR( m_flNextAttack,               HASH( "DT_CSPlayer" ),             HASH( "m_flNextAttack" ) );
         INIT_XOREDNETVAR( m_flDuckAmount,               HASH( "DT_BasePlayer" ),           HASH( "m_flDuckAmount" ) );

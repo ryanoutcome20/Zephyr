@@ -2336,7 +2336,6 @@ public:
 	Checkbox    fake_latency_always;
 	Keybind       fake_latency;
 	Slider		  fake_latency_amt;
-
 	Colorpicker console_color;
 	Slider		   console_blend;
 
@@ -2347,6 +2346,9 @@ public:
 	Checkbox killfeed;
 	Checkbox clantag;
 	Edit			 clantag_text;
+	Checkbox	  spawn_exploit;
+	Slider		  spawn_exploit_health;
+
 public:
 	void init() {
 		SetTitle(XOR("misc"));
@@ -2465,6 +2467,12 @@ public:
 
 		clantag_text.setup("", XOR("clantag_text"), 16, false, XOR("zephyr"), true);
 		RegisterElement(&clantag_text, 1);
+
+		spawn_exploit.setup(XOR("spawn exploit"), XOR("spawn_exploit"));
+		RegisterElement(&spawn_exploit, 1);
+
+		spawn_exploit_health.setup(XOR("minimum health"), XOR("spawn_exploit_health"), 0.f, 100.f, true, 0, 50.f, 5.f);
+		RegisterElement(&spawn_exploit_health, 1);
 	}
 };
 

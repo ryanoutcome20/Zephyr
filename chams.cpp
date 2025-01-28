@@ -72,12 +72,12 @@ void Chams::init() {
 	m_overlays.resize( 5 );
 
 	// basic materials.
-	m_basic[ 0 ] = g_materials.Create( "debug/debugambientcube" );
-	m_basic[ 1 ] = g_materials.Create( "debug/debugdrawflat" );
-	m_basic[ 2 ] = g_materials.Create("models/props/de_dust/hr_dust/foliage/palm_bark_01");
+	m_basic[ 0 ] = g_materials.Create( XOR( "debug/debugambientcube" ) );
+	m_basic[ 1 ] = g_materials.Create( XOR( "debug/debugdrawflat" ) );
+	m_basic[ 2 ] = g_materials.Create( XOR( "models/props/de_dust/hr_dust/foliage/palm_bark_01" ) );
 
 	// overlay materials.
-	m_overlays[ 0 ] = g_materials.New("zephyr_blink", R"#( "VertexLitGeneric" 
+	m_overlays[ 0 ] = g_materials.New( XOR( "zephyr_blink" ), R"#( "VertexLitGeneric" 
 		{
 			"$additive"  "1"
 			"$color"     "[1 1 1]"
@@ -94,7 +94,7 @@ void Chams::init() {
 			}
 		})#");
 
-	m_overlays[ 1 ] = g_materials.New( "zephyr_glow", R"#( "VertexLitGeneric" 
+	m_overlays[ 1 ] = g_materials.New( XOR( "zephyr_glow" ), R"#( "VertexLitGeneric" 
 		{
 			"$additive" "1"
 			"$envmap" "models/effects/cube_white"
@@ -104,7 +104,7 @@ void Chams::init() {
 			"$alpha" "0.8"
 		})#");
 
-	m_overlays[ 2 ] = g_materials.New("zephyr_animated", R"#( "VertexLitGeneric" 
+	m_overlays[ 2 ] = g_materials.New( XOR( "zephyr_animated" ), R"#( "VertexLitGeneric" 
 		{
 			"$basetexture" "models/weapons/customization/paints/anodized_multi/smoke"
 			"$nofog" "1"
@@ -131,7 +131,7 @@ void Chams::init() {
 			}
 		})#");
 
-	m_overlays[ 3 ] = g_materials.New("zephyr_circles", R"#( "VertexLitGeneric" 
+	m_overlays[ 3 ] = g_materials.New( XOR( "zephyr_circles" ), R"#( "VertexLitGeneric" 
 		{
 			"$basetexture" "models/weapons/customization/paints/anodized_multi/gyrate_cz75"
 			"$nofog" "1"
@@ -158,7 +158,7 @@ void Chams::init() {
 			}
 		})#");
 
-	m_overlays[ 4 ] = g_materials.New("zephyr_liner", R"#( "VertexLitGeneric" 
+	m_overlays[ 4 ] = g_materials.New( XOR( "zephyr_liner" ), R"#( "VertexLitGeneric" 
 		{
 			"$basetexture" "models/weapons/customization/paints/hydrographic/liner"
 			"$nofog" "1"

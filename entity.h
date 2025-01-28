@@ -650,6 +650,10 @@ public:
 		return get< float >(g_csgo.LastBoneSetupTime);
 	}
 
+	__forceinline bool& m_bControlledBot() {
+		return get< bool >(g_entoffsets.m_bControlledBot);
+	}
+
 	__forceinline int& m_nTickBase() {
 		return get< int >(g_entoffsets.m_nTickBase);
 	}
