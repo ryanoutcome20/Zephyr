@@ -497,6 +497,7 @@ public:
 	Colorpicker   glow_friendly;
 	Colorpicker   glow_local;
 	Slider		     glow_blend;
+	Dropdown	 glow_style;
 	MultiDropdown skeleton;
 	Colorpicker   skeleton_enemy;
 	Colorpicker   skeleton_friendly;
@@ -682,6 +683,9 @@ public:
 		glow_blend.setup("", XOR("glow_blend"), 10.f, 100.f, false, 0, 60.f, 1.f, XOR(L"%"));
 		RegisterElement(&glow_blend);
 
+		glow_style.setup( XOR("glow style"), XOR("glow_style"), {  XOR("outline"), XOR("model"), XOR("inline"), XOR("pulse") });
+		RegisterElement(&glow_style);
+
 		skeleton.setup(XOR("skeleton"), XOR("skeleton"), { XOR("enemy"), XOR("friendly"), XOR("local") });
 		RegisterElement(&skeleton);
 
@@ -711,30 +715,37 @@ public:
 
 		chams_enemy_visible_material.setup(XOR("material"), XOR("chams_enemy_visible_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
 		chams_enemy_visible_material.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_visible_material.AddShowCallback(callbacks::IsChamsEnemyVisible);
 		RegisterElement(&chams_enemy_visible_material, 1);
 
 		chams_enemy_visible_color.setup(XOR("color"), XOR("chams_enemy_visible_color"), { 150, 200, 60 });
 		chams_enemy_visible_color.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_visible_color.AddShowCallback(callbacks::IsChamsEnemyVisible);
 		RegisterElement(&chams_enemy_visible_color, 1);
 
 		chams_enemy_visible_blend.setup("", XOR("chams_enemy_visible_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_enemy_visible_blend.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_visible_blend.AddShowCallback(callbacks::IsChamsEnemyVisible);
 		RegisterElement(&chams_enemy_visible_blend, 1);
 
 		chams_enemy_visible_overlay.setup(XOR("overlay"), XOR("chams_enemy_visible_overlay"));
 		chams_enemy_visible_overlay.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_visible_overlay.AddShowCallback(callbacks::IsChamsEnemyVisible);
 		RegisterElement(&chams_enemy_visible_overlay, 1);
 
 		chams_enemy_visible_overlay_material.setup(XOR("material"), XOR("chams_enemy_visible_overlay_material"), { XOR("pulse"), XOR("glow"), XOR("animation"), XOR("circle"), XOR("liner") });
 		chams_enemy_visible_overlay_material.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_visible_overlay_material.AddShowCallback(callbacks::IsChamsEnemyVisible);
 		RegisterElement(&chams_enemy_visible_overlay_material, 1);
 
 		chams_enemy_visible_overlay_color.setup(XOR("tint color"), XOR("chams_enemy_visible_overlay_color"), colors::white);
 		chams_enemy_visible_overlay_color.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_visible_overlay_color.AddShowCallback(callbacks::IsChamsEnemyVisible);
 		RegisterElement(&chams_enemy_visible_overlay_color, 1);
 
 		chams_enemy_visible_overlay_blend.setup("", XOR("chams_enemy_visible_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_enemy_visible_overlay_blend.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_visible_overlay_blend.AddShowCallback(callbacks::IsChamsEnemyVisible);
 		RegisterElement(&chams_enemy_visible_overlay_blend, 1);
 
 
@@ -744,14 +755,17 @@ public:
 
 		chams_enemy_invisible_material.setup(XOR("material"), XOR("chams_enemy_invisible_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
 		chams_enemy_invisible_material.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_invisible_material.AddShowCallback(callbacks::IsChamsEnemyInvisible);
 		RegisterElement(&chams_enemy_invisible_material, 1);
 
 		chams_enemy_invisible_color.setup(XOR("color"), XOR("chams_enemy_invisible_color"), { 150, 200, 60 });
 		chams_enemy_invisible_color.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_invisible_color.AddShowCallback(callbacks::IsChamsEnemyInvisible);
 		RegisterElement(&chams_enemy_invisible_color, 1);
 
 		chams_enemy_invisible_blend.setup("", XOR("chams_enemy_invisible_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_enemy_invisible_blend.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_invisible_blend.AddShowCallback(callbacks::IsChamsEnemyInvisible);
 		RegisterElement(&chams_enemy_invisible_blend, 1);
 
 
@@ -761,14 +775,17 @@ public:
 
 		chams_enemy_history_material.setup(XOR("material"), XOR("chams_enemy_history_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
 		chams_enemy_history_material.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_history_material.AddShowCallback(callbacks::IsChamsEnemyHistory);
 		RegisterElement(&chams_enemy_history_material, 1);
 
 		chams_enemy_history_color.setup(XOR("color"), XOR("chams_enemy_history_color"), { 150, 200, 60 });
 		chams_enemy_history_color.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_history_color.AddShowCallback(callbacks::IsChamsEnemyHistory);
 		RegisterElement(&chams_enemy_history_color, 1);
 
 		chams_enemy_history_blend.setup("", XOR("chams_enemy_history_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_enemy_history_blend.AddShowCallback(callbacks::IsChamsEnemy);
+		chams_enemy_history_blend.AddShowCallback(callbacks::IsChamsEnemyHistory);
 		RegisterElement(&chams_enemy_history_blend, 1);
 
 		// friendly subtab.
@@ -778,30 +795,37 @@ public:
 
 		chams_friendly_visible_material.setup(XOR("material"), XOR("chams_friendly_visible_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
 		chams_friendly_visible_material.AddShowCallback(callbacks::IsChamsFriendly);
+		chams_friendly_visible_material.AddShowCallback(callbacks::IsChamsFriendlyVisible);
 		RegisterElement(&chams_friendly_visible_material, 1);
 
 		chams_friendly_visible_color.setup(XOR("color"), XOR("chams_friendly_visible_color"), { 150, 200, 60 });
 		chams_friendly_visible_color.AddShowCallback(callbacks::IsChamsFriendly);
+		chams_friendly_visible_color.AddShowCallback(callbacks::IsChamsFriendlyVisible);
 		RegisterElement(&chams_friendly_visible_color, 1);
 
 		chams_friendly_visible_blend.setup("", XOR("chams_friendly_visible_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_friendly_visible_blend.AddShowCallback(callbacks::IsChamsFriendly);
+		chams_friendly_visible_blend.AddShowCallback(callbacks::IsChamsFriendlyVisible);
 		RegisterElement(&chams_friendly_visible_blend, 1);
 
 		chams_friendly_visible_overlay.setup(XOR("overlay"), XOR("chams_friendly_visible_overlay"));
 		chams_friendly_visible_overlay.AddShowCallback(callbacks::IsChamsFriendly);
+		chams_friendly_visible_overlay.AddShowCallback(callbacks::IsChamsFriendlyVisible);
 		RegisterElement(&chams_friendly_visible_overlay, 1);
 
 		chams_friendly_visible_overlay_material.setup(XOR("material"), XOR("chams_friendly_visible_overlay_material"), { XOR("pulse"), XOR("glow"), XOR("animation"), XOR("circle"), XOR("liner") });
 		chams_friendly_visible_overlay_material.AddShowCallback(callbacks::IsChamsFriendly);
+		chams_friendly_visible_overlay_material.AddShowCallback(callbacks::IsChamsFriendlyVisible);
 		RegisterElement(&chams_friendly_visible_overlay_material, 1);
 
 		chams_friendly_visible_overlay_color.setup(XOR("tint color"), XOR("chams_friendly_visible_overlay_color"), colors::white);
 		chams_friendly_visible_overlay_color.AddShowCallback(callbacks::IsChamsFriendly);
+		chams_friendly_visible_overlay_color.AddShowCallback(callbacks::IsChamsFriendlyVisible);
 		RegisterElement(&chams_friendly_visible_overlay_color, 1);
 
 		chams_friendly_visible_overlay_blend.setup("", XOR("chams_friendly_visible_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_friendly_visible_overlay_blend.AddShowCallback(callbacks::IsChamsFriendly);
+		chams_friendly_visible_overlay_blend.AddShowCallback(callbacks::IsChamsFriendlyVisible);
 		RegisterElement(&chams_friendly_visible_overlay_blend, 1);
 
 
@@ -811,14 +835,17 @@ public:
 
 		chams_friendly_invisible_material.setup(XOR("material"), XOR("chams_friendly_invisible_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
 		chams_friendly_invisible_material.AddShowCallback(callbacks::IsChamsFriendly);
+		chams_friendly_invisible_material.AddShowCallback(callbacks::IsChamsFriendlyInvisible);
 		RegisterElement(&chams_friendly_invisible_material, 1);
 
 		chams_friendly_invisible_color.setup(XOR("color"), XOR("chams_friendly_invisible_color"), { 150, 200, 60 });
 		chams_friendly_invisible_color.AddShowCallback(callbacks::IsChamsFriendly);
+		chams_friendly_invisible_color.AddShowCallback(callbacks::IsChamsFriendlyInvisible);
 		RegisterElement(&chams_friendly_invisible_color, 1);
 
 		chams_friendly_invisible_blend.setup("", XOR("chams_friendly_invisible_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_friendly_invisible_blend.AddShowCallback(callbacks::IsChamsFriendly);
+		chams_friendly_invisible_blend.AddShowCallback(callbacks::IsChamsFriendlyInvisible);
 		RegisterElement(&chams_friendly_invisible_blend, 1);
 
 		// local subtab.
@@ -828,34 +855,42 @@ public:
 
 		chams_local_real_material.setup(XOR("material"), XOR("chams_local_real_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
 		chams_local_real_material.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_real_material.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_material, 1);
 
 		chams_local_real_color.setup(XOR("color"), XOR("chams_local_real_color"), { 150, 200, 60 });
 		chams_local_real_color.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_real_color.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_color, 1);
 
 		chams_local_real_blend.setup("", XOR("chams_local_real_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_local_real_blend.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_real_blend.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_blend, 1);
 
 		chams_local_real_overlay.setup(XOR("real overlay"), XOR("chams_local_real_overlay"));
 		chams_local_real_overlay.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_real_overlay.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_overlay, 1);
 
 		chams_local_real_overlay_material.setup(XOR("material"), XOR("chams_local_real_overlay_material"), { XOR("pulse"), XOR("glow"), XOR("animation"), XOR("circle"), XOR("liner") });
 		chams_local_real_overlay_material.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_real_overlay_material.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_overlay_material, 1);
 
 		chams_local_real_overlay_color.setup(XOR("tint color"), XOR("chams_local_real_overlay_color"), colors::white);
 		chams_local_real_overlay_color.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_real_overlay_color.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_overlay_color, 1);
 
 		chams_local_real_overlay_blend.setup("", XOR("chams_local_real_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_local_real_overlay_blend.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_real_overlay_blend.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_overlay_blend, 1);
 
 		chams_local_real_blend_scope.setup(XOR("blend when scoped"), XOR("chams_local_real_blend_scope"));
 		chams_local_real_blend_scope.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_real_blend_scope.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_blend_scope, 1);
 
 
@@ -865,30 +900,37 @@ public:
 
 		chams_local_fake_material.setup(XOR("material"), XOR("chams_local_fake_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
 		chams_local_fake_material.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_fake_material.AddShowCallback(callbacks::IsChamsLocalFake);
 		RegisterElement(&chams_local_fake_material, 1);
 
 		chams_local_fake_color.setup(XOR("color"), XOR("chams_local_fake_color"), { 150, 200, 60 });
 		chams_local_fake_color.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_fake_color.AddShowCallback(callbacks::IsChamsLocalFake);
 		RegisterElement(&chams_local_fake_color, 1);
 
 		chams_local_fake_blend.setup("", XOR("chams_local_fake_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_local_fake_blend.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_fake_blend.AddShowCallback(callbacks::IsChamsLocalFake);
 		RegisterElement(&chams_local_fake_blend, 1);
 	
 		chams_local_fake_overlay.setup(XOR("fake overlay"), XOR("chams_local_fake_overlay"));
 		chams_local_fake_overlay.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_fake_overlay.AddShowCallback(callbacks::IsChamsLocalFake);
 		RegisterElement(&chams_local_fake_overlay, 1);
 
 		chams_local_fake_overlay_material.setup(XOR("material"), XOR("chams_local_fake_overlay_material"), { XOR("pulse"), XOR("glow"), XOR("animation"), XOR("circle"), XOR("liner") });
 		chams_local_fake_overlay_material.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_fake_overlay_material.AddShowCallback(callbacks::IsChamsLocalFake);
 		RegisterElement(&chams_local_fake_overlay_material, 1);
 
 		chams_local_fake_overlay_color.setup(XOR("tint color"), XOR("chams_local_fake_overlay_color"), colors::white);
 		chams_local_fake_overlay_color.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_fake_overlay_color.AddShowCallback(callbacks::IsChamsLocalFake);
 		RegisterElement(&chams_local_fake_overlay_color, 1);
 
 		chams_local_fake_overlay_blend.setup("", XOR("chams_local_fake_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_local_fake_overlay_blend.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_fake_overlay_blend.AddShowCallback(callbacks::IsChamsLocalFake);
 		RegisterElement(&chams_local_fake_overlay_blend, 1);
 	}
 };

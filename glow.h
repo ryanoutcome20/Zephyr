@@ -15,7 +15,7 @@ struct GlowObjectDefinition_t {
 	bool   m_render_full_bloom;
 	PAD( 0x1 );
 	int    m_full_bloom_stencil;
-	PAD( 0x4 );
+	int    m_render_style;
 	int    m_slot;
 	int    m_next_free_slot;
 };

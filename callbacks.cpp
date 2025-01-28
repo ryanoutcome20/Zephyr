@@ -202,12 +202,40 @@ bool callbacks::IsChamsEnemy( ) {
 	return g_menu.main.players.chams_selection.get( ) == 0;
 }
 
+bool callbacks::IsChamsEnemyVisible( ) {
+	return g_menu.main.players.chams_enemy_visible.get( );
+}
+
+bool callbacks::IsChamsEnemyInvisible() {
+	return g_menu.main.players.chams_enemy_invisible.get();
+}
+
+bool callbacks::IsChamsEnemyHistory() {
+	return g_menu.main.players.chams_enemy_history.get();
+}
+
 bool callbacks::IsChamsFriendly( ) {
 	return g_menu.main.players.chams_selection.get() == 1;
 }
 
+bool callbacks::IsChamsFriendlyVisible() {
+	return g_menu.main.players.chams_friendly_visible.get();
+}
+
+bool callbacks::IsChamsFriendlyInvisible() {
+	return g_menu.main.players.chams_friendly_invisible.get();
+}
+
 bool callbacks::IsChamsLocal( ) {
 	return g_menu.main.players.chams_selection.get() == 2;
+}
+
+bool callbacks::IsChamsLocalReal() {
+	return g_menu.main.players.chams_local_real.get();
+}
+
+bool callbacks::IsChamsLocalFake() {
+	return g_menu.main.players.chams_local_fake.get();
 }
 
 bool callbacks::IsBoxEnemy( ) {

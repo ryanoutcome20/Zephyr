@@ -50,8 +50,15 @@ namespace callbacks {
 	bool IsFakeLagOn( );
 	
 	bool IsChamsEnemy( );
+	bool IsChamsEnemyVisible( );
+	bool IsChamsEnemyInvisible( );
+	bool IsChamsEnemyHistory( );
 	bool IsChamsFriendly( );
+	bool IsChamsFriendlyVisible( );
+	bool IsChamsFriendlyInvisible( );
 	bool IsChamsLocal( );
+	bool IsChamsLocalReal( );
+	bool IsChamsLocalFake( );
 
 	bool IsBoxEnemy( );
 	bool IsBoxFriendly( );

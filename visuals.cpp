@@ -1307,6 +1307,7 @@ void Visuals::RenderGlow( ) {
 		return;
 
 	float blend = g_menu.main.players.glow_blend.get( ) / 100.f;
+	int style = g_menu.main.players.glow_style.get( );
 
 	for( int i{ }; i < g_csgo.m_glow->m_object_definitions.Count( ); ++i ) {
 		GlowObjectDefinition_t* obj = &g_csgo.m_glow->m_object_definitions[ i ];
@@ -1347,6 +1348,7 @@ void Visuals::RenderGlow( ) {
 		else
 			color = g_menu.main.players.glow_friendly.get( );
 
+		obj->m_render_style = style;
 		obj->m_render_occluded = true;
 		obj->m_render_unoccluded = false;
 		obj->m_render_full_bloom = false;
