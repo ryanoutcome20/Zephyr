@@ -172,11 +172,33 @@ public:
 	}
 };
 
+class IMaterialVar {
+public:
+	enum indices : size_t {
+		SETFLOATVALUE = 3,
+		SETINTVALUE = 4,
+		SETVECVALUE = 11,
+	};
+
+	__forceinline void SetFloatValue( float value ) {
+		return util::get_method< void(__thiscall*)(void*, float)  >(this, SETFLOATVALUE)(this, value);
+	}
+
+	__forceinline void SetIntValue( int value ) {
+		return util::get_method< void(__thiscall*)(void*, int)  >(this, SETINTVALUE)(this, value);
+	}
+
+	__forceinline void SetVecValue( float x, float y, float z ) {
+		return util::get_method< void(__thiscall*)(void*, float, float, float)  >(this, SETVECVALUE)(this, x, y, z);
+	}
+};
+
 class IMaterial {
 public:
 	enum indices : size_t {
 		GETNAME                 = 0,
 		GETTEXTUREGROUPNAME     = 1,
+		FINDVAR									= 11,
 		INCREMENTREFERENCECOUNT = 12,
 		ALPHAMODULATE           = 27,
 		COLORMODULATE           = 28,
@@ -190,6 +212,10 @@ public:
 
 	__forceinline const char* GetTextureGroupName( ) {
 		return util::get_method< const char* ( __thiscall* )( void* ) >( this, GETTEXTUREGROUPNAME )( this );
+	}
+
+	__forceinline IMaterialVar* FindVar( const char* name, bool* found, bool complain ) {
+		return util::get_method< IMaterialVar* (__thiscall*)( IMaterial*, const char*, bool*, bool ) >( this, FINDVAR )( this, name, found, complain );
 	}
 
 	__forceinline void IncrementReferenceCount( ) {

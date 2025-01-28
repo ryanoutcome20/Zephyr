@@ -128,6 +128,37 @@ void render::sphere( vec3_t origin, float radius, float angle, float scale, Colo
 	}
 }
 
+void render::worldcircle( vec3_t origin, float radius, float angle, float scale, Color color ) {
+	std::vector< Vertex > vertices{};
+
+	// compute angle step for input radius and precision.
+	float step = (1.f / radius) + math::deg_to_rad(angle);
+
+	// reset.
+	vertices.clear();
+
+	for ( float lon{}; lon < math::pi_2; lon += step ) {
+		vec3_t point{
+			origin.x + (radius * math::sin_1 * std::cos(lon)),
+			origin.y + (radius * math::sin_1 * std::sin(lon)),
+			origin.z + (radius * math::cos_1 - (radius / 2))
+		};
+
+		vec2_t screen;
+		if ( WorldToScreen(point, screen) )
+			vertices.emplace_back(screen);
+	}
+
+	static int texture = g_csgo.m_surface->CreateNewTextureID(false);
+
+	if ( !texture )
+		return;
+
+	g_csgo.m_surface->DrawSetTextureRGBA(texture, &colors::white, 1, 1);
+	g_csgo.m_surface->DrawSetColor(color);
+	g_csgo.m_surface->DrawTexturedPolyLine(vertices.size(), vertices.data());
+}
+
 Vertex render::RotateVertex( const vec2_t& p, const Vertex& v, float angle ) {
 	// convert theta angle to sine and cosine representations.
 	float c = std::cos( math::deg_to_rad( angle ) );

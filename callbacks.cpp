@@ -314,6 +314,14 @@ bool callbacks::IsProjectileOn( ) {
 	return g_menu.main.visuals.proj.get( );
 }
 
+bool callbacks::IsProjectileSphereOn( ) {
+	return !g_menu.main.visuals.proj_sphere.GetActiveIndices( ).empty( );
+}
+
+bool callbacks::IsProjectileGroundOn() {
+	return !g_menu.main.visuals.proj_ground.GetActiveIndices().empty();
+}
+
 bool callbacks::IsAutopeekVisualizeOn( ) {
 	return g_menu.main.visuals.autopeek_indicator.get( );
 }

@@ -2,8 +2,12 @@
 
 namespace math {
     // pi constants.
-    constexpr float pi   = 3.1415926535897932384f; // pi
-    constexpr float pi_2 = pi * 2.f;               // pi * 2
+    constexpr float pi      = 3.1415926535897932384f; // pi
+    constexpr float pi_2  = pi * 2.f;               // pi * 2
+    
+    // expression constants.
+    const float sin_1 = std::sin( 1 );
+    const float cos_1 = std::cos( 1 );
 
     // degrees to radians.
     __forceinline constexpr float deg_to_rad( float val ) {

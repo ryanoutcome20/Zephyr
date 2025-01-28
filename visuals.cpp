@@ -403,7 +403,7 @@ void Visuals::AutopeekIndicator( ) {
 		return;
 
 	if ( g_input.GetKeyState(g_menu.main.movement.autopeek.get()) ) {
-		render::sphere( g_movement.m_autopeek_origin, 5.f, 5.f, 1.f, g_menu.main.visuals.autopeek_color.get( ) );
+		render::worldcircle( g_movement.m_autopeek_origin, 15.f, 5.f, 1.f, g_menu.main.visuals.autopeek_color.get( ) );
 	}
 }
 
@@ -521,10 +521,9 @@ void Visuals::DrawProjectile( Weapon* ent ) {
 				render::esp_small.string( screen.x, screen.y, col, XOR( "FLASH" ), render::ALIGN_CENTER );
 
 			else if( name.find( XOR( "fraggrenade" ) ) != std::string::npos ) {
-
 				// grenade range.
-				if( g_menu.main.visuals.proj_range.get( 0 ) )
-					render::sphere( origin, 350.f, 5.f, 1.f, g_menu.main.visuals.proj_range_color.get( ) );
+				if( g_menu.main.visuals.proj_sphere.get( 0 ) )
+					render::sphere( origin, 350.f, 5.f, 1.f, g_menu.main.visuals.proj_sphere_color.get( ) );
 
 				render::esp_small.string( screen.x, screen.y, col, XOR( "FRAG" ), render::ALIGN_CENTER );
 			}
@@ -534,14 +533,23 @@ void Visuals::DrawProjectile( Weapon* ent ) {
 	// find classes.
 	else if( ent->is( HASH( "CInferno" ) ) ) {
 		// fire range.
-		if( g_menu.main.visuals.proj_range.get( 1 ) )
-			render::sphere( origin, 150.f, 5.f, 1.f, g_menu.main.visuals.proj_range_color.get( ) );
+		if( g_menu.main.visuals.proj_sphere.get( 1 ) )
+			render::sphere( origin, 150.f, 5.f, 1.f, g_menu.main.visuals.proj_sphere_color.get( ) );
+
+		// fire ground.
+		if( g_menu.main.visuals.proj_ground.get( 1 ) )
+			render::worldcircle( origin, 150.f, 5.f, 1.f, g_menu.main.visuals.proj_ground_color.get( ) );
 
 		render::esp_small.string( screen.x, screen.y, col, XOR( "FIRE" ), render::ALIGN_CENTER );
 	}
 
-	else if( ent->is( HASH( "CSmokeGrenadeProjectile" ) ) )
+	else if( ent->is( HASH( "CSmokeGrenadeProjectile" ) ) ) { 
+		// smoke ground.
+		if ( ent->m_nSmokeEffectTickBegin( ) && g_menu.main.visuals.proj_ground.get( 0 ) )
+			render::worldcircle( origin, 175.f, 5.f, 1.f, g_menu.main.visuals.proj_ground_color.get( ) );
+
 		render::esp_small.string( screen.x, screen.y, col, XOR( "SMOKE" ), render::ALIGN_CENTER );
+	}
 }
 
 void Visuals::DrawItem( Weapon* item ) {

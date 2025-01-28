@@ -6,8 +6,8 @@ IMaterial* Materials::Get( std::string material ) {
 	hash32_t hash = FNV1a::get( material );
 	
 	// check if we've already looked for this one.
-	if( cache[ hash ] )
-		return cache[ hash ];
+	if( m_cache[ hash ] )
+		return m_cache[ hash ];
 
 	// iterate material handles.
 	for ( uint16_t h{ g_csgo.m_material_system->FirstMaterial() }; h != g_csgo.m_material_system->InvalidMaterial(); h = g_csgo.m_material_system->NextMaterial(h) ) {
@@ -18,7 +18,7 @@ IMaterial* Materials::Get( std::string material ) {
 
 		// compare hashes with name and return if equal.
 		if ( FNV1a::get(target->GetName()) == hash ) {
-			cache[ hash ] = target;
+			m_cache[ hash ] = target;
 			return target;
 		}
 	}
@@ -68,6 +68,40 @@ std::vector<IMaterial*> Materials::GetGroup(std::string group) {
 	return final;
 }
 
+IMaterial* Materials::Create( const char* name, char* type ) {
+	IMaterial* mat = g_csgo.m_material_system->FindMaterial( name, type );
+	
+	if( !mat )
+		return nullptr;
+
+	// increment games index handler.
+	mat->IncrementReferenceCount( );
+
+	// return our new material.
+	return mat;
+}
+
+IMaterial* Materials::New( const char* vmt, const char* shader ) {
+	// create path.
+	std::filesystem::path path = m_base / (std::string(vmt) + ".vmt");
+
+	// open our write stream.
+	std::ofstream stream{ path };
+
+	// file can't be opened.
+	if ( !stream )
+		return nullptr; 
+
+	// write shader.
+	stream << shader;
+
+	// close stream so the game can read the file.
+	stream.close( );
+
+	// stream will automatically deconstruct when it goes out of scope.
+	return Create( vmt  );
+}
+
 void Materials::Modulate( std::vector< IMaterial* > materials, Color color, bool reset ) {
 	for ( const auto& material : materials ) {
 		// we are resetting our colors, set back to non modulated.
@@ -82,4 +116,3 @@ void Materials::Modulate( std::vector< IMaterial* > materials, Color color, bool
 		material->ColorModulate(color.r( ) / 255.f, color.g( ) / 255.f, color.b( ) / 255.f);
 	}
 }
-

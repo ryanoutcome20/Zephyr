@@ -3,26 +3,7 @@
 Chams g_chams{ };;
 
 Chams::model_type_t Chams::GetModelType(const ModelRenderInfo_t& info) {
-	// model name.
-	//const char* mdl = info.m_model->m_name;
-
 	std::string mdl{ info.m_model->m_name };
-
-	//static auto int_from_chars = [ mdl ]( size_t index ) {
-	//	return *( int* )( mdl + index );
-	//};
-
-	// little endian.
-	//if( int_from_chars( 7 ) == 'paew' ) { // weap
-	//	if( int_from_chars( 15 ) == 'om_v' && int_from_chars( 19 ) == 'sled' )
-	//		return model_type_t::arms;
-	//
-	//	if( mdl[ 15 ] == 'v' )
-	//		return model_type_t::view_weapon;
-	//}
-
-	//else if( int_from_chars( 7 ) == 'yalp' ) // play
-	//	return model_type_t::player;
 
 	if (mdl.find(XOR("player")) != std::string::npos && info.m_index >= 1 && info.m_index <= 64)
 		return model_type_t::player;
@@ -56,7 +37,7 @@ void Chams::SetAlpha(float alpha, IMaterial* mat) {
 		g_csgo.m_render_view->SetBlend(alpha);
 }
 
-void Chams::SetupMaterial(IMaterial* mat, Color col, bool z_flag) {
+void Chams::SetupMaterialData(IMaterial* mat, Color col, bool z_flag) {
 	SetColor(col);
 
 	// mat->SetFlag( MATERIAL_VAR_HALFLAMBERT, flags );
@@ -67,13 +48,142 @@ void Chams::SetupMaterial(IMaterial* mat, Color col, bool z_flag) {
 	g_csgo.m_studio_render->ForcedMaterialOverride(mat);
 }
 
-void Chams::init() {
-	// find stupid materials.
-	debugambientcube = g_csgo.m_material_system->FindMaterial(XOR("debug/debugambientcube"), XOR("Model textures"));
-	debugambientcube->IncrementReferenceCount();
+void Chams::SetupMaterial(int index, Color col, int blend, bool z) {
+	// get material from index.
+	IMaterial* material = m_basic[ index ];
 
-	debugdrawflat = g_csgo.m_material_system->FindMaterial(XOR("debug/debugdrawflat"), XOR("Model textures"));
-	debugdrawflat->IncrementReferenceCount();
+	if( !material ) {
+		init( );
+		return;
+	}
+
+	// override blend.
+	SetAlpha( blend / 100.f );
+
+	// set material and color.
+	SetupMaterialData( material, col, z );
+}
+
+void Chams::init() {
+	// generate our materials.
+	// order matters here, see the material handler for how these are generated. this allows us
+	// to avoid having a function that litterally just has a big switch statement.
+	m_basic.resize( 3 );
+	m_overlays.resize( 5 );
+
+	// basic materials.
+	m_basic[ 0 ] = g_materials.Create( "debug/debugambientcube" );
+	m_basic[ 1 ] = g_materials.Create( "debug/debugdrawflat" );
+	m_basic[ 2 ] = g_materials.Create("models/props/de_dust/hr_dust/foliage/palm_bark_01");
+
+	// overlay materials.
+	m_overlays[ 0 ] = g_materials.New("zephyr_blink", R"#( "VertexLitGeneric" 
+		{
+			"$additive"  "1"
+			"$color"     "[1 1 1]"
+	
+			"Proxies"
+			{
+				"Sine"
+				{
+					"sineperiod"    0.8
+					"sinemin"		0
+					"sinemax"		5
+					"resultvar"     "$color"
+				}
+			}
+		})#");
+
+	m_overlays[ 1 ] = g_materials.New( "zephyr_glow", R"#( "VertexLitGeneric" 
+		{
+			"$additive" "1"
+			"$envmap" "models/effects/cube_white"
+			"$envmaptint" "[1 1 1]"
+			"$envmapfresnel" "1"
+			"$envmapfresnelminmaxexp" "[0 1 2]"
+			"$alpha" "0.8"
+		})#");
+
+	m_overlays[ 2 ] = g_materials.New("zephyr_animated", R"#( "VertexLitGeneric" 
+		{
+			"$basetexture" "models/weapons/customization/paints/anodized_multi/smoke"
+			"$nofog" "1"
+			"$envmap" "env_cubemap"
+			"$envmaptint" "[1 1 1]"
+			"$phong" "1"
+			"$basemapalphaphongmask" "1"
+			"$phongboost" "0"
+			"$rimlight" "1"
+			"$phongtint" "[1 1 1]"
+			"$rimlightexponent" "10"
+			"$rimlightboost" "0"
+			"$selfillum" "1"
+			"$ignorez" "0"
+			
+			"Proxies"
+			{
+				"TextureScroll"
+				{
+					"textureScrollVar" "$BasetextureTransform"
+					"textureScrollRate" "0.8"
+					"textureScrollAngle" "60.0"
+				}
+			}
+		})#");
+
+	m_overlays[ 3 ] = g_materials.New("zephyr_circles", R"#( "VertexLitGeneric" 
+		{
+			"$basetexture" "models/weapons/customization/paints/anodized_multi/gyrate_cz75"
+			"$nofog" "1"
+			"$envmap" "env_cubemap"
+			"$envmaptint" "[1 1 1]"
+			"$phong" "1"
+			"$basemapalphaphongmask" "1"
+			"$phongboost" "0"
+			"$rimlight" "1"
+			"$phongtint" "[1 1 1]"
+			"$rimlightexponent" "10"
+			"$rimlightboost" "0"
+			"$selfillum" "1"
+			"$ignorez" "0"
+			
+			"Proxies"
+			{
+				"TextureScroll"
+				{
+					"textureScrollVar" "$BasetextureTransform"
+					"textureScrollRate" "0.5"
+					"textureScrollAngle" "45.0"
+				}
+			}
+		})#");
+
+	m_overlays[ 4 ] = g_materials.New("zephyr_liner", R"#( "VertexLitGeneric" 
+		{
+			"$basetexture" "models/weapons/customization/paints/hydrographic/liner"
+			"$nofog" "1"
+			"$envmap" "env_cubemap"
+			"$envmaptint" "[1 1 1]"
+			"$phong" "1"
+			"$basemapalphaphongmask" "1"
+			"$phongboost" "0"
+			"$rimlight" "1"
+			"$phongtint" "[1 1 1]"
+			"$rimlightexponent" "10"
+			"$rimlightboost" "0"
+			"$selfillum" "1"
+			"$ignorez" "0"
+			
+			"Proxies"
+			{
+				"TextureScroll"
+				{
+					"textureScrollVar" "$BasetextureTransform"
+					"textureScrollRate" "0.5"
+					"textureScrollAngle" "0.0"
+				}
+			}
+		})#");
 }
 
 bool Chams::OverridePlayer(int index) {
@@ -92,11 +202,11 @@ bool Chams::OverridePlayer(int index) {
 	bool enemy = g_cl.m_local && player->enemy(g_cl.m_local);
 
 	// we have chams on enemies.
-	if (enemy && g_menu.main.players.chams_enemy.get(0))
+	if (enemy && g_menu.main.players.chams_enemy_visible.get( ))
 		return true;
 
 	// we have chams on friendly.
-	else if (!enemy && g_menu.main.players.chams_friendly.get(0))
+	else if (!enemy && g_menu.main.players.chams_friendly_visible.get( ))
 		return true;
 
 	return false;
@@ -199,11 +309,8 @@ void Chams::RenderHistoryChams(int index) {
 		if (!record)
 			return;
 
-		// override blend.
-		SetAlpha(g_menu.main.players.chams_enemy_history_blend.get() / 100.f);
-
-		// set material and color.
-		SetupMaterial(debugdrawflat, g_menu.main.players.chams_enemy_history_col.get(), true);
+		// load material.
+		SetupMaterial( g_menu.main.players.chams_enemy_history_material.get( ), g_menu.main.players.chams_enemy_history_color.get( ), g_menu.main.players.chams_enemy_history_blend.get( ), true );
 
 		// was the matrix properly setup?
 		BoneArray arr[128];
@@ -223,52 +330,67 @@ void Chams::RenderHistoryChams(int index) {
 	}
 }
 
-void Chams::RenderChams(Player* player) {
+void Chams::RenderOverlay( Player* player, Color col, int blend, int index ) {
+	// get material.
+	IMaterial* material = m_overlays.at( index );
 
-	if (!player->m_bIsLocalPlayer())
-		return;
-
-	if (g_menu.main.players.chams_local_scope.get() && player->m_bIsScoped())
-	{
-		SetAlpha(0.5f);
+	if ( index == 1 ) {
+		material->FindVar( "$envmaptint", nullptr, false )->SetVecValue( col.r( ) / 255.f, col.g( ) / 255.f, col.b( ) / 255.f );
 	}
-	else
-		// override blend.
-		SetAlpha(g_menu.main.players.chams_local_blend.get() / 100.f);
 
+	// override blend.
+	SetAlpha( blend / 100.f );
 
 	// set material and color.
-	SetupMaterial(debugambientcube, g_menu.main.players.chams_local_col.get(), false);
+	SetupMaterialData( material, col, false );
 
-	// manually draw the model.
-	player->DrawModel();
-
+	// render player.
+	player->DrawModel( );
 }
 
+void Chams::RenderChams(Player* player) {
+	// only draw the localplayer without chams.
+	if( g_menu.main.players.chams_local_real_blend_scope.get( )  && player->m_bIsScoped() ) { 
+		SetAlpha(0.5f);
 
+		player->DrawModel( );
+
+		return;
+	}
+
+	// check if we are enabled.
+	if( g_menu.main.players.chams_local_real.get( ) ) {
+		// set material and color.
+		SetupMaterial( g_menu.main.players.chams_local_real_material.get( ), g_menu.main.players.chams_local_real_color.get( ), g_menu.main.players.chams_local_real_blend.get( ), false );
+	}
+
+	// draw our regular model.
+	player->DrawModel( );
+
+	// draw our overlay if needed.
+	if( g_menu.main.players.chams_local_real_overlay.get( ) )
+		RenderOverlay( player, g_menu.main.players.chams_local_real_overlay_color.get( ), g_menu.main.players.chams_local_real_overlay_blend.get( ), g_menu.main.players.chams_local_real_overlay_material.get( ) );
+
+	// draw ghost chams.
+	RenderGhostChams(player);
+}
 
 void Chams::RenderGhostChams(Player* player) {
-
-	if (!player->m_bIsLocalPlayer())
-		return;
-
-	if (g_menu.main.players.chams_local_scope.get() && player->m_bIsScoped())
-	{
-		SetAlpha(0.5f);
-	}
-	else
-		// override blend.
-		SetAlpha(g_menu.main.players.chams_local_ghost_blend.get() / 100.f);
-
-
-	// set material and color.
-	SetupMaterial(debugambientcube, g_menu.main.players.chams_local_ghost_col.get(), false);
-
+	// set our angles. radar is an easy way of tracking our fake.
 	g_cl.SetAngles2(ang_t(0.f, g_cl.m_radar.y, 0.f));
-	player->DrawModel();
 
+	if ( g_menu.main.players.chams_local_fake.get() ) {
+		// set material and color.
+		SetupMaterial( g_menu.main.players.chams_local_fake_material.get( ), g_menu.main.players.chams_local_fake_color.get( ), g_menu.main.players.chams_local_fake_blend.get( ), false );
+
+		// draw our model.
+		player->DrawModel();
+	}
+
+	// draw our overlay if needed.
+	if ( g_menu.main.players.chams_local_fake_overlay.get() )
+		RenderOverlay(player, g_menu.main.players.chams_local_fake_overlay_color.get(), g_menu.main.players.chams_local_fake_overlay_blend.get(), g_menu.main.players.chams_local_fake_overlay_material.get());
 }
-
 
 bool Chams::DrawModel(uintptr_t ctx, const DrawModelState_t& state, const ModelRenderInfo_t& info, matrix3x4_t* bone) {
 	// store and validate model type.
@@ -309,51 +431,56 @@ void Chams::RenderPlayer(Player* player) {
 	g_csgo.m_studio_render->ForcedMaterialOverride(nullptr);
 	g_csgo.m_render_view->SetColorModulation(colors::white);
 	g_csgo.m_render_view->SetBlend(1.f);
-	player->DrawModel();
 
-
-	if (g_menu.main.players.chams_local.get(0))
+	// render local chams.
+	if( player->m_bIsLocalPlayer( ) ) {
 		RenderChams(player);
-
-	if (g_menu.main.players.chams_local.get(1))
-		RenderGhostChams(player);
-
+		m_running = false;
+		return;
+	}
 
 	// check if is an enemy.
 	bool enemy = g_cl.m_local && player->enemy(g_cl.m_local);
 
-	if (enemy && g_menu.main.players.chams_enemy_history.get()) {
-		RenderHistoryChams(player->index());
-	}
+	// enemy chams.
+	if (enemy ) {
+		if( g_menu.main.players.chams_enemy_history.get( ) )
+			RenderHistoryChams(player->index());
 
-	if (enemy && g_menu.main.players.chams_enemy.get(0)) {
-		if (g_menu.main.players.chams_enemy.get(1)) {
+		if ( g_menu.main.players.chams_enemy_visible.get( )) {
+			if (g_menu.main.players.chams_enemy_invisible.get( )) {
+				SetupMaterial(g_menu.main.players.chams_enemy_invisible_material.get(), g_menu.main.players.chams_enemy_invisible_color.get(), g_menu.main.players.chams_enemy_invisible_blend.get(), true);
 
-			SetAlpha(g_menu.main.players.chams_enemy_invis_blend.get() / 100.f);
-			SetupMaterial(debugambientcube, g_menu.main.players.chams_enemy_invis.get(), true);
+				player->DrawModel();
+			}
 
-			player->DrawModel();
-		}
-
-		SetAlpha(g_menu.main.players.chams_enemy_vis_blend.get() / 100.f);
-		SetupMaterial(debugambientcube, g_menu.main.players.chams_enemy_vis.get(), false);
-
-		player->DrawModel();
-	}
-
-	else if (!enemy && g_menu.main.players.chams_friendly.get(0) && !player->m_bIsLocalPlayer()) {
-		if (g_menu.main.players.chams_friendly.get(1)) {
-
-			SetAlpha(g_menu.main.players.chams_friendly_invis_blend.get() / 100.f);
-			SetupMaterial(debugambientcube, g_menu.main.players.chams_friendly_invis.get(), true);
+			SetupMaterial(g_menu.main.players.chams_enemy_visible_material.get(), g_menu.main.players.chams_enemy_visible_color.get(), g_menu.main.players.chams_enemy_visible_blend.get(), false);
 
 			player->DrawModel();
 		}
 
-		SetAlpha(g_menu.main.players.chams_friendly_vis_blend.get() / 100.f);
-		SetupMaterial(debugambientcube, g_menu.main.players.chams_friendly_vis.get(), false);
+		// draw our overlay if needed.
+		if ( g_menu.main.players.chams_enemy_visible_overlay.get() )
+			RenderOverlay(player, g_menu.main.players.chams_enemy_visible_overlay_color.get(), g_menu.main.players.chams_enemy_visible_overlay_blend.get(), g_menu.main.players.chams_enemy_visible_overlay_material.get());
+	}
+	
+	// friendly chams.
+	else if ( !enemy ) { // I'm not sure removing this will cause issues with teams that aren't CT or T.
+		if( g_menu.main.players.chams_friendly_visible.get() ) {
+			if ( g_menu.main.players.chams_friendly_invisible.get( ) ) {
+				SetupMaterial(g_menu.main.players.chams_friendly_invisible_material.get(), g_menu.main.players.chams_friendly_invisible_color.get(), g_menu.main.players.chams_friendly_invisible_blend.get(), true);
 
-		player->DrawModel();
+				player->DrawModel();
+			}
+
+			SetupMaterial(g_menu.main.players.chams_friendly_visible_material.get(), g_menu.main.players.chams_friendly_visible_color.get(), g_menu.main.players.chams_friendly_visible_blend.get(), false);
+
+			player->DrawModel();
+		}
+
+		// draw our overlay if needed.
+		if ( g_menu.main.players.chams_friendly_visible_overlay.get() )
+			RenderOverlay(player, g_menu.main.players.chams_friendly_visible_overlay_color.get(), g_menu.main.players.chams_friendly_visible_overlay_blend.get(), g_menu.main.players.chams_friendly_visible_overlay_material.get());
 	}
 
 	m_running = false;

@@ -272,7 +272,6 @@ public:
 	}
 
 	__forceinline int& m_fEffects() {
-		// todo; netvar.
 		return get< int >(g_entoffsets.m_fEffects);
 	}
 
@@ -282,6 +281,14 @@ public:
 
 	__forceinline bool& m_bReadyToDraw() {
 		return get< bool >(g_entoffsets.m_bReadyToDraw);
+	}
+
+	__forceinline bool& m_bFireIsBurning() {
+		return get< bool >(g_entoffsets.m_bFireIsBurning);
+	}
+
+	__forceinline int& m_nSmokeEffectTickBegin() {
+		return get< int >(g_entoffsets.m_nSmokeEffectTickBegin);
 	}
 
 public:
