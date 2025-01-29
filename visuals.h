@@ -25,8 +25,6 @@ public:
 
     int bullet_counter;
 
-    bool m_reset_console;
-
     std::unordered_map< int, char > m_weapon_icons = {
     	{ DEAGLE, 'F' },
     	{ ELITE, 'S' },

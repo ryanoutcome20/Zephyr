@@ -311,7 +311,15 @@ bool callbacks::IsHealthOn( ) {
 }
 
 bool callbacks::IsHealthOverrideOn( ) {
-	return g_menu.main.players.health_color_override.get( );
+	return g_menu.main.players.health_override_mode.get( ) != 0;
+}
+
+bool callbacks::IsHealthOverrideGradient() {
+	return g_menu.main.players.health_override_mode.get() == 2;
+}
+
+bool callbacks::IsNotHealthOverrideGradient() {
+	return g_menu.main.players.health_override_mode.get() != 2;
 }
 
 bool callbacks::IsLBYUpdateOn( ) {
@@ -360,6 +368,10 @@ bool callbacks::IsSkyboxModulationOn( ) {
 
 bool callbacks::IsPropModulationOn( ) {
 	return g_menu.main.visuals.prop_modulation.get();
+}
+
+bool callbacks::IsConsoleModulationOn( ) {
+	return g_menu.main.visuals.console_modulation.get( );
 }
 
 bool callbacks::IsAutopeekVisualizeOn( ) {

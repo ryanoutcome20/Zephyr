@@ -79,6 +79,8 @@ namespace callbacks {
 	bool IsOffscreenOn( );
 	bool IsHealthOn( );
 	bool IsHealthOverrideOn( );
+	bool IsHealthOverrideGradient( );
+	bool IsNotHealthOverrideGradient( );
 	bool IsLBYUpdateOn( );
 	bool IsShotMatrixOn( );
 
@@ -92,6 +94,7 @@ namespace callbacks {
 	bool IsWorldModulationOn( );
 	bool IsSkyboxModulationOn( );
 	bool IsPropModulationOn( );
+	bool IsConsoleModulationOn( );
 	bool IsAutopeekVisualizeOn( );
 	bool IsImpactBeamsOn( );
 	bool IsImpactBoxesServer( );

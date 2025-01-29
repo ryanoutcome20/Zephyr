@@ -14,6 +14,10 @@ void Hooks::PaintTraverse( VPANEL panel, bool repaint, bool force ) {
 	if( !tools && panel == g_csgo.m_engine_vgui->GetPanel( PANEL_TOOLS ) )
 		tools = panel;
 
+	// disable our console override.
+	if ( panel != tools )
+		g_visuals.ModulateConsole( true );
+
 	// render hack stuff.
 	if( panel == tools )
 		g_cl.OnPaint( );
@@ -21,17 +25,10 @@ void Hooks::PaintTraverse( VPANEL panel, bool repaint, bool force ) {
 	// don't call the original function if we want to remove the scope.
 	if( panel == zoom && g_menu.main.visuals.removals.get(7) )
 		return;
-	
-	// recolor console.
-	if ( name == HASH("GameConsole") || name == HASH("ConsolePage") || name == HASH("ConsoleEntry") 
-		|| name == HASH("ConsoleSubmit") || name == HASH("ConsoleHistory")) {
-		if( g_csgo.m_engine->IsConsoleVisible( ) ) { 
-			g_visuals.ModulateConsole( false );
-		}
-	}
-	else if( g_visuals.m_reset_console ) {
-		g_visuals.ModulateConsole( true );
-	}
+
+	// ensure our console override is running.
+	if( panel != tools )
+		g_visuals.ModulateConsole( false );
 
 	g_hooks.m_panel.GetOldMethod< PaintTraverse_t >( IPanel::PAINTTRAVERSE )( this, panel, repaint, force );
 }

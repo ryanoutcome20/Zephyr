@@ -472,9 +472,6 @@ public:
 	Colorpicker   name_enemy;
 	Colorpicker   name_friendly;
 	Colorpicker   name_local;
-	MultiDropdown health;
-	Checkbox			   health_color_override;
-	Colorpicker		   health_color;
 	MultiDropdown flags_enemy;
 	MultiDropdown flags_friendly;
 	MultiDropdown weapon;
@@ -483,6 +480,13 @@ public:
 	Colorpicker   ammo_enemy;
 	Colorpicker   ammo_friendly;
 	Colorpicker   ammo_local;
+	MultiDropdown health;
+	Dropdown		  health_override_mode;
+	Colorpicker		   health_color;
+	Slider				   health_color_fade;
+	Colorpicker		   health_color_gradient;
+	Slider				   health_color_gradient_fade;
+	Checkbox			   health_color_fade_off;
 	Checkbox      lby_update;
 	Colorpicker   lby_update_color;
 	Checkbox		 shot_matrix;
@@ -592,17 +596,6 @@ public:
 		name_local.AddShowCallback( callbacks::IsNameLocal );
 		RegisterElement(&name_local);
 
-		health.setup(XOR("health"), XOR("health"), { XOR("enemy"), XOR("friendly"), XOR("local") });
-		RegisterElement(&health);
-
-		health_color_override.setup( XOR("override color"), XOR("health_color_override") );
-		health_color_override.AddShowCallback( callbacks::IsHealthOn );
-		RegisterElement( &health_color_override );
-
-		health_color.setup( XOR("color"), XOR("health_color"), colors::burgundy );
-		health_color.AddShowCallback( callbacks::IsHealthOverrideOn );
-		RegisterElement( &health_color );
-
 		flags_enemy.setup(XOR("flags enemy"), XOR("flags_enemy"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb"), XOR("lc") });
 		RegisterElement(&flags_enemy);
 
@@ -631,6 +624,33 @@ public:
 		ammo_local.setup(XOR("ammo local color"), XOR("ammo_local"), colors::white);
 		ammo_local.AddShowCallback( callbacks::IsWeaponLocal );
 		RegisterElement(&ammo_local);
+
+		health.setup(XOR("health"), XOR("health"), { XOR("enemy"), XOR("friendly"), XOR("local") });
+		RegisterElement(&health);
+
+		health_override_mode.setup(XOR("override color"), XOR("health_override_mode"), { XOR("off"), XOR("singular"), XOR("gradient") });
+		health_override_mode.AddShowCallback(callbacks::IsHealthOn);
+		RegisterElement(&health_override_mode);
+
+		health_color.setup(XOR("main color"), XOR("health_color"), colors::burgundy);
+		health_color.AddShowCallback(callbacks::IsHealthOverrideOn);
+		RegisterElement(&health_color);
+
+		health_color_fade.setup("", XOR("health_color_fade"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		health_color_fade.AddShowCallback(callbacks::IsHealthOverrideGradient);
+		RegisterElement(&health_color_fade);
+
+		health_color_gradient.setup(XOR("secondary color"), XOR("health_color"), colors::burgundy);
+		health_color_gradient.AddShowCallback(callbacks::IsHealthOverrideGradient);
+		RegisterElement(&health_color_gradient);
+
+		health_color_gradient_fade.setup("", XOR("health_color_gradient_fade"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		health_color_gradient_fade.AddShowCallback(callbacks::IsHealthOverrideGradient);
+		RegisterElement(&health_color_gradient_fade);
+
+		health_color_fade_off.setup(XOR("fade off"), XOR("health_color_fade_off"));
+		health_color_fade_off.AddShowCallback(callbacks::IsNotHealthOverrideGradient);
+		RegisterElement(&health_color_fade_off);
 
 		lby_update.setup(XOR("lby update"), XOR("lby_update"));
 		RegisterElement(&lby_update);
@@ -951,6 +971,7 @@ public:
 	Colorpicker   proj_sphere_color;
 	MultiDropdown proj_ground;
 	Colorpicker   proj_ground_color;
+	Checkbox      enemy_radar;
 	MultiDropdown planted_c4;
 	Checkbox world_modulation;
 	Colorpicker world_modulation_color;
@@ -962,7 +983,9 @@ public:
 	Colorpicker skybox_modulation_color;
 	Dropdown skybox_sky;
 	Button		  update_modulation;
-	Checkbox      enemy_radar;
+	Checkbox    console_modulation;
+	Colorpicker console_color;
+	Slider		   console_blend;
 
 	// col2.
 	MultiDropdown removals;
@@ -1115,6 +1138,17 @@ public:
 		update_modulation.setup(XOR("update modulation"));
 		update_modulation.SetCallback(Visuals::ModulateWorld);
 		RegisterElement(&update_modulation);
+
+		console_modulation.setup(XOR("console modulation"), XOR("console_modulation"));
+		RegisterElement(&console_modulation);
+
+		console_color.setup(XOR("console color"), XOR("console_color"), colors::white);
+		console_color.AddShowCallback(callbacks::IsConsoleModulationOn);
+		RegisterElement(&console_color);
+
+		console_blend.setup("", XOR("console_blend"), 10.f, 100.f, false, 0, 65.f, 1.f, XOR(L"%"));
+		console_blend.AddShowCallback(callbacks::IsConsoleModulationOn);
+		RegisterElement(&console_blend);
 
 		// col2.
 		removals.setup( XOR("removals"), XOR("removals"), { 
@@ -2397,8 +2431,6 @@ public:
 	Checkbox    fake_latency_always;
 	Keybind       fake_latency;
 	Slider		  fake_latency_amt;
-	Colorpicker console_color;
-	Slider		   console_blend;
 
 	// col2.
 	Checkbox unlock;
@@ -2504,12 +2536,6 @@ public:
 
 		fake_latency_always.setup(XOR("fake latency always on"), XOR("fake_latency_always"));
 		RegisterElement(&fake_latency_always);
-
-		console_color.setup(XOR("console color"), XOR("console_color"), colors::white);
-		RegisterElement(&console_color);
-
-		console_blend.setup("", XOR("console_blend"), 10.f, 100.f, false, 0, 65.f, 1.f, XOR(L"%"));
-		RegisterElement(&console_blend);
 
 		// col2.
 		unlock.setup(XOR("unlock inventory in-game"), XOR("unlock_inventory"));

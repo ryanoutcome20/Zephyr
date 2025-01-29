@@ -23,6 +23,7 @@ private:
 	std::vector< Tab* >	m_tabs;
 	Tab*				m_active_tab;
 	Element*			m_active_element;
+	Element*			m_priority;
 
 public:
 	__forceinline Form( ) : m_open{ true }, m_opacity{}, m_alpha{}, m_key{ -1 }, m_x{}, m_y{}, m_width{}, m_height{}, m_tick{}, m_tabs{}, m_active_tab{}, m_active_element{} {}

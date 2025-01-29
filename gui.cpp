@@ -204,6 +204,12 @@ void GUI::think( ) {
 				f->m_active_element = nullptr;
 		}
 
+		// we have a priority element, run this above all others.
+		if ( f->m_priority ) {
+			f->m_active_element = f->m_priority;
+			f->m_priority = nullptr;
+		}
+
 		// we have an active element already.
 		if( f->m_active_element && f->m_active_element->m_show ) {
 			// call think callback.
@@ -233,6 +239,9 @@ void GUI::think( ) {
 				// invalid element
 				// or already handled above.
 				if( !e || ( f->m_active_element && e == f->m_active_element ) )
+					continue;
+
+				if( f->m_priority != nullptr && e != f->m_priority )
 					continue;
 
 				if( !e->m_show )

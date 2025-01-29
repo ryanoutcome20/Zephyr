@@ -48,22 +48,21 @@ void Visuals::ModulateWorld( ) {
 }
 
 void Visuals::ModulateConsole( bool reset ) {
+	if( !g_menu.main.visuals.console_modulation.get( ) )
+		return;
+
 	// get our materials.
 	std::vector< IMaterial* > console = g_materials.Get({ "vgui_white", "800corner1", "800corner2", "800corner3", "800corner4" });
 
-	// run our reset if needed.
-	if ( reset ) {
-		g_materials.Modulate(console);
-		m_reset_console = false;
+	// reset if needed.
+	if( reset ) {
+		g_materials.Modulate( console );
 		return;
 	}
 
-	// reset our updater.
-	m_reset_console = true;
-
 	// get color.
-	Color color = g_menu.main.misc.console_color.get( );
-	color.a( ) = g_menu.main.misc.console_blend.get( ) * 2.55f;
+	Color color = g_menu.main.visuals.console_color.get( );
+	color.a( ) = g_menu.main.visuals.console_blend.get( ) * 2.55f;
 
 	// modulate materials.
 	g_materials.Modulate( console, color, false );
@@ -842,13 +841,16 @@ void Visuals::DrawPlayer( Player* player ) {
 		int y = box.y + 1;
 		int h = box.h - 2;
 
+		// should override.
+		int health_override = g_menu.main.players.health_override_mode.get( );
+
 		// retarded servers that go above 100 hp..
 		int hp = std::min( 100, player->m_iHealth( ) );
 
 		// calculate hp bar color.
 		Color bar = { std::min((510 * (100 - hp)) / 100, 255), std::min((510 * hp) / 100, 255), 0 };
 		
-		if ( g_menu.main.players.health_color_override.get() )
+		if ( health_override != 0 )
 			bar = g_menu.main.players.health_color.get( );
 
 		bar.a( ) = alpha;
@@ -859,8 +861,26 @@ void Visuals::DrawPlayer( Player* player ) {
 		// render background.
 		render::rect_filled( box.x - 6, y - 1, 4, h + 2, { 10, 10, 10, very_low_alpha } );
 
-		// render actual bar.
-		render::rect( box.x - 5, y + h - fill, 2, fill, bar );
+		// if in gradient mode, render the bars with a gradient to allow for color scaling.
+		if ( health_override == 2 ) {
+			// get our secondary color.
+			Color secondary = g_menu.main.players.health_color_gradient.get();
+
+			secondary.a() = alpha;
+
+			// run our rendering.
+			render::rect_filled_fade(box.x - 5, y + h - fill, 2, fill, bar, g_menu.main.players.health_color_fade.get( ) * 2.55, 0);
+
+			render::rect_filled_fade(box.x - 5, y + h - ( fill / 2 ), 2, ( fill / 2), secondary, 0, g_menu.main.players.health_color_gradient_fade.get( ) * 2.55);
+		}
+
+		// otherwise render as normal.
+		else {
+			if( g_menu.main.players.health_color_fade_off.get( ) )
+				render::rect_filled_fade(box.x - 5, y + h - fill, 2, fill, bar, 255, 0);
+			else 
+				render::rect(box.x - 5, y + h - fill, 2, fill, bar);
+		}
 
 		// if hp is below max, draw a string.
 		if( hp < 100 )
