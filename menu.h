@@ -750,22 +750,21 @@ public:
 
 		chams_enemy_visible_overlay.setup(XOR("overlay"), XOR("chams_enemy_visible_overlay"));
 		chams_enemy_visible_overlay.AddShowCallback(callbacks::IsChamsEnemy);
-		chams_enemy_visible_overlay.AddShowCallback(callbacks::IsChamsEnemyVisible);
 		RegisterElement(&chams_enemy_visible_overlay, 1);
 
 		chams_enemy_visible_overlay_material.setup(XOR("material"), XOR("chams_enemy_visible_overlay_material"), { XOR("pulse"), XOR("glow"), XOR("animation"), XOR("circle"), XOR("liner") });
 		chams_enemy_visible_overlay_material.AddShowCallback(callbacks::IsChamsEnemy);
-		chams_enemy_visible_overlay_material.AddShowCallback(callbacks::IsChamsEnemyVisible);
+		chams_enemy_visible_overlay_material.AddShowCallback(callbacks::IsChamsEnemyOverlay);
 		RegisterElement(&chams_enemy_visible_overlay_material, 1);
 
 		chams_enemy_visible_overlay_color.setup(XOR("tint color"), XOR("chams_enemy_visible_overlay_color"), colors::white);
 		chams_enemy_visible_overlay_color.AddShowCallback(callbacks::IsChamsEnemy);
-		chams_enemy_visible_overlay_color.AddShowCallback(callbacks::IsChamsEnemyVisible);
+		chams_enemy_visible_overlay_color.AddShowCallback(callbacks::IsChamsEnemyOverlay);
 		RegisterElement(&chams_enemy_visible_overlay_color, 1);
 
 		chams_enemy_visible_overlay_blend.setup("", XOR("chams_enemy_visible_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_enemy_visible_overlay_blend.AddShowCallback(callbacks::IsChamsEnemy);
-		chams_enemy_visible_overlay_blend.AddShowCallback(callbacks::IsChamsEnemyVisible);
+		chams_enemy_visible_overlay_blend.AddShowCallback(callbacks::IsChamsEnemyOverlay);
 		RegisterElement(&chams_enemy_visible_overlay_blend, 1);
 
 
@@ -830,22 +829,21 @@ public:
 
 		chams_friendly_visible_overlay.setup(XOR("overlay"), XOR("chams_friendly_visible_overlay"));
 		chams_friendly_visible_overlay.AddShowCallback(callbacks::IsChamsFriendly);
-		chams_friendly_visible_overlay.AddShowCallback(callbacks::IsChamsFriendlyVisible);
 		RegisterElement(&chams_friendly_visible_overlay, 1);
 
 		chams_friendly_visible_overlay_material.setup(XOR("material"), XOR("chams_friendly_visible_overlay_material"), { XOR("pulse"), XOR("glow"), XOR("animation"), XOR("circle"), XOR("liner") });
 		chams_friendly_visible_overlay_material.AddShowCallback(callbacks::IsChamsFriendly);
-		chams_friendly_visible_overlay_material.AddShowCallback(callbacks::IsChamsFriendlyVisible);
+		chams_friendly_visible_overlay_material.AddShowCallback(callbacks::IsChamsFriendlyOverlay);
 		RegisterElement(&chams_friendly_visible_overlay_material, 1);
 
 		chams_friendly_visible_overlay_color.setup(XOR("tint color"), XOR("chams_friendly_visible_overlay_color"), colors::white);
 		chams_friendly_visible_overlay_color.AddShowCallback(callbacks::IsChamsFriendly);
-		chams_friendly_visible_overlay_color.AddShowCallback(callbacks::IsChamsFriendlyVisible);
+		chams_friendly_visible_overlay_color.AddShowCallback(callbacks::IsChamsFriendlyOverlay);
 		RegisterElement(&chams_friendly_visible_overlay_color, 1);
 
 		chams_friendly_visible_overlay_blend.setup("", XOR("chams_friendly_visible_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_friendly_visible_overlay_blend.AddShowCallback(callbacks::IsChamsFriendly);
-		chams_friendly_visible_overlay_blend.AddShowCallback(callbacks::IsChamsFriendlyVisible);
+		chams_friendly_visible_overlay_blend.AddShowCallback(callbacks::IsChamsFriendlyOverlay);
 		RegisterElement(&chams_friendly_visible_overlay_blend, 1);
 
 
@@ -890,22 +888,21 @@ public:
 
 		chams_local_real_overlay.setup(XOR("real overlay"), XOR("chams_local_real_overlay"));
 		chams_local_real_overlay.AddShowCallback(callbacks::IsChamsLocal);
-		chams_local_real_overlay.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_overlay, 1);
 
 		chams_local_real_overlay_material.setup(XOR("material"), XOR("chams_local_real_overlay_material"), { XOR("pulse"), XOR("glow"), XOR("animation"), XOR("circle"), XOR("liner") });
 		chams_local_real_overlay_material.AddShowCallback(callbacks::IsChamsLocal);
-		chams_local_real_overlay_material.AddShowCallback(callbacks::IsChamsLocalReal);
+		chams_local_real_overlay_material.AddShowCallback(callbacks::IsChamsLocalRealOverlay);
 		RegisterElement(&chams_local_real_overlay_material, 1);
 
 		chams_local_real_overlay_color.setup(XOR("tint color"), XOR("chams_local_real_overlay_color"), colors::white);
 		chams_local_real_overlay_color.AddShowCallback(callbacks::IsChamsLocal);
-		chams_local_real_overlay_color.AddShowCallback(callbacks::IsChamsLocalReal);
+		chams_local_real_overlay_color.AddShowCallback(callbacks::IsChamsLocalRealOverlay);
 		RegisterElement(&chams_local_real_overlay_color, 1);
 
 		chams_local_real_overlay_blend.setup("", XOR("chams_local_real_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_local_real_overlay_blend.AddShowCallback(callbacks::IsChamsLocal);
-		chams_local_real_overlay_blend.AddShowCallback(callbacks::IsChamsLocalReal);
+		chams_local_real_overlay_blend.AddShowCallback(callbacks::IsChamsLocalRealOverlay);
 		RegisterElement(&chams_local_real_overlay_blend, 1);
 
 		chams_local_real_blend_scope.setup(XOR("blend when scoped"), XOR("chams_local_real_blend_scope"));
@@ -935,22 +932,21 @@ public:
 	
 		chams_local_fake_overlay.setup(XOR("fake overlay"), XOR("chams_local_fake_overlay"));
 		chams_local_fake_overlay.AddShowCallback(callbacks::IsChamsLocal);
-		chams_local_fake_overlay.AddShowCallback(callbacks::IsChamsLocalFake);
 		RegisterElement(&chams_local_fake_overlay, 1);
 
 		chams_local_fake_overlay_material.setup(XOR("material"), XOR("chams_local_fake_overlay_material"), { XOR("pulse"), XOR("glow"), XOR("animation"), XOR("circle"), XOR("liner") });
 		chams_local_fake_overlay_material.AddShowCallback(callbacks::IsChamsLocal);
-		chams_local_fake_overlay_material.AddShowCallback(callbacks::IsChamsLocalFake);
+		chams_local_fake_overlay_material.AddShowCallback(callbacks::IsChamsLocalFakeOverlay);
 		RegisterElement(&chams_local_fake_overlay_material, 1);
 
 		chams_local_fake_overlay_color.setup(XOR("tint color"), XOR("chams_local_fake_overlay_color"), colors::white);
 		chams_local_fake_overlay_color.AddShowCallback(callbacks::IsChamsLocal);
-		chams_local_fake_overlay_color.AddShowCallback(callbacks::IsChamsLocalFake);
+		chams_local_fake_overlay_color.AddShowCallback(callbacks::IsChamsLocalFakeOverlay);
 		RegisterElement(&chams_local_fake_overlay_color, 1);
 
 		chams_local_fake_overlay_blend.setup("", XOR("chams_local_fake_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_local_fake_overlay_blend.AddShowCallback(callbacks::IsChamsLocal);
-		chams_local_fake_overlay_blend.AddShowCallback(callbacks::IsChamsLocalFake);
+		chams_local_fake_overlay_blend.AddShowCallback(callbacks::IsChamsLocalFakeOverlay);
 		RegisterElement(&chams_local_fake_overlay_blend, 1);
 	}
 };

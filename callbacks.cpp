@@ -206,6 +206,10 @@ bool callbacks::IsChamsEnemyVisible( ) {
 	return g_menu.main.players.chams_enemy_visible.get( );
 }
 
+bool callbacks::IsChamsEnemyOverlay() {
+	return g_menu.main.players.chams_enemy_visible_overlay.get();
+}
+
 bool callbacks::IsChamsEnemyInvisible() {
 	return g_menu.main.players.chams_enemy_invisible.get();
 }
@@ -222,6 +226,10 @@ bool callbacks::IsChamsFriendlyVisible() {
 	return g_menu.main.players.chams_friendly_visible.get();
 }
 
+bool callbacks::IsChamsFriendlyOverlay() {
+	return g_menu.main.players.chams_friendly_visible_overlay.get();
+}
+
 bool callbacks::IsChamsFriendlyInvisible() {
 	return g_menu.main.players.chams_friendly_invisible.get();
 }
@@ -234,8 +242,16 @@ bool callbacks::IsChamsLocalReal() {
 	return g_menu.main.players.chams_local_real.get();
 }
 
+bool callbacks::IsChamsLocalRealOverlay() {
+	return g_menu.main.players.chams_local_real_overlay.get();
+}
+
 bool callbacks::IsChamsLocalFake() {
 	return g_menu.main.players.chams_local_fake.get();
+}
+
+bool callbacks::IsChamsLocalFakeOverlay() {
+	return g_menu.main.players.chams_local_fake_overlay.get();
 }
 
 bool callbacks::IsBoxEnemy( ) {

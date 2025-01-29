@@ -51,14 +51,18 @@ namespace callbacks {
 	
 	bool IsChamsEnemy( );
 	bool IsChamsEnemyVisible( );
+	bool IsChamsEnemyOverlay( );
 	bool IsChamsEnemyInvisible( );
 	bool IsChamsEnemyHistory( );
 	bool IsChamsFriendly( );
 	bool IsChamsFriendlyVisible( );
+	bool IsChamsFriendlyOverlay( );
 	bool IsChamsFriendlyInvisible( );
 	bool IsChamsLocal( );
 	bool IsChamsLocalReal( );
+	bool IsChamsLocalRealOverlay( );
 	bool IsChamsLocalFake( );
+	bool IsChamsLocalFakeOverlay( );
 
 	bool IsBoxEnemy( );
 	bool IsBoxFriendly( );
