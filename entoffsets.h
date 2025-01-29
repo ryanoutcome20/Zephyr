@@ -79,6 +79,7 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_PlayerCommand;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_pCurrentCommand;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iEFlags;
+    XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nLastNonSkippedFrame;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flPoseParameter;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_hMyWearables;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_BoneCache;
@@ -236,6 +237,7 @@ public:
         INIT_XOREDNETVAR_SPECIFIC( m_BoneCache,                  0x2900 );
         INIT_XOREDNETVAR_SPECIFIC( m_CustomMaterials2,           0x9DC );
         INIT_XOREDNETVAR_SPECIFIC( m_bCustomMaterialInitialized, 0x32DD );
+        INIT_XOREDNETVAR_SPECIFIC( m_nLastNonSkippedFrame, 0x260 )
 
         // don't want these macros outside of this file.
         #undef INIT_XOREDNETVAR

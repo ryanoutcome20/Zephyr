@@ -71,29 +71,25 @@ void Hooks::FrameStageNotify( Stage_t stage ) {
 		g_visuals.DrawBulletImpacts( );
 	}
 
-	// call og.
+	// call original.
 	g_hooks.m_client.GetOldMethod< FrameStageNotify_t >( CHLClient::FRAMESTAGENOTIFY )( this, stage );
 
-	if( stage == FRAME_RENDER_START ) {
-		// ...
-	}
+	if( stage == FRAME_NET_UPDATE_END ) {
+		// this is the last stage called, prefer it over anything else
+		// when messing with clientside data (animations, bones, etc).
 
-	else if( stage == FRAME_NET_UPDATE_POSTDATAUPDATE_START ) {
-		// restore non-compressed netvars.
-		// g_netdata.apply( );
-
+		// run our skins.
 		g_skins.think( );
-	}
 
-	else if( stage == FRAME_NET_UPDATE_POSTDATAUPDATE_END ) {
+		// run our no smoke.
 		g_visuals.NoSmoke( );
-	}
 
-	else if( stage == FRAME_NET_UPDATE_END ) {
         // restore non-compressed netvars.
 		g_netdata.apply( );
 
 		// update all players.
+		// call this here so that all of the bone processing and stuff has already been 
+		// done by the client and we can override it with our own instead.
 		for( int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i ) {
 			Player* player = g_csgo.m_entlist->GetClientEntity< Player* >( i );
 			if( !player || player->m_bIsLocalPlayer( ) )

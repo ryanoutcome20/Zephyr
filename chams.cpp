@@ -387,6 +387,9 @@ void Chams::RenderGhostChams(Player* player) {
 		player->DrawModel();
 	}
 
+	// set our original angles.
+	g_cl.SetAngles( );
+
 	// draw our overlay if needed.
 	if ( g_menu.main.players.chams_local_fake_overlay.get() )
 		RenderOverlay(player, g_menu.main.players.chams_local_fake_overlay_color.get(), g_menu.main.players.chams_local_fake_overlay_blend.get(), g_menu.main.players.chams_local_fake_overlay_material.get());

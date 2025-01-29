@@ -98,6 +98,41 @@ enum effects_t : int {
 	EF_MAX_BITS = 10
 };
 
+enum flags_t : int {
+	EFL_KILLME = (1 << 0),	// This entity is marked for death -- This allows the game to actually delete ents at a safe time
+	EFL_DORMANT = (1 << 1),	// Entity is dormant, no updates to client
+	EFL_NOCLIP_ACTIVE = (1 << 2),	// Lets us know when the noclip command is active.
+	EFL_SETTING_UP_BONES = (1 << 3),	// Set while a model is setting up its bones.
+	EFL_KEEP_ON_RECREATE_ENTITIES = (1 << 4), // This is a special entity that should not be deleted when we restart entities only
+	EFL_DIRTY_SHADOWUPDATE = (1 << 5),	// Client only- need shadow manager to update the shadow...
+	EFL_NOTIFY = (1 << 6),	// Another entity is watching events on this entity (used by teleport).
+	EFL_FORCE_CHECK_TRANSMIT = (1 << 7),
+	EFL_BOT_FROZEN = (1 << 8),	// This is set on bots that are frozen.
+	EFL_SERVER_ONLY = (1 << 9),	// Non-networked entity.
+	EFL_NO_AUTO_EDICT_ATTACH = (1 << 10), 
+	EFL_DIRTY_ABSTRANSFORM = (1 << 11),
+	EFL_DIRTY_ABSVELOCITY = (1 << 12),
+	EFL_DIRTY_ABSANGVELOCITY = (1 << 13),
+	EFL_DIRTY_SURROUNDING_COLLISION_BOUNDS = (1 << 14),
+	EFL_DIRTY_SPATIAL_PARTITION = (1 << 15),
+	EFL_HAS_PLAYER_CHILD = (1 << 16),	// One of the child entities is a player.
+	EFL_IN_SKYBOX = (1 << 17),
+	EFL_USE_PARTITION_WHEN_NOT_SOLID = (1 << 18),	// Entities with this flag set show up in the partition even when not solid
+	EFL_TOUCHING_FLUID = (1 << 19),	// Used to determine if an entity is floating
+	EFL_IS_BEING_LIFTED_BY_BARNACLE = (1 << 20),
+	EFL_NO_ROTORWASH_PUSH = (1 << 21),		// I shouldn't be pushed by the rotorwash
+	EFL_NO_THINK_FUNCTION = (1 << 22),
+	EFL_NO_GAME_PHYSICS_SIMULATION = (1 << 23),
+	EFL_CHECK_UNTOUCH = (1 << 24),
+	EFL_DONTBLOCKLOS = (1 << 25),		// I shouldn't block NPC line-of-sight
+	EFL_DONTWALKON = (1 << 26),		// NPC;s should not walk on this entity
+	EFL_NO_DISSOLVE = (1 << 27),		// These guys shouldn't dissolve
+	EFL_NO_MEGAPHYSCANNON_RAGDOLL = (1 << 28),	// Mega physcannon can't ragdoll these guys.
+	EFL_NO_WATER_VELOCITY_CHANGE = (1 << 29),	// Don't adjust this entity's velocity when transitioning into water
+	EFL_NO_PHYSCANNON_INTERACTION = (1 << 30),	// Physcannon can't pick these up or punt them
+	EFL_NO_DAMAGE_FORCES = (1 << 31),	// Doesn't accept forces from physics damage
+};
+
 enum InvalidatePhysicsBits_t : int {
 	POSITION_CHANGED = 0x1,
 	ANGLES_CHANGED = 0x2,
@@ -291,6 +326,10 @@ public:
 		return get< int >(g_entoffsets.m_nSmokeEffectTickBegin);
 	}
 
+	__forceinline int& m_iEFlags() {
+		return get< int >(g_entoffsets.m_iEFlags);
+	}
+
 public:
 	// virtual indices
 	enum indices : size_t {
@@ -431,6 +470,10 @@ public:
 
 	__forceinline void AddEffect(int effects) {
 		m_fEffects() |= effects;
+	}
+
+	__forceinline void AddEntityFlag(int flag) {
+		m_iEFlags() |= flag;
 	}
 
 	__forceinline int get_class_id() {
@@ -758,8 +801,8 @@ public:
 		return get< CUserCmd* >(g_entoffsets.m_pCurrentCommand);
 	}
 
-	__forceinline int& m_iEFlags() {
-		return get< int >(g_entoffsets.m_iEFlags);
+	__forceinline int& m_nLastNonSkippedFrame() {
+		return get< int >(g_entoffsets.m_nLastNonSkippedFrame);
 	}
 
 	__forceinline float* m_flPoseParameter() {
@@ -821,8 +864,10 @@ public:
 		GETREFEHANDLE = 2,
 		TESTHITBOXES = 52,
 		BUILDTRANSFORMATIONS = 184,
+		SETUPBONES						= 187,
 		DOEXTRABONEPROCESSING = 192,
 		STANDARDBLENDINGRULES = 200,
+		ACCUMULATELAYERS			   = 201,
 		UPDATECLIENTSIDEANIMATION = 218, // 55 8B EC 51 56 8B F1 80 BE ? ? ? ? ? 74 36
 		GETACTIVEWEAPON = 262,
 		GETEYEPOS = 163,

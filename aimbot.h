@@ -165,6 +165,9 @@ public:
 		if( !player->enemy( g_cl.m_local ) )
 			return false;
 
+		if( player->dormant( ) )
+			return false;
+
 		return true;
 	}
 

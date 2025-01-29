@@ -495,29 +495,32 @@ void Skins::think( ) {
 					break;
 			}
 
-			// create an ent index and serial no for the new glove entity.
-			int index  = g_csgo.m_entlist->GetHighestEntityIndex( ) + 1;
-			int serial = g_csgo.RandomInt( 0xA00, 0xFFF );
+			// check if list even exists.
+			if( list !=nullptr ) {
+				// create an ent index and serial no for the new glove entity.
+				int index  = g_csgo.m_entlist->GetHighestEntityIndex( ) + 1;
+				int serial = g_csgo.RandomInt( 0xA00, 0xFFF );
 
-			// call ctor on CEconWearable entity.
-			Address networkable = list->m_pCreate( index, serial );
+				// call ctor on CEconWearable entity.
+				Address networkable = list->m_pCreate( index, serial );
 
-			// get entity ptr via index.
-			glove = g_csgo.m_entlist->GetClientEntity< Weapon* >( index );
+				// get entity ptr via index.
+				glove = g_csgo.m_entlist->GetClientEntity< Weapon* >( index );
 
-			static Address offset = g_netvars.get( HASH( "DT_EconEntity" ), HASH( "m_iItemIDLow" ) );
+				static Address offset = g_netvars.get( HASH( "DT_EconEntity" ), HASH( "m_iItemIDLow" ) );
 
-			// m_bInitialized?
-			networkable.add( offset.add( 0x8 ) ).set< bool >( true );
+				// m_bInitialized?
+				networkable.add( offset.add( 0x8 ) ).set< bool >( true );
 
-			// no idea what this is.
-			networkable.add( offset.sub( 0xC ) ).set< bool >( true );
+				// no idea what this is.
+				networkable.add( offset.sub( 0xC ) ).set< bool >( true );
 
-			// set the wearable handle.
-			wearables[ 0 ] = index | ( serial << 16 );
+				// set the wearable handle.
+				wearables[ 0 ] = index | ( serial << 16 );
 
-			// use this for later on.
-			m_glove_handle = wearables[ 0 ];
+				// use this for later on.
+				m_glove_handle = wearables[ 0 ];
+			}
 		}
 
 		// store glove data.
