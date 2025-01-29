@@ -590,6 +590,10 @@ public:
 		return get< bool >(g_entoffsets.m_bHasDefuser);
 	}
 
+	__forceinline bool& m_bIsBuyMenuOpen() {
+		return get< bool >(g_entoffsets.m_bIsBuyMenuOpen);
+	}
+
 	__forceinline int& m_nHitboxSet() {
 		return get< int >(g_entoffsets.m_nHitboxSet);
 	}

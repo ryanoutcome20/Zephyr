@@ -19,7 +19,7 @@ void events::round_start( IGameEvent* evt ) {
 	// reset hvh / aa stuff.
 	g_hvh.m_next_random_update = 0.f;
 	g_hvh.m_auto_last = 0.f;
-	g_hvh.m_dropping = g_cl.m_local->m_nTickBase( );
+	g_hvh.m_dropping = 0;
 
 	// reset bomb stuff.
 	g_visuals.m_c4_planted = false;
@@ -28,6 +28,9 @@ void events::round_start( IGameEvent* evt ) {
 	// reset dormant esp.
     g_visuals.m_draw.fill( false );
 	g_visuals.m_opacities.fill( 0.f );
+	
+	// reset exploit timer.
+	g_exploits.m_last_command = g_csgo.m_globals->m_curtime;
 
 	// update all players.
 	for( int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i  ) {
@@ -89,23 +92,8 @@ void events::round_end( IGameEvent* evt ) {
 	// reset our shots.
 	g_shots.m_shots.clear( );
 
-	// get our teams for the exploit.
-	int team = g_cl.m_local->m_iTeamNum();
-
-	// spawn exploit.
-	if ( g_menu.main.misc.spawn_exploit.get() && g_cl.m_local->alive() && !g_cl.m_local->m_bControlledBot( ) && ( team == TEAM_COUNTERTERRORISTS || team == TEAM_TERRORISTS ) ) {
-		int health = g_cl.m_local->m_iHealth( );
-
-		if ( health > g_menu.main.misc.spawn_exploit_health.get() ) {
-			g_notify.add(XOR("executing exploit\n"));
-
-			// execute this command which sets our team to unassigned and our iTeamNum to zero.
-			g_csgo.m_engine->ExecuteClientCmd(XOR("resetteam"));
-			
-			// rejoin our team, otherwise we are unassigned.
-			g_csgo.m_engine->ExecuteClientCmd(tfm::format(XOR("jointeam %s 1", team)).data( ));
-		}
-	}
+	// call our exploit handler.
+	g_exploits.Team( );
 }
 
 void events::player_hurt( IGameEvent* evt ) {

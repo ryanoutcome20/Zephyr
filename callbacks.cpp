@@ -378,6 +378,10 @@ bool callbacks::IsNotificationsOn() {
 	return g_menu.main.misc.notifications.get( 4 );
 }
 
+bool callbacks::IsSpawnExploitOn() {
+	return g_menu.main.misc.spawn_exploit.get( );
+}
+
 bool callbacks::IsConfigMM( ) {
 	return g_menu.main.config.mode.get( ) == 0;
 }

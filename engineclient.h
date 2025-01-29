@@ -1,5 +1,24 @@
 #pragma once
 
+class INetMessage {
+public:
+	enum indices : size_t {
+		SETNETCHANNEL = 1,
+		GETTYPE = 7,
+		GETGROUP = 8,
+		GETNAME = 9,
+		TOSTRING = 11
+	};
+public:
+	__forceinline int GetType( ) {
+		return util::get_method< int( __thiscall* )( decltype( this ) ) >( this, GETTYPE )( this );
+	}
+
+	__forceinline int GetGroup( ) {
+		return util::get_method< int( __thiscall* )( decltype( this ) ) >( this, GETGROUP )( this );
+	}
+};
+
 // public/inetchannelinfo.h and public/inetchannel.h
 class INetChannel {
 public:
@@ -38,7 +57,7 @@ public:
 
 public:
 	__forceinline bool IsLoopback( ) {
-		return util::get_method< float( __thiscall* )( decltype( this ) ) >( this, ISLOOPBACK )( this );
+		return util::get_method< bool( __thiscall* )( decltype( this ) ) >( this, ISLOOPBACK )( this );
 	}
 
 	__forceinline float GetLatency( int flow ) {
@@ -49,9 +68,8 @@ public:
 		return util::get_method< float( __thiscall* )( decltype( this ), int ) >( this, GETAVGLATENCY )( this, flow );
 	}
 
-
-	__forceinline bool SendNetMsg( void* msg, bool rel = false, bool voice = false ) {
-		return util::get_method< bool( __thiscall* )( decltype( this ), void*, bool, bool ) >( this, SENDNETMSG )( this, msg, rel, voice );
+	__forceinline bool SendNetMsg( INetMessage* msg, bool rel = false, bool voice = false ) {
+		return util::get_method< bool( __thiscall* )( decltype( this ), INetMessage*, bool, bool ) >( this, SENDNETMSG )( this, msg, rel, voice );
 	}
 
 	// engine/net_chan.h

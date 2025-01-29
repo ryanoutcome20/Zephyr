@@ -197,6 +197,7 @@
     <ClInclude Include="entity.h" />
     <ClInclude Include="entlist.h" />
     <ClInclude Include="entoffsets.h" />
+    <ClInclude Include="exploits.h" />
     <ClInclude Include="form.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameevents.h" />
@@ -275,6 +276,7 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="edit.cpp" />
     <ClCompile Include="events.cpp" />
+    <ClCompile Include="exploits.cpp" />
     <ClCompile Include="firebullets.cpp" />
     <ClCompile Include="keybind.cpp" />
     <ClCompile Include="materials.cpp" />

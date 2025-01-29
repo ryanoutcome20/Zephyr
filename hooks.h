@@ -28,6 +28,7 @@ public:
 	using RunCommand_t                 = void( __thiscall* )( void*, Entity*, CUserCmd*, IMoveHelper* );
 	using ProcessPacket_t              = void( __thiscall* )( void*, void*, bool );
 	using SendDatagram_t               = int( __thiscall* )( void*, void* );
+	using SendNetMsg_t					= int( __thiscall* )( void*, INetMessage*, bool, bool );
 	// using CanPacket_t                = bool( __thiscall* )( void* );
 	using PlaySound_t                  = void( __thiscall* )( void*, const char* );
 	using GetScreenSize_t              = void( __thiscall* )( void*, int&, int& );
@@ -71,7 +72,8 @@ public:
 	void                     PlaySound( const char* name );
 	void                     OnScreenSizeChanged( int oldwidth, int oldheight );
 	void                     RunCommand( Entity* ent, CUserCmd* cmd, IMoveHelper* movehelper );
-	int                      SendDatagram( void* data );
+	int                        SendDatagram( void* data );
+	void					    SendNetMsg( INetMessage* msg, bool reliable, bool voice );
 	void                     ProcessPacket( void* packet, bool header );
 	//void                     GetScreenSize( int& w, int& h );
 	void                     SceneEnd( );

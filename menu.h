@@ -2348,6 +2348,8 @@ public:
 	Edit			 clantag_text;
 	Checkbox	  spawn_exploit;
 	Slider		  spawn_exploit_health;
+	Dropdown active_exploit;
+	Slider active_strength;
 
 public:
 	void init() {
@@ -2472,7 +2474,14 @@ public:
 		RegisterElement(&spawn_exploit, 1);
 
 		spawn_exploit_health.setup(XOR("minimum health"), XOR("spawn_exploit_health"), 0.f, 100.f, true, 0, 50.f, 5.f);
+		spawn_exploit_health.AddShowCallback(callbacks::IsSpawnExploitOn);
 		RegisterElement(&spawn_exploit_health, 1);
+
+		active_exploit.setup(XOR("active exploit"), XOR("active_exploit"), { XOR( "none" ), XOR( "team exploit" ), XOR( "deathmatch godmode" ), XOR("crasher") });
+		RegisterElement(&active_exploit, 1);
+
+		active_strength.setup(XOR("strength"), XOR("active_strength"), 0.f, 500.f, true, 0, 15.f, 5.f);
+		RegisterElement(&active_strength, 1);
 	}
 };
 

@@ -117,7 +117,7 @@ public:
 	float  m_anim_frame;
 	bool   m_ground;
 	bool   m_lagcomp;
-	
+
 	// hack username.
 	std::string m_user;
 };

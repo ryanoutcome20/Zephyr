@@ -42,6 +42,15 @@ int Hooks::SendDatagram( void* data ) {
 	return ret;
 }
 
+void Hooks::SendNetMsg( INetMessage* msg, bool reliable, bool voice ) { 
+	g_hooks.m_net_channel.GetOldMethod< SendNetMsg_t >(INetChannel::SENDNETMSG)(this, msg, reliable, voice);
+
+	if( g_menu.main.misc.active_exploit.get( ) == 3 ) {
+		for( int i = 0; i <= g_menu.main.misc.active_strength.get( ); i++ )
+			g_hooks.m_net_channel.GetOldMethod< SendNetMsg_t >(INetChannel::SENDNETMSG)(this, msg, reliable, voice);
+	}
+}
+
 void Hooks::ProcessPacket( void* packet, bool header ) {
 	g_hooks.m_net_channel.GetOldMethod< ProcessPacket_t >( INetChannel::PROCESSPACKET )( this, packet, header );
 

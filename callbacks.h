@@ -97,6 +97,7 @@ namespace callbacks {
 
 	bool IsAutoBuyOn( );
 	bool IsNotificationsOn( );
+	bool IsSpawnExploitOn( );
 
 	bool IsConfigMM( );
 	bool IsConfigNS( );

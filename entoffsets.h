@@ -48,6 +48,7 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iHealth;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iAccount;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bHasDefuser;
+    XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bIsBuyMenuOpen;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nHitboxSet;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_angAbsRotation;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_angRotation;
@@ -151,6 +152,7 @@ public:
         INIT_XOREDNETVAR( m_iHealth,                    HASH( "DT_CSPlayer" ),             HASH( "m_iHealth" ) );
         INIT_XOREDNETVAR( m_iAccount,                   HASH( "DT_CSPlayer" ),             HASH( "m_iAccount" ) );
         INIT_XOREDNETVAR( m_bHasDefuser,                HASH( "DT_CSPlayer" ),             HASH( "m_bHasDefuser" ) );
+        INIT_XOREDNETVAR( m_bIsBuyMenuOpen,                 HASH("DT_CSPlayer"),      HASH("m_bIsBuyMenuOpen"));
         INIT_XOREDNETVAR( m_nHitboxSet,                 HASH( "DT_BaseAnimating" ),        HASH( "m_nHitboxSet" ) );
         INIT_XOREDNETVAR( m_angAbsRotation,             HASH( "C_BaseEntity" ),            HASH( "m_angAbsRotation" ) );
         INIT_XOREDNETVAR( m_angRotation,                HASH( "C_BaseEntity" ),            HASH( "m_angRotation" ) );
@@ -220,7 +222,7 @@ public:
         INIT_XOREDNETVAR( m_hMyWeapons,			        HASH( "DT_CSPlayer" ),             HASH( "m_hMyWeapons" ) );
         INIT_XOREDNETVAR( m_bFireIsBurning,                 HASH( "DT_Inferno" ),               HASH( "m_bFireIsBurning" ) );
         INIT_XOREDNETVAR( m_nSmokeEffectTickBegin,                 HASH( "DT_SmokeGrenadeProjectile" ),               HASH( "m_nSmokeEffectTickBegin" ) );
-
+        
         INIT_XOREDNETVAR_SPECIFIC( m_flOldSimulationTime,        g_netvars.get( HASH( "DT_BaseEntity" ),       HASH( "m_flSimulationTime" ) ) + sizeof( float ) );
         INIT_XOREDNETVAR_SPECIFIC( m_CustomMaterials,            g_netvars.get( HASH( "DT_BaseCombatWeapon" ), HASH( "m_Item" ) ) + 0x14 );
         INIT_XOREDNETVAR_SPECIFIC( m_VisualsDataProcessors,      g_netvars.get( HASH( "DT_BaseCombatWeapon" ), HASH( "m_Item" ) ) + 0x220 );

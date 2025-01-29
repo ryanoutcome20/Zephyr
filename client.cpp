@@ -77,7 +77,7 @@ void Client::OnPaint() {
 	g_grenades.paint();
 	g_notify.think();
 
-
+	// run some rendering functions.
 	DrawHUD();
 	KillFeed();
 
@@ -110,6 +110,7 @@ void Client::OnMapload() {
 		g_hooks.m_net_channel.init(g_csgo.m_net);
 		g_hooks.m_net_channel.add(INetChannel::PROCESSPACKET, util::force_cast(&Hooks::ProcessPacket));
 		g_hooks.m_net_channel.add(INetChannel::SENDDATAGRAM, util::force_cast(&Hooks::SendDatagram));
+		g_hooks.m_net_channel.add(INetChannel::SENDNETMSG, util::force_cast(&Hooks::SendNetMsg));
 	}
 }
 
@@ -135,6 +136,9 @@ void Client::StartMove(CUserCmd* cmd) {
 	m_latency_ticks = game::TIME_TO_TICKS(m_latency);
 	m_server_tick = g_csgo.m_cl->m_server_tick;
 	m_arrival_tick = m_server_tick + m_latency_ticks;
+
+	// run our exploit handler
+	g_exploits.Command( );
 
 	// processing indicates that the localplayer is valid and alive.
 	m_processing = m_local && m_local->alive();
@@ -325,7 +329,7 @@ void Client::EndMove(CUserCmd* cmd) {
 	m_old_shot = m_shot;
 
 	// run our dropping if needed.
-	if ( g_hvh.m_dropping == m_local->m_nTickBase( ) ) {
+	if ( g_hvh.m_dropping == m_local->m_nTickBase() ) {
 		g_csgo.m_engine->ExecuteClientCmd(XOR("drop"));
 	}
 }
