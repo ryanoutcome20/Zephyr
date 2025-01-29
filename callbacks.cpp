@@ -346,8 +346,20 @@ bool callbacks::IsProjectileSphereOn( ) {
 	return !g_menu.main.visuals.proj_sphere.GetActiveIndices( ).empty( );
 }
 
-bool callbacks::IsProjectileGroundOn() {
+bool callbacks::IsProjectileGroundOn( ) {
 	return !g_menu.main.visuals.proj_ground.GetActiveIndices().empty();
+}
+
+bool callbacks::IsWorldModulationOn( ) {
+	return g_menu.main.visuals.world_modulation.get( );
+}
+
+bool callbacks::IsSkyboxModulationOn( ) {
+	return g_menu.main.visuals.skybox_modulation.get();
+}
+
+bool callbacks::IsPropModulationOn( ) {
+	return g_menu.main.visuals.prop_modulation.get();
 }
 
 bool callbacks::IsAutopeekVisualizeOn( ) {

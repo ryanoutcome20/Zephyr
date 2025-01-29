@@ -99,6 +99,7 @@ bool CSGO::init( ) {
     view_recoil_tracking                    = m_cvar->FindVar( HASH( "view_recoil_tracking" ) );
 	cl_fullupdate                           = m_cvar->FindVar( HASH( "cl_fullupdate" ) );
 	r_DrawSpecificStaticProp                = m_cvar->FindVar( HASH( "r_DrawSpecificStaticProp" ) );
+	sv_skyname										= m_cvar->FindVar( HASH("sv_skyname") );
 	cl_crosshair_sniper_width               = m_cvar->FindVar( HASH( "cl_crosshair_sniper_width" ) );
 	hud_scaling                             = m_cvar->FindVar( HASH( "hud_scaling" ) );
     sv_clip_penetration_traces_to_players   = m_cvar->FindVar( HASH( "sv_clip_penetration_traces_to_players" ) );

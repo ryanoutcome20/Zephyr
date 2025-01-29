@@ -952,8 +952,16 @@ public:
 	MultiDropdown proj_ground;
 	Colorpicker   proj_ground_color;
 	MultiDropdown planted_c4;
-	Dropdown	  world;
-	Checkbox      transparent_props;
+	Checkbox world_modulation;
+	Colorpicker world_modulation_color;
+	Slider	    world_modulation_blend;
+	Checkbox prop_modulation;
+	Colorpicker prop_modulation_color;
+	Slider	    prop_modulation_blend;
+	Checkbox skybox_modulation;
+	Colorpicker skybox_modulation_color;
+	Dropdown skybox_sky;
+	Button		  update_modulation;
 	Checkbox      enemy_radar;
 
 	// col2.
@@ -1047,13 +1055,66 @@ public:
 		planted_c4.setup(XOR("planted c4"), XOR("planted_c4"), { XOR("timer (2D)"), XOR("timer (3D)"), XOR("damage (2D)"), XOR("damage (3D)") });
 		RegisterElement(&planted_c4);
 
-		world.setup(XOR("world"), XOR("world"), { XOR("off"), XOR("night"), XOR("fullbright") });
-		world.SetCallback(Visuals::ModulateWorld);
-		RegisterElement(&world);
+		world_modulation.setup(XOR("world modulation"), XOR("world_modulation"));
+		RegisterElement(&world_modulation);
 
-		transparent_props.setup(XOR("transparent props"), XOR("transparent_props"));
-		transparent_props.SetCallback(Visuals::ModulateWorld);
-		RegisterElement(&transparent_props);
+		world_modulation_color.setup(XOR("color"), XOR("world_modulation_color"), { 128, 128, 128 });
+		world_modulation_color.AddShowCallback(callbacks::IsWorldModulationOn);
+		RegisterElement(&world_modulation_color);
+
+		world_modulation_blend.setup("", XOR("world_modulation_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		world_modulation_blend.AddShowCallback(callbacks::IsWorldModulationOn);
+		RegisterElement(&world_modulation_blend);
+
+		prop_modulation.setup(XOR("prop modulation"), XOR("prop_modulation"));
+		RegisterElement(&prop_modulation);
+
+		prop_modulation_color.setup(XOR("color"), XOR("prop_modulation_color"), colors::white);
+		prop_modulation_color.AddShowCallback(callbacks::IsPropModulationOn);
+		RegisterElement(&prop_modulation_color);
+
+		prop_modulation_blend.setup("", XOR("prop_modulation_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		prop_modulation_blend.AddShowCallback(callbacks::IsPropModulationOn);
+		RegisterElement(&prop_modulation_blend);
+
+		skybox_modulation.setup(XOR("skybox modulation"), XOR("skybox_modulation"));
+		RegisterElement(&skybox_modulation);
+
+		skybox_modulation_color.setup(XOR("color"), XOR("skybox_modulation_color"), colors::white);
+		skybox_modulation_color.AddShowCallback(callbacks::IsSkyboxModulationOn);
+		RegisterElement(&skybox_modulation_color);
+
+		skybox_sky.setup("", XOR("skybox_sky"), { 
+			XOR("cs__baggage_skybox_"),
+			XOR("cs_tibet"),
+			XOR("clearsky"),
+			XOR("clearsky_hdr"),
+			XOR("embassy"),
+			XOR("italy"),
+			XOR("jungle"),
+			XOR("nukeblank"),
+			XOR("office"),
+			XOR("sky_cs15_daylight01_hdr"),
+			XOR("sky_cs15_daylight02_hdr"),
+			XOR("sky_cs15_daylight03_hdr"),
+			XOR("sky_cs15_daylight04_hdr"),
+			XOR("sky_csgo_cloudy01"),
+			XOR("sky_csgo_night02"),
+			XOR("sky_csgo_night02b"),
+			XOR("sky_csgo_night_flat"),
+			XOR("sky_day02_05_hdr"),
+			XOR("sky_day02_05"),
+			XOR("sky_dust"),
+			XOR("sky_l4d_rural02_ldr"),
+			XOR("vertigo_hdr"),
+			XOR("vertigoblue_hdr"),
+			XOR("vertigo")
+		}, false);
+		RegisterElement(&skybox_sky);
+
+		update_modulation.setup(XOR("update modulation"));
+		update_modulation.SetCallback(Visuals::ModulateWorld);
+		RegisterElement(&update_modulation);
 
 		// col2.
 		removals.setup( XOR("removals"), XOR("removals"), { 

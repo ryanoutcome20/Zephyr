@@ -46,28 +46,6 @@ std::vector< IMaterial* > Materials::Get( std::vector< std::string > materials )
 	return completed;
 }
 
-std::vector<IMaterial*> Materials::GetGroup(std::string group) {
-	hash32_t hash = FNV1a::get( group );
-
-	// our localized material cache.
-	std::vector<IMaterial*> final;
-
-	// iterate material handles.
-	for ( uint16_t h{ g_csgo.m_material_system->FirstMaterial() }; h != g_csgo.m_material_system->InvalidMaterial(); h = g_csgo.m_material_system->NextMaterial(h) ) {
-		// get material from handle.
-		IMaterial* target = g_csgo.m_material_system->GetMaterial(h);
-		if ( !target )
-			continue;
-
-		// compare hashes with name and return if equal.
-		if ( FNV1a::get(target->GetTextureGroupName()) == hash ) {
-			final.push_back( target );
-		}
-	}
-
-	return final;
-}
-
 IMaterial* Materials::Create( const char* name, char* type ) {
 	IMaterial* mat = g_csgo.m_material_system->FindMaterial( name, type );
 	
@@ -106,13 +84,13 @@ void Materials::Modulate( std::vector< IMaterial* > materials, Color color, bool
 	for ( const auto& material : materials ) {
 		// we are resetting our colors, set back to non modulated.
 		if( reset ) { 
-			material->AlphaModulate(1.f);
 			material->ColorModulate(1.f, 1.f, 1.f);
+			material->AlphaModulate(1.f);
 			continue;
 		}
 
 		// we are coloring our material.
-		material->AlphaModulate(color.a( ) / 255.f);
 		material->ColorModulate(color.r( ) / 255.f, color.g( ) / 255.f, color.b( ) / 255.f);
+		material->AlphaModulate(color.a( ) / 255.f);
 	}
 }

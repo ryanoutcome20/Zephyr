@@ -11,7 +11,6 @@ public:
 	// caching functions.
 	IMaterial* Get( std::string material );
 	std::vector< IMaterial* > Get( std::vector< std::string > materials );
-	std::vector< IMaterial* > GetGroup( std::string group );
 
 	// creation functions.
 	IMaterial* Create( const char* name, char* type = "Model textures" );

@@ -3,7 +3,7 @@
 Visuals g_visuals{ };;
 
 void Visuals::ModulateWorld( ) {
-	std::vector< IMaterial* > world, props;
+	std::vector< IMaterial* > world, skybox, props;
 
 	// iterate material handles.
 	for( uint16_t h{ g_csgo.m_material_system->FirstMaterial( ) }; h != g_csgo.m_material_system->InvalidMaterial( ); h = g_csgo.m_material_system->NextMaterial( h ) ) {
@@ -16,62 +16,35 @@ void Visuals::ModulateWorld( ) {
 		if( FNV1a::get( mat->GetTextureGroupName( ) ) == HASH( "World textures" ) )
 			world.push_back( mat );
 
+		// store the skybox itself.
+		else if ( FNV1a::get(mat->GetTextureGroupName()) == HASH("SkyBox textures") )
+			skybox.push_back(mat);
+
 		// store props.
 		else if( FNV1a::get( mat->GetTextureGroupName( ) ) == HASH( "StaticProp textures" ) )
 			props.push_back( mat );
 	}
 
-	// night.
-	if( g_menu.main.visuals.world.get( ) == 1 ) {
-		for( const auto& w : world )
-			w->ColorModulate( 0.17f, 0.16f, 0.18f );
+	// props.
+	bool prop_modulate = g_menu.main.visuals.prop_modulation.get();
 
-		// IsUsingStaticPropDebugModes my nigga
-		if( g_csgo.r_DrawSpecificStaticProp->GetInt( ) != 0 ) {
-			g_csgo.r_DrawSpecificStaticProp->SetValue( 0 );
-		}
+	g_csgo.r_DrawSpecificStaticProp->SetValue( prop_modulate );
 
-		for( const auto& p : props )
-			p->ColorModulate( 0.5f, 0.5f, 0.5f );
-	}
+	Color prop_color = g_menu.main.visuals.prop_modulation_color.get( );
+	prop_color.a( ) = g_menu.main.visuals.prop_modulation_blend.get( ) * 2.55f;
 
-	// disable night.
-	else {
-		for( const auto& w : world )
-			w->ColorModulate( 1.f, 1.f, 1.f );
+	g_materials.Modulate( props, prop_color, !prop_modulate );
 
-		// restore r_DrawSpecificStaticProp.
-		if( g_csgo.r_DrawSpecificStaticProp->GetInt( ) != -1 ) {
-			g_csgo.r_DrawSpecificStaticProp->SetValue( -1 );
-		}
+	// world.
+	Color world_color = g_menu.main.visuals.world_modulation_color.get();
+	world_color.a() = g_menu.main.visuals.world_modulation_blend.get() * 2.55f;
 
-		for( const auto& p : props )
-			p->ColorModulate( 1.f, 1.f, 1.f );
-	}
+	g_materials.Modulate(world, world_color, !g_menu.main.visuals.world_modulation.get());
 
-	// transparent props.
-	if( g_menu.main.visuals.transparent_props.get( ) ) {
+	// skybox.
+	g_csgo.sv_skyname->SetValue( g_menu.main.visuals.skybox_sky.GetActiveItem( ).c_str( ) );
 
-		// IsUsingStaticPropDebugModes my nigga
-		if( g_csgo.r_DrawSpecificStaticProp->GetInt( ) != 0 ) {
-			g_csgo.r_DrawSpecificStaticProp->SetValue( 0 );
-		}
-
-		for( const auto& p : props )
-			p->AlphaModulate( 0.85f );
-	}
-
-	// disable transparent props.
-	else {
-
-		// restore r_DrawSpecificStaticProp.
-		if( g_csgo.r_DrawSpecificStaticProp->GetInt( ) != -1 ) {
-			g_csgo.r_DrawSpecificStaticProp->SetValue( -1 );
-		}
-
-		for( const auto& p : props )
-			p->AlphaModulate( 1.0f );
-	}
+	g_materials.Modulate( skybox, g_menu.main.visuals.skybox_modulation_color.get(), !g_menu.main.visuals.skybox_modulation.get( ) );
 }
 
 void Visuals::ModulateConsole( bool reset ) {

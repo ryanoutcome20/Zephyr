@@ -89,6 +89,9 @@ namespace callbacks {
 	bool IsProjectileOn();
 	bool IsProjectileSphereOn( );
 	bool IsProjectileGroundOn();
+	bool IsWorldModulationOn( );
+	bool IsSkyboxModulationOn( );
+	bool IsPropModulationOn( );
 	bool IsAutopeekVisualizeOn( );
 	bool IsImpactBeamsOn( );
 	bool IsImpactBoxesServer( );
