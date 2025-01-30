@@ -379,7 +379,7 @@ public:
 		return util::get_method< void(__thiscall*)(void*, int, const RenderableInstance_t&)>(renderable(), R_DRAWMODEL)(renderable(), flags, instance);
 	}
 
-	__forceinline bool SetupBones(matrix3x4_t* out, int max, int mask, float time) {
+	__forceinline bool SetupBones(matrix3x4_t* out, int max, int mask, float time) {	
 		return util::get_method< bool(__thiscall*)(void*, matrix3x4_t*, int, int, float)>(renderable(), R_SETUPBONES)(renderable(), out, max, mask, time);
 	}
 
