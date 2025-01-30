@@ -294,6 +294,10 @@ bool callbacks::IsWeaponLocal( ) {
 	return g_menu.main.players.weapon.get( 2 );
 }
 
+bool callbacks::IsGlowOn( ) {
+	return !g_menu.main.players.glow.GetActiveIndices( ).empty( );
+}
+
 bool callbacks::IsGlowEnemy() {
 	return g_menu.main.players.glow.get( 0 );
 }

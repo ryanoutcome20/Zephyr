@@ -486,6 +486,8 @@ public:
 	Colorpicker		   health_color_gradient;
 	Checkbox			   health_color_fade_off;
 	Dropdown		   health_color_fade_off_direction;
+
+	// col2.
 	Checkbox      lby_update;
 	Colorpicker   lby_update_color;
 	Checkbox		 shot_matrix;
@@ -506,8 +508,6 @@ public:
 	Colorpicker   skeleton_friendly;
 	Colorpicker   skeleton_local;
 	Checkbox      dormant;
-
-	// col2.
 	Dropdown		  chams_selection;
 	
 	// enemy subtab.
@@ -648,80 +648,82 @@ public:
 		health_color_fade_off_direction.AddShowCallback(callbacks::IsHealthOverrideFadeOn);
 		RegisterElement(&health_color_fade_off_direction);
 
+		// col2.
 		lby_update.setup(XOR("lby update"), XOR("lby_update"));
-		RegisterElement(&lby_update);
+		RegisterElement(&lby_update, 1);
 
 		lby_update_color.setup(XOR("color"), XOR("lby_update_color"), colors::orange);
-		lby_update_color.AddShowCallback( callbacks::IsLBYUpdateOn );
-		RegisterElement(&lby_update_color);
+		lby_update_color.AddShowCallback(callbacks::IsLBYUpdateOn);
+		RegisterElement(&lby_update_color, 1);
 
 		shot_matrix.setup(XOR("shot matrix"), XOR("shot_matrix"));
-		RegisterElement(&shot_matrix);
+		RegisterElement(&shot_matrix, 1);
 
 		shot_matrix_color.setup(XOR("color"), XOR("shot_matrix_color"), colors::white);
-		shot_matrix_color.AddShowCallback( callbacks::IsShotMatrixOn );
-		RegisterElement(&shot_matrix_color);
+		shot_matrix_color.AddShowCallback(callbacks::IsShotMatrixOn);
+		RegisterElement(&shot_matrix_color, 1);
 
-		shot_matrix_time.setup( XOR("shot matrix time"), XOR("shot_matrix_time"), 0.1f, 10.f, true, 1, 2.f, 0.1f, XOR(L"s"));
-		shot_matrix_time.AddShowCallback( callbacks::IsShotMatrixOn );
-		RegisterElement(&shot_matrix_time);
+		shot_matrix_time.setup(XOR("shot matrix time"), XOR("shot_matrix_time"), 0.1f, 10.f, true, 1, 2.f, 0.1f, XOR(L"s"));
+		shot_matrix_time.AddShowCallback(callbacks::IsShotMatrixOn);
+		RegisterElement(&shot_matrix_time, 1);
 
 		offscreen.setup(XOR("enemy offscreen esp"), XOR("offscreen"));
-		RegisterElement(&offscreen);
+		RegisterElement(&offscreen, 1);
 
 		offscreen_color.setup(XOR("offscreen esp color"), XOR("offscreen_color"), colors::white);
 		offscreen_color.AddShowCallback(callbacks::IsOffscreenOn);
-		RegisterElement(&offscreen_color);
+		RegisterElement(&offscreen_color, 1);
 
 		offscreen_dist.setup("", XOR("offscreen_distance"), 30.f, 300.f, false, 0, 250.f, 5.f);
 		offscreen_dist.AddShowCallback(callbacks::IsOffscreenOn);
-		RegisterElement(&offscreen_dist);
+		RegisterElement(&offscreen_dist, 1);
 
 		offscreen_size.setup("", XOR("offscreen_size"), 6.f, 18.f, false, 0.f, 12.f);
 		offscreen_size.AddShowCallback(callbacks::IsOffscreenOn);
-		RegisterElement(&offscreen_size);
+		RegisterElement(&offscreen_size, 1);
 
 		glow.setup(XOR("glow"), XOR("glow"), { XOR("enemy"), XOR("friendly"), XOR("local") });
-		RegisterElement(&glow);
+		RegisterElement(&glow, 1);
 
 		glow_enemy.setup(XOR("enemy color"), XOR("glow_enemy"), { 150, 200, 60 });
-		glow_enemy.AddShowCallback( callbacks::IsGlowEnemy );
-		RegisterElement(&glow_enemy);
+		glow_enemy.AddShowCallback(callbacks::IsGlowEnemy);
+		RegisterElement(&glow_enemy, 1);
 
 		glow_friendly.setup(XOR("friendly color"), XOR("glow_friendly"), { 150, 200, 60 });
 		glow_friendly.AddShowCallback(callbacks::IsGlowFriendly);
-		RegisterElement(&glow_friendly);
-		
+		RegisterElement(&glow_friendly, 1);
+
 		glow_local.setup(XOR("local color"), XOR("glow_local"), { 150, 200, 60 });
 		glow_local.AddShowCallback(callbacks::IsGlowLocal);
-		RegisterElement(&glow_local);
+		RegisterElement(&glow_local, 1);
 
 		glow_blend.setup("", XOR("glow_blend"), 10.f, 100.f, false, 0, 60.f, 1.f, XOR(L"%"));
-		RegisterElement(&glow_blend);
+		glow_blend.AddShowCallback(callbacks::IsGlowOn);
+		RegisterElement(&glow_blend, 1);
 
-		glow_style.setup( XOR("glow style"), XOR("glow_style"), {  XOR("outline"), XOR("model"), XOR("inline"), XOR("pulse") });
-		RegisterElement(&glow_style);
+		glow_style.setup(XOR("glow style"), XOR("glow_style"), { XOR("outline"), XOR("model"), XOR("inline"), XOR("pulse") });
+		glow_style.AddShowCallback(callbacks::IsGlowOn);
+		RegisterElement(&glow_style, 1);
 
 		skeleton.setup(XOR("skeleton"), XOR("skeleton"), { XOR("enemy"), XOR("friendly"), XOR("local") });
-		RegisterElement(&skeleton);
+		RegisterElement(&skeleton, 1);
 
 		skeleton_enemy.setup(XOR("enemy color"), XOR("skeleton_enemy"), { 255, 255, 255 });
 		skeleton_enemy.AddShowCallback(callbacks::IsSkeletonEnemy);
-		RegisterElement(&skeleton_enemy);
+		RegisterElement(&skeleton_enemy, 1);
 
 		skeleton_friendly.setup(XOR("friendly color"), XOR("skeleton_friendly"), { 255, 255, 255 });
 		skeleton_friendly.AddShowCallback(callbacks::IsSkeletonFriendly);
-		RegisterElement(&skeleton_friendly);
+		RegisterElement(&skeleton_friendly, 1);
 
 		skeleton_local.setup(XOR("local color"), XOR("skeleton_local"), { 255, 255, 255 });
 		skeleton_local.AddShowCallback(callbacks::IsSkeletonLocal);
-		RegisterElement(&skeleton_local);
+		RegisterElement(&skeleton_local, 1);
 
 		dormant.setup(XOR("dormant enemies"), XOR("dormant"));
-		RegisterElement(&dormant);
+		RegisterElement(&dormant, 1);
 
-		// col2.
-		chams_selection.setup( XOR("selection"), XOR("chams_selection"), { XOR("enemy"), XOR("friendly"), XOR("local") });
+		chams_selection.setup( XOR("chams selection"), XOR("chams_selection"), { XOR("enemy"), XOR("friendly"), XOR("local") });
 		RegisterElement(&chams_selection, 1);
 
 		// enemy subtab.

@@ -74,6 +74,7 @@ namespace callbacks {
 	bool IsWeaponEnemy( );
 	bool IsWeaponFriendly( );
 	bool IsWeaponLocal( );
+	bool IsGlowOn( );
 	bool IsGlowEnemy( );
 	bool IsGlowFriendly( );
 	bool IsGlowLocal( );
