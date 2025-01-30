@@ -838,17 +838,29 @@ void Visuals::DrawPlayer( Player* player ) {
 	bool health_esp = ( local && g_menu.main.players.health.get( 2 ) ) || ( enemy && g_menu.main.players.health.get( 0 ) ) || ( !enemy && !local && g_menu.main.players.health.get( 1 ) );
 
 	if( health_esp ) {
+		// get x and y.
 		int y = box.y + 1;
 		int h = box.h - 2;
 
 		// should override.
 		int health_override = g_menu.main.players.health_override_mode.get( );
 
-		// retarded servers that go above 100 hp..
+		// save this for checking our scaled factor later.
 		int hp = std::min( 100, player->m_iHealth( ) );
 
+		// get our scaled health.
+		float& scaled = m_scaled_health[ index - 1 ];
+
+		// reset if needed. note that this will reset the health injector but since
+		// the health injector already does some scaling it'll look fine.
+		if ( !scaled || scaled < hp )
+			scaled = hp;
+
+		// converted health.
+		int health = (int)scaled;
+
 		// calculate hp bar color.
-		Color bar = { std::min((510 * (100 - hp)) / 100, 255), std::min((510 * hp) / 100, 255), 0 };
+		Color bar = { std::min((510 * (100 - health)) / 100, 255), std::min((510 * health) / 100, 255), 0 };
 		
 		if ( health_override != 0 )
 			bar = g_menu.main.players.health_color.get( );
@@ -856,7 +868,7 @@ void Visuals::DrawPlayer( Player* player ) {
 		bar.a( ) = alpha;
 
 		// get hp bar height.
-		int fill = ( int ) std::round( hp * h / 100.f );
+		int fill = ( int ) std::round( health * h / 100.f );
 
 		// render background.
 		render::rect_filled( box.x - 6, y - 1, 4, h + 2, { 10, 10, 10, very_low_alpha } );
@@ -869,22 +881,31 @@ void Visuals::DrawPlayer( Player* player ) {
 			secondary.a() = alpha;
 
 			// run our rendering.
-			render::rect_filled_fade(box.x - 5, y + h - fill, 2, fill, bar, g_menu.main.players.health_color_fade.get( ) * 2.55, 0);
+			render::rect_filled_fade(box.x - 5, y + h - fill, 2, fill, bar, 255, 0);
 
-			render::rect_filled_fade(box.x - 5, y + h - ( fill / 2 ), 2, ( fill / 2), secondary, 0, g_menu.main.players.health_color_gradient_fade.get( ) * 2.55);
+			render::rect_filled_fade(box.x - 5, y + h - ( fill / 2 ), 2, ( fill / 2), secondary, 0, 255);
 		}
 
 		// otherwise render as normal.
 		else {
-			if( g_menu.main.players.health_color_fade_off.get( ) )
-				render::rect_filled_fade(box.x - 5, y + h - fill, 2, fill, bar, 255, 0);
-			else 
+			if( g_menu.main.players.health_color_fade_off.get( ) ) {
+				if( g_menu.main.players.health_color_fade_off_direction.get( ) == 0 )
+					render::rect_filled_fade(box.x - 5, y + h - fill, 2, fill, bar, 255, 0);
+				else 
+					render::rect_filled_fade(box.x - 5, y + h - fill, 2, fill, bar, 0, 255);
+			}
+			else {
 				render::rect(box.x - 5, y + h - fill, 2, fill, bar);
+			}
 		}
 
 		// if hp is below max, draw a string.
-		if( hp < 100 )
-			render::esp_small.string( box.x - 5, y + ( h - fill ) - 5, { 255, 255, 255, alpha }, std::to_string( hp ), render::ALIGN_CENTER );
+		if( health < 100 )
+			render::esp_small.string( box.x - 5, y + ( h - fill ) - 5, { 255, 255, 255, alpha }, std::to_string( health ), render::ALIGN_CENTER );
+
+		// adjust our scaled speed for later.
+		if ( scaled > hp )
+			scaled -= 255 * g_csgo.m_globals->m_frametime;
 	}
 
 	// draw flags.
@@ -1019,15 +1040,20 @@ void Visuals::DrawPlayer( Player* player ) {
 					bool reload = ( layer1->m_weight != 0.f ) && ( player->GetSequenceActivity( layer1->m_sequence ) == 967 );
 
 					// ammo bar.
-					if( max != -1 && g_menu.main.players.ammo.get( ) ) {
+					if( weapon->m_iItemDefinitionIndex( ) != ZEUS && max != -1 && g_menu.main.players.ammo.get( ) ) {
+						// setup current animation.
+						float& scaled = m_scaled_ammo[ index - 1 ];
+					
+						if ( !scaled || scaled < current || scaled < max || scaled > max )
+							scaled = current;
+
 						// check for reload.
 						if( reload )
 							scale = layer1->m_cycle;
 
 						// not reloading.
-						// make the division of 2 ints produce a float instead of another int.
 						else
-							scale = ( float ) current / max;
+							scale = scaled / (float) max;
 
 						// relative to bar.
 						bar = ( int ) std::round( ( box.w - 2 ) * scale );
@@ -1048,6 +1074,10 @@ void Visuals::DrawPlayer( Player* player ) {
 							render::esp_small.string( box.x + bar, box.y + box.h + offset, { 255, 255, 255, alpha }, std::to_string( current ), render::ALIGN_CENTER );
 
 						offset += 8;
+
+						// adjust our scaled for next frame.
+						if( scaled > current )
+							scaled -= 125 * g_csgo.m_globals->m_frametime;
 					}
 
 					// text.

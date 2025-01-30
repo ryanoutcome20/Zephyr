@@ -84,6 +84,7 @@ namespace callbacks {
 	bool IsHealthOn( );
 	bool IsHealthOverrideOn( );
 	bool IsHealthOverrideGradient( );
+	bool IsHealthOverrideFadeOn( );
 	bool IsNotHealthOverrideGradient( );
 	bool IsLBYUpdateOn( );
 	bool IsShotMatrixOn( );

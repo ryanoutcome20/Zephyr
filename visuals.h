@@ -3,7 +3,9 @@
 class Visuals {
 public:
 	std::array< bool, 64 >                  m_draw;
-	std::array< float, 2048 >               m_opacities;
+    std::array< float, 64 >                  m_scaled_health;
+    std::array< float, 64 >                  m_scaled_ammo;
+	std::array< float, 2048 >              m_opacities;
 	vec2_t                                  m_crosshair;
 	bool                                    m_thirdperson;
 	float					                m_hit_start, m_hit_end, m_hit_duration;

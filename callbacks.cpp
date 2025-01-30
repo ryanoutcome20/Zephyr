@@ -330,11 +330,15 @@ bool callbacks::IsHealthOverrideOn( ) {
 	return g_menu.main.players.health_override_mode.get( ) != 0;
 }
 
-bool callbacks::IsHealthOverrideGradient() {
+bool callbacks::IsHealthOverrideGradient( ) {
 	return g_menu.main.players.health_override_mode.get() == 2;
 }
 
-bool callbacks::IsNotHealthOverrideGradient() {
+bool callbacks::IsHealthOverrideFadeOn( ) {
+	return g_menu.main.players.health_color_fade_off.get();
+}
+
+bool callbacks::IsNotHealthOverrideGradient( ) {
 	return g_menu.main.players.health_override_mode.get() != 2;
 }
 

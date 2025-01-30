@@ -483,10 +483,9 @@ public:
 	MultiDropdown health;
 	Dropdown		  health_override_mode;
 	Colorpicker		   health_color;
-	Slider				   health_color_fade;
 	Colorpicker		   health_color_gradient;
-	Slider				   health_color_gradient_fade;
 	Checkbox			   health_color_fade_off;
+	Dropdown		   health_color_fade_off_direction;
 	Checkbox      lby_update;
 	Colorpicker   lby_update_color;
 	Checkbox		 shot_matrix;
@@ -636,21 +635,18 @@ public:
 		health_color.AddShowCallback(callbacks::IsHealthOverrideOn);
 		RegisterElement(&health_color);
 
-		health_color_fade.setup("", XOR("health_color_fade"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
-		health_color_fade.AddShowCallback(callbacks::IsHealthOverrideGradient);
-		RegisterElement(&health_color_fade);
-
 		health_color_gradient.setup(XOR("secondary color"), XOR("health_color"), colors::burgundy);
 		health_color_gradient.AddShowCallback(callbacks::IsHealthOverrideGradient);
 		RegisterElement(&health_color_gradient);
 
-		health_color_gradient_fade.setup("", XOR("health_color_gradient_fade"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
-		health_color_gradient_fade.AddShowCallback(callbacks::IsHealthOverrideGradient);
-		RegisterElement(&health_color_gradient_fade);
-
 		health_color_fade_off.setup(XOR("fade off"), XOR("health_color_fade_off"));
 		health_color_fade_off.AddShowCallback(callbacks::IsNotHealthOverrideGradient);
 		RegisterElement(&health_color_fade_off);
+
+		health_color_fade_off_direction.setup("", XOR("health_color_fade_off_direction"), { XOR("down"), XOR("up") }, false);
+		health_color_fade_off_direction.AddShowCallback(callbacks::IsNotHealthOverrideGradient);
+		health_color_fade_off_direction.AddShowCallback(callbacks::IsHealthOverrideFadeOn);
+		RegisterElement(&health_color_fade_off_direction);
 
 		lby_update.setup(XOR("lby update"), XOR("lby_update"));
 		RegisterElement(&lby_update);

@@ -64,9 +64,9 @@ void render::rect_filled( int x, int y, int w, int h, Color color ) {
 	g_csgo.m_surface->DrawFilledRect( x, y, x + w, y + h );
 }
 
-void render::rect_filled_fade( int x, int y, int w, int h, Color color, int a1, int a2 ) {
+void render::rect_filled_fade( int x, int y, int w, int h, Color color, int a1, int a2, bool horizontal ) {
 	g_csgo.m_surface->DrawSetColor( color );
-	g_csgo.m_surface->DrawFilledRectFade( x, y, x + w, y + h, a1, a2, false );
+	g_csgo.m_surface->DrawFilledRectFade( x, y, x + w, y + h, a1, a2, horizontal );
 }
 
 void render::rect_outlined( int x, int y, int w, int h, Color color, Color color2 ) {
