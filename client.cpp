@@ -127,8 +127,7 @@ void Client::StartMove(CUserCmd* cmd) {
 		return;
 
 	// store max choke
-	// TODO; 11 -> m_bIsValveDS
-	m_max_lag = (m_local->m_fFlags() & FL_ONGROUND) ? 16 : 15;
+	m_max_lag = (m_local->m_fFlags() & FL_ONGROUND) ? 16 : 14;
 	m_lag = g_csgo.m_cl->m_choked_commands;
 	m_lerp = game::GetClientInterpAmount();
 	m_latency = g_csgo.m_net->GetLatency(INetChannel::FLOW_OUTGOING);
