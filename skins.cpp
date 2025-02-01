@@ -496,7 +496,7 @@ void Skins::think( ) {
 			}
 
 			// check if list even exists.
-			if( list !=nullptr ) {
+			if( list != nullptr ) {
 				// create an ent index and serial no for the new glove entity.
 				int index  = g_csgo.m_entlist->GetHighestEntityIndex( ) + 1;
 				int serial = g_csgo.RandomInt( 0xA00, 0xFFF );

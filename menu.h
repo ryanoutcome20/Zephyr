@@ -976,7 +976,12 @@ public:
 	Checkbox skybox_modulation;
 	Colorpicker skybox_modulation_color;
 	Dropdown skybox_sky;
+	Checkbox ambient_modulation;
+	Colorpicker ambient_modulation_color;
 	Button		  update_modulation;
+	Checkbox	  weather_modulation;
+	Checkbox	  weather_audio;
+	Slider		  weather_audio_volume;
 	Checkbox    console_modulation;
 	Colorpicker console_color;
 	Slider		   console_blend;
@@ -1129,9 +1134,29 @@ public:
 		}, false);
 		RegisterElement(&skybox_sky);
 
+		ambient_modulation.setup(XOR("ambient modulation"), XOR("ambient_modulation"));
+		RegisterElement(&ambient_modulation);
+
+		ambient_modulation_color.setup(XOR("color"), XOR("ambient_modulation_color"), colors::white);
+		ambient_modulation_color.AddShowCallback( callbacks::IsAmbientModulationOn );
+		RegisterElement(&ambient_modulation_color);
+
 		update_modulation.setup(XOR("update modulation"));
 		update_modulation.SetCallback(Visuals::ModulateWorld);
 		RegisterElement(&update_modulation);
+
+		weather_modulation.setup(XOR("weather modulation"), XOR("weather_modulation"));
+		weather_modulation.SetCallback(callbacks::ToggleWeather);
+		RegisterElement(&weather_modulation);
+
+		weather_audio.setup(XOR("audio"), XOR("weather_audio"));
+		weather_audio.AddShowCallback(callbacks::IsWeatherModulationOn);
+		RegisterElement(&weather_audio);
+		
+		weather_audio_volume.setup("", XOR("weather_audio_volume"), 1.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		weather_audio_volume.AddShowCallback(callbacks::IsWeatherModulationOn);
+		weather_audio_volume.AddShowCallback(callbacks::IsWeatherModulationAudioOn);
+		RegisterElement(&weather_audio_volume);
 
 		console_modulation.setup(XOR("console modulation"), XOR("console_modulation"));
 		RegisterElement(&console_modulation);

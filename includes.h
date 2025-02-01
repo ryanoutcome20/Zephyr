@@ -89,6 +89,7 @@ using ulong_t = unsigned long;
 #include "shots.h"
 #include "materials.h"
 #include "exploits.h"
+#include "precipitation.h"
 
 // gui includes.
 #include "json.h"

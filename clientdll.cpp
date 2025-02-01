@@ -69,17 +69,22 @@ void Hooks::FrameStageNotify( Stage_t stage ) {
 
 		// draw our bullet impacts.
 		g_visuals.DrawBulletImpacts( );
+
+		// draw our precipitation.
+		g_precipitation.Paint();
 	}
 
 	// call original.
 	g_hooks.m_client.GetOldMethod< FrameStageNotify_t >( CHLClient::FRAMESTAGENOTIFY )( this, stage );
 
-	if( stage == FRAME_NET_UPDATE_END ) {
+	if ( stage == FRAME_NET_UPDATE_POSTDATAUPDATE_START ) {
+		// run our skins.
+		g_skins.think();
+	}
+
+	else if( stage == FRAME_NET_UPDATE_END ) {
 		// this is the last stage called, prefer it over anything else
 		// when messing with clientside data (animations, bones, etc).
-
-		// run our skins.
-		g_skins.think( );
 
 		// run our no smoke.
 		g_visuals.NoSmoke( );

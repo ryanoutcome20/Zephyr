@@ -5,7 +5,7 @@ void callbacks::SkinUpdate( ) {
 	g_skins.m_update = true;
 }
 
-void callbacks::ForceFullUpdate( ) {
+void callbacks::ForceFullUpdate( ) {	
 	if( g_csgo.m_net && g_csgo.m_net->IsLoopback( ) )
 		return;
 
@@ -22,6 +22,10 @@ void callbacks::ToggleExtendedLag( ) {
 
 void callbacks::ToggleThirdPerson( ) {
 	g_visuals.m_thirdperson = !g_visuals.m_thirdperson;
+}
+
+void callbacks::ToggleWeather( ) {
+	g_precipitation.m_setup = false;
 }
 
 void callbacks::ToggleFakeLatency( ) {
@@ -384,6 +388,18 @@ bool callbacks::IsProjectileGroundOn( ) {
 
 bool callbacks::IsWorldModulationOn( ) {
 	return g_menu.main.visuals.world_modulation.get( );
+}
+
+bool callbacks::IsAmbientModulationOn( ) {
+	return g_menu.main.visuals.ambient_modulation.get( );
+}
+
+bool callbacks::IsWeatherModulationOn( ) {
+	return g_menu.main.visuals.weather_modulation.get( );
+}
+
+bool callbacks::IsWeatherModulationAudioOn() {
+	return g_menu.main.visuals.weather_audio.get( );
 }
 
 bool callbacks::IsSkyboxModulationOn( ) {

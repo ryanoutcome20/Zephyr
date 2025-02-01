@@ -235,6 +235,7 @@
     <ClInclude Include="pattern.h" />
     <ClInclude Include="pe.h" />
     <ClInclude Include="penetration.h" />
+    <ClInclude Include="precipitation.h" />
     <ClInclude Include="pred.h" />
     <ClInclude Include="prediction.h" />
     <ClInclude Include="render.h" />
@@ -281,6 +282,7 @@
     <ClCompile Include="keybind.cpp" />
     <ClCompile Include="materials.cpp" />
     <ClCompile Include="materialsystem.cpp" />
+    <ClCompile Include="precipitation.cpp" />
     <ClCompile Include="shadowmgr.cpp" />
     <ClCompile Include="csgo.cpp" />
     <ClCompile Include="cvar.cpp" />

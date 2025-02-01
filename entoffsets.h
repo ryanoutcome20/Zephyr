@@ -126,6 +126,7 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_hMyWeapons;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bFireIsBurning;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nSmokeEffectTickBegin;
+    XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nPrecipType;
 
     void init( ) {
         // initialize a xored netvar.
@@ -153,13 +154,13 @@ public:
         INIT_XOREDNETVAR( m_iHealth,                    HASH( "DT_CSPlayer" ),             HASH( "m_iHealth" ) );
         INIT_XOREDNETVAR( m_iAccount,                   HASH( "DT_CSPlayer" ),             HASH( "m_iAccount" ) );
         INIT_XOREDNETVAR( m_bHasDefuser,                HASH( "DT_CSPlayer" ),             HASH( "m_bHasDefuser" ) );
-        INIT_XOREDNETVAR( m_bIsBuyMenuOpen,                 HASH("DT_CSPlayer"),      HASH("m_bIsBuyMenuOpen"));
+        INIT_XOREDNETVAR( m_bIsBuyMenuOpen,                 HASH("DT_CSPlayer"),           HASH("m_bIsBuyMenuOpen"));
         INIT_XOREDNETVAR( m_nHitboxSet,                 HASH( "DT_BaseAnimating" ),        HASH( "m_nHitboxSet" ) );
         INIT_XOREDNETVAR( m_angAbsRotation,             HASH( "C_BaseEntity" ),            HASH( "m_angAbsRotation" ) );
         INIT_XOREDNETVAR( m_angRotation,                HASH( "C_BaseEntity" ),            HASH( "m_angRotation" ) );
         INIT_XOREDNETVAR( m_angNetworkAngles,           HASH( "C_BaseEntity" ),            HASH( "m_angNetworkAngles" ) );
-        INIT_XOREDNETVAR( m_fEffects,                               HASH( "C_BaseEntity" ),             HASH( "m_fEffects" ) );
-        INIT_XOREDNETVAR( m_bControlledBot,                  HASH( "DT_CSPlayer" ),             HASH( "m_bHasControlledBotThisRound" ) );
+        INIT_XOREDNETVAR( m_fEffects,                   HASH( "C_BaseEntity" ),            HASH( "m_fEffects" ) );
+        INIT_XOREDNETVAR( m_bControlledBot,             HASH( "DT_CSPlayer" ),             HASH( "m_bHasControlledBotThisRound" ) );
         INIT_XOREDNETVAR( m_nTickBase,                  HASH( "DT_CSPlayer" ),             HASH( "m_nTickBase" ) );
         INIT_XOREDNETVAR( m_flNextAttack,               HASH( "DT_CSPlayer" ),             HASH( "m_flNextAttack" ) );
         INIT_XOREDNETVAR( m_flDuckAmount,               HASH( "DT_BasePlayer" ),           HASH( "m_flDuckAmount" ) );
@@ -173,7 +174,7 @@ public:
         INIT_XOREDNETVAR( m_bDucking,                   HASH( "DT_CSPlayer" ),             HASH( "m_bDucking" ) );
         INIT_XOREDNETVAR( m_bSpotted,                   HASH( "DT_BaseEntity" ),           HASH( "m_bSpotted" ) );
         INIT_XOREDNETVAR( m_iObserverMode,              HASH( "DT_BasePlayer" ),           HASH( "m_iObserverMode" ) );
-        INIT_XOREDNETVAR( m_ArmorValue,                 HASH( "DT_CSPlayer" ),           HASH( "m_ArmorValue" ) );
+        INIT_XOREDNETVAR( m_ArmorValue,                 HASH( "DT_CSPlayer" ),             HASH( "m_ArmorValue" ) );
         INIT_XOREDNETVAR( m_flMaxspeed,                 HASH( "DT_BasePlayer" ),           HASH( "m_flMaxspeed" ) );
         INIT_XOREDNETVAR( m_surfaceFriction,            HASH( "C_BasePlayer" ),            HASH( "m_surfaceFriction" ) );
         INIT_XOREDNETVAR( m_angEyeAngles,               HASH( "DT_CSPlayer" ),             HASH( "m_angEyeAngles" ) );
@@ -221,9 +222,10 @@ public:
 		INIT_XOREDNETVAR( m_flAbsYaw,					HASH( "DT_CSRagdoll" ),			   HASH( "m_flAbsYaw" ) );
         INIT_XOREDNETVAR( m_flConstraintRadius,			HASH( "DT_CSPlayer" ),             HASH( "m_flConstraintRadius" ) );
         INIT_XOREDNETVAR( m_hMyWeapons,			        HASH( "DT_CSPlayer" ),             HASH( "m_hMyWeapons" ) );
-        INIT_XOREDNETVAR( m_bFireIsBurning,                 HASH( "DT_Inferno" ),               HASH( "m_bFireIsBurning" ) );
-        INIT_XOREDNETVAR( m_nSmokeEffectTickBegin,                 HASH( "DT_SmokeGrenadeProjectile" ),               HASH( "m_nSmokeEffectTickBegin" ) );
-        
+        INIT_XOREDNETVAR( m_bFireIsBurning,             HASH( "DT_Inferno" ),              HASH( "m_bFireIsBurning" ) );
+        INIT_XOREDNETVAR( m_nPrecipType,                HASH( "DT_Precipitation" ),        HASH( "m_nPrecipType" ) );
+        INIT_XOREDNETVAR( m_nSmokeEffectTickBegin,      HASH( "DT_SmokeGrenadeProjectile" ), HASH( "m_nSmokeEffectTickBegin" ) );
+
         INIT_XOREDNETVAR_SPECIFIC( m_flOldSimulationTime,        g_netvars.get( HASH( "DT_BaseEntity" ),       HASH( "m_flSimulationTime" ) ) + sizeof( float ) );
         INIT_XOREDNETVAR_SPECIFIC( m_CustomMaterials,            g_netvars.get( HASH( "DT_BaseCombatWeapon" ), HASH( "m_Item" ) ) + 0x14 );
         INIT_XOREDNETVAR_SPECIFIC( m_VisualsDataProcessors,      g_netvars.get( HASH( "DT_BaseCombatWeapon" ), HASH( "m_Item" ) ) + 0x220 );

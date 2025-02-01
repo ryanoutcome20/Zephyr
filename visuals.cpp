@@ -45,6 +45,16 @@ void Visuals::ModulateWorld( ) {
 	g_csgo.sv_skyname->SetValue( g_menu.main.visuals.skybox_sky.GetActiveItem( ).c_str( ) );
 
 	g_materials.Modulate( skybox, g_menu.main.visuals.skybox_modulation_color.get(), !g_menu.main.visuals.skybox_modulation.get( ) );
+
+	// ambient.
+	// this is, in fact, super stupid if you know how slow convars are to get the value of, 
+	// but Valve does it anyway, and no, there is no overriding this in another way; trust me, 
+	// I looked. reguardless it isn't that slow to set convars so this should be fine, albeit ugly.
+	Color ambient_color = g_menu.main.visuals.ambient_modulation.get( ) ? g_menu.main.visuals.ambient_modulation_color.get( ) : colors::black;
+
+	g_csgo.mat_ambient_light_r->SetValue( ambient_color.r( ) / 255.f );
+	g_csgo.mat_ambient_light_g->SetValue( ambient_color.g( ) / 255.f );
+	g_csgo.mat_ambient_light_b->SetValue( ambient_color.b( ) / 255.f );
 }
 
 void Visuals::ModulateConsole( bool reset ) {

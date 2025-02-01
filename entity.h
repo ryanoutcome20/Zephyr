@@ -145,6 +145,18 @@ enum DataUpdateType_t : int {
 	DATA_UPDATE_DATATABLE_CHANGED,
 };
 
+enum PrecipitationType_t : int {
+	PRECIPITATION_TYPE_RAIN = 0,
+	PRECIPITATION_TYPE_SNOW,
+	PRECIPITATION_TYPE_ASH,
+	PRECIPITATION_TYPE_SNOWFALL,
+	PRECIPITATION_TYPE_PARTICLERAIN,
+	PRECIPITATION_TYPE_PARTICLEASH,
+	PRECIPITATION_TYPE_PARTICLERAINSTORM,
+	PRECIPITATION_TYPE_PARTICLESNOW,
+	NUM_PRECIPITATION_TYPES,
+};
+
 enum LifeStates_t : int {
 	LIFE_ALIVE = 0,
 	LIFE_DYING,
@@ -328,6 +340,10 @@ public:
 
 	__forceinline int& m_iEFlags() {
 		return get< int >(g_entoffsets.m_iEFlags);
+	}
+
+	__forceinline int& m_nPrecipType() {
+		return get< int >(g_entoffsets.m_nPrecipType);
 	}
 
 public:

@@ -112,6 +112,9 @@ public:
 	ConVar *cl_fullupdate;
 	ConVar *r_DrawSpecificStaticProp;
 	ConVar *sv_skyname;
+	ConVar *mat_ambient_light_r;
+	ConVar* mat_ambient_light_g;
+	ConVar* mat_ambient_light_b;
 	ConVar *cl_crosshair_sniper_width;
 	ConVar *hud_scaling;
 	ConVar *sv_clip_penetration_traces_to_players;

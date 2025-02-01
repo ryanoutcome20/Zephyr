@@ -100,6 +100,7 @@ void Client::OnMapload() {
 	// init knife shit.
 	g_skins.load();
 
+	// clear networking sequences.
 	m_sequences.clear();
 
 	// if the INetChannelInfo pointer has changed, store it for later.

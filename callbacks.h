@@ -6,6 +6,7 @@ namespace callbacks {
 	void ToggleMinimalDamageOverride( );
 	void ToggleExtendedLag( );
 	void ToggleThirdPerson( );
+	void ToggleWeather( );
 	void ToggleFakeLatency( );
     void ToggleKillfeed( );
 
@@ -98,6 +99,9 @@ namespace callbacks {
 	bool IsProjectileSphereOn( );
 	bool IsProjectileGroundOn();
 	bool IsWorldModulationOn( );
+	bool IsAmbientModulationOn( );
+	bool IsWeatherModulationOn( );
+	bool IsWeatherModulationAudioOn( );
 	bool IsSkyboxModulationOn( );
 	bool IsPropModulationOn( );
 	bool IsConsoleModulationOn( );
