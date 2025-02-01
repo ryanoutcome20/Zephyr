@@ -731,7 +731,7 @@ public:
 		chams_enemy_visible.AddShowCallback(callbacks::IsChamsEnemy);
 		RegisterElement(&chams_enemy_visible, 1);
 
-		chams_enemy_visible_material.setup(XOR("material"), XOR("chams_enemy_visible_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
+		chams_enemy_visible_material.setup(XOR("material"), XOR("chams_enemy_visible_material"), { XOR("regular"), XOR("flat"), XOR("metal") });
 		chams_enemy_visible_material.AddShowCallback(callbacks::IsChamsEnemy);
 		chams_enemy_visible_material.AddShowCallback(callbacks::IsChamsEnemyVisible);
 		RegisterElement(&chams_enemy_visible_material, 1);
@@ -770,7 +770,7 @@ public:
 		chams_enemy_invisible.AddShowCallback(callbacks::IsChamsEnemy);
 		RegisterElement(&chams_enemy_invisible, 1);
 
-		chams_enemy_invisible_material.setup(XOR("material"), XOR("chams_enemy_invisible_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
+		chams_enemy_invisible_material.setup(XOR("material"), XOR("chams_enemy_invisible_material"), { XOR("regular"), XOR("flat"), XOR("metal") });
 		chams_enemy_invisible_material.AddShowCallback(callbacks::IsChamsEnemy);
 		chams_enemy_invisible_material.AddShowCallback(callbacks::IsChamsEnemyInvisible);
 		RegisterElement(&chams_enemy_invisible_material, 1);
@@ -790,7 +790,7 @@ public:
 		chams_enemy_history.AddShowCallback(callbacks::IsChamsEnemy);
 		RegisterElement(&chams_enemy_history, 1);
 
-		chams_enemy_history_material.setup(XOR("material"), XOR("chams_enemy_history_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
+		chams_enemy_history_material.setup(XOR("material"), XOR("chams_enemy_history_material"), { XOR("regular"), XOR("flat"), XOR("metal") });
 		chams_enemy_history_material.AddShowCallback(callbacks::IsChamsEnemy);
 		chams_enemy_history_material.AddShowCallback(callbacks::IsChamsEnemyHistory);
 		RegisterElement(&chams_enemy_history_material, 1);
@@ -810,7 +810,7 @@ public:
 		chams_friendly_visible.AddShowCallback(callbacks::IsChamsFriendly);
 		RegisterElement(&chams_friendly_visible, 1);
 
-		chams_friendly_visible_material.setup(XOR("material"), XOR("chams_friendly_visible_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
+		chams_friendly_visible_material.setup(XOR("material"), XOR("chams_friendly_visible_material"), { XOR("regular"), XOR("flat"), XOR("metal") });
 		chams_friendly_visible_material.AddShowCallback(callbacks::IsChamsFriendly);
 		chams_friendly_visible_material.AddShowCallback(callbacks::IsChamsFriendlyVisible);
 		RegisterElement(&chams_friendly_visible_material, 1);
@@ -849,7 +849,7 @@ public:
 		chams_friendly_invisible.AddShowCallback(callbacks::IsChamsFriendly);
 		RegisterElement(&chams_friendly_invisible, 1);
 
-		chams_friendly_invisible_material.setup(XOR("material"), XOR("chams_friendly_invisible_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
+		chams_friendly_invisible_material.setup(XOR("material"), XOR("chams_friendly_invisible_material"), { XOR("regular"), XOR("flat"), XOR("metal") });
 		chams_friendly_invisible_material.AddShowCallback(callbacks::IsChamsFriendly);
 		chams_friendly_invisible_material.AddShowCallback(callbacks::IsChamsFriendlyInvisible);
 		RegisterElement(&chams_friendly_invisible_material, 1);
@@ -869,7 +869,7 @@ public:
 		chams_local_real.AddShowCallback(callbacks::IsChamsLocal);
 		RegisterElement(&chams_local_real, 1);
 
-		chams_local_real_material.setup(XOR("material"), XOR("chams_local_real_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
+		chams_local_real_material.setup(XOR("material"), XOR("chams_local_real_material"), { XOR("regular"), XOR("flat"), XOR("metal") });
 		chams_local_real_material.AddShowCallback(callbacks::IsChamsLocal);
 		chams_local_real_material.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_material, 1);
@@ -913,7 +913,7 @@ public:
 		chams_local_fake.AddShowCallback(callbacks::IsChamsLocal);
 		RegisterElement(&chams_local_fake, 1);
 
-		chams_local_fake_material.setup(XOR("material"), XOR("chams_local_fake_material"), { XOR("regular"), XOR("flat"), XOR("palm") });
+		chams_local_fake_material.setup(XOR("material"), XOR("chams_local_fake_material"), { XOR("regular"), XOR("flat"), XOR("metal") });
 		chams_local_fake_material.AddShowCallback(callbacks::IsChamsLocal);
 		chams_local_fake_material.AddShowCallback(callbacks::IsChamsLocalFake);
 		RegisterElement(&chams_local_fake_material, 1);

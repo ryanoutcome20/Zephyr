@@ -60,6 +60,10 @@ IMaterial* Materials::Create( const char* name, char* type ) {
 }
 
 IMaterial* Materials::New( const char* vmt, const char* shader ) {
+	// note that this really should be converted into a dynamic texture
+	// and have its variables written dynamically at injection time instead
+	// of dumping the texture to disk.
+
 	// create path.
 	std::filesystem::path path = m_base / (std::string(vmt) + ".vmt");
 

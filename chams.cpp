@@ -74,7 +74,24 @@ void Chams::init() {
 	// basic materials.
 	m_basic[ 0 ] = g_materials.Create( XOR( "debug/debugambientcube" ) );
 	m_basic[ 1 ] = g_materials.Create( XOR( "debug/debugdrawflat" ) );
-	m_basic[ 2 ] = g_materials.Create( XOR( "models/props/de_dust/hr_dust/foliage/palm_bark_01" ) );
+
+	m_basic[ 2 ] = g_materials.New(XOR("zephyr_metal"), R"#( "VertexLitGeneric" 
+		{
+			"$basetexture" "vgui/white_additive"
+			"$bumpmap" "effects/flat_normal"
+			"$phong" "1"
+			"$phongexponent" "5"	
+			"$phongboost" "4.0"
+			"$phongfresnelranges" "[0 0.5 1]"
+			"$rimlight" "1"
+			"$rimlightexponent" "2"
+			"$rimlightboost" ".2"
+			"$selfillum" "1"
+			"$halflambert" "1"
+			"$znearer" "0"
+			"$nocull" "1"
+			"$reflectivity" "[1 1 1]"
+		})#");
 
 	// overlay materials.
 	m_overlays[ 0 ] = g_materials.New( XOR( "zephyr_blink" ), R"#( "VertexLitGeneric" 
