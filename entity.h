@@ -253,6 +253,20 @@ enum Weapons_t : int {
 	KNIFE_SHADOW_DAGGERS = 516,
 };
 
+class VarMapEntry_t {
+public:
+	unsigned short m_type;
+	unsigned short m_bNeedsToInterpolate;
+	void* m_data;
+	void* m_watcher;
+};
+
+struct VarMapping_t {
+	VarMapEntry_t* m_Entries;
+	int m_nInterpolatedEntries;
+	float m_lastInterpolationTime;
+};
+
 struct RenderableInstance_t {
 	uint8_t m_alpha;
 	__forceinline RenderableInstance_t() : m_alpha{ 255ui8 } {}
@@ -1011,6 +1025,10 @@ public:
 
 	__forceinline CBaseHandle* m_hMyWearables() {
 		return (CBaseHandle*)((uintptr_t)this + g_entoffsets.m_hMyWearables);
+	}
+
+	__forceinline VarMapping_t* m_VarMap() {
+		return (VarMapping_t*)((uintptr_t)this + g_entoffsets.m_VarMap);
 	}
 
 	__forceinline CBoneCache& m_BoneCache() {

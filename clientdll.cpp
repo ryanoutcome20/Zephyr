@@ -66,6 +66,9 @@ void Hooks::FrameStageNotify( Stage_t stage ) {
 
 		// draw our precipitation.
 		g_precipitation.Paint();
+
+		// update model interpolation.
+		g_animations.UpdateInterpolation( );
 	}
 
 	// call original.

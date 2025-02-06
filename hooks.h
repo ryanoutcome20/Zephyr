@@ -132,8 +132,6 @@ public:
 	CalcView_t						  m_CalcView;
 
 	// netvar proxies.
-	RecvVarProxy_t m_Pitch_original;
-	RecvVarProxy_t m_Body_original;
     RecvVarProxy_t m_Force_original;
 };
 

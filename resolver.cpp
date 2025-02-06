@@ -48,14 +48,6 @@ LagRecord* Resolver::FindLastRecord(AimPlayer* data) {
 	return nullptr;
 }
 
-void Resolver::OnBodyUpdate( Player* player, float value ) {
-	AimPlayer* data = &g_aimbot.m_players[ player->index( ) - 1 ];
-
-	// set data.
-	data->m_old_body = data->m_body;
-	data->m_body     = value;
-}
-
 float Resolver::GetAwayAngle( LagRecord* record ) {
 	vec3_t pos;
 	ang_t  away;

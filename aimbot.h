@@ -52,11 +52,6 @@ public:
 
 	// data about the LBY proxy.
 	float m_body;
-	float m_old_body;
-
-	//std::deque< float >            m_lbyt_update;
-	//std::deque< float >			   m_prefer_stand;
-	//std::deque< float >            m_prefer_air;
 
 public:
 	void HandleLagCompensation( );

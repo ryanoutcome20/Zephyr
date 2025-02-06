@@ -122,6 +122,7 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_hOwnerEntity;
 	XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flDeathYaw;
 	XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flAbsYaw;
+    XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_VarMap;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flConstraintRadius;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_hMyWeapons;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bFireIsBurning;
@@ -243,7 +244,8 @@ public:
         INIT_XOREDNETVAR_SPECIFIC( m_BoneCache,                  0x2900 );
         INIT_XOREDNETVAR_SPECIFIC( m_CustomMaterials2,           0x9DC );
         INIT_XOREDNETVAR_SPECIFIC( m_bCustomMaterialInitialized, 0x32DD );
-        INIT_XOREDNETVAR_SPECIFIC( m_nLastNonSkippedFrame, 0x260 )
+        INIT_XOREDNETVAR_SPECIFIC( m_nLastNonSkippedFrame,       0x260 );
+        INIT_XOREDNETVAR_SPECIFIC( m_VarMap,                     0x24  );
 
         // don't want these macros outside of this file.
         #undef INIT_XOREDNETVAR

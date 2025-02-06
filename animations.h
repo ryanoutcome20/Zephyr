@@ -33,6 +33,7 @@ public:
 
 	// shared.
 	void UpdateClientsideAnimations( Player* player );
+	void UpdateInterpolation( );
 
 	// clientside animations.
 	void UpdateShootPosition( );

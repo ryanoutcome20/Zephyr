@@ -278,6 +278,34 @@ void Animations::UpdateClientsideAnimations( Player* player ) {
 	player->m_bClientSideAnimation( ) = player->m_bIsLocalPlayer( ) ? backup : false;
 }
 
+void Animations::UpdateInterpolation( ) {
+	for ( int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i ) {
+		Player* player = g_csgo.m_entlist->GetClientEntity< Player* >(i);
+
+		if ( !player || player->m_bIsLocalPlayer() )
+			continue;
+
+		VarMapping_t* map = player->m_VarMap();
+		if ( !map )
+			continue;
+
+		
+
+		// get map entries.
+		int entries = map->m_nInterpolatedEntries;
+
+		// loop through map entries.
+		for ( int index = 0; index < entries; index++ ) {
+			VarMapEntry_t* entry = &map->m_Entries[ index ];
+			if ( !entry )
+				continue;
+
+			// force disable.
+			entry->m_bNeedsToInterpolate = false;
+		}
+	}
+}
+
 void Animations::UpdateShootPosition( ) {
 	// you can do this test yourself by just disabling this function and seeing
 	// how bad your shoot position actually becomes. personally when I tested mine

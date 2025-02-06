@@ -167,7 +167,7 @@ bool CSGO::init( ) {
 	AnimOverlay                     = pattern::find( m_client_dll, XOR( "8B 80 ? ? ? ? 8D 34 C8" ) ).add( 2 ).to< size_t >( );
 	SpawnTime                       = pattern::find( m_client_dll, XOR( "F3 0F 5C 88 ? ? ? ? 0F" ) ).add( 4 ).to< size_t >( );
 	IsLocalPlayer                   = pattern::find( m_client_dll, XOR( "74 ? 8A 83 ? ? ? ? 88" ) ).add( 4 ).to< size_t >( );
-	BulletVerifyListClient		= pattern::find( m_client_dll, XOR( "8b 86 ? ? 00 00 f3 0f 10 17" ) ).add( 2 ).to< size_t >( );
+	BulletVerifyListClient			= pattern::find( m_client_dll, XOR( "8b 86 ? ? 00 00 f3 0f 10 17" ) ).add( 2 ).to< size_t >( );
 	PlayerAnimState                 = pattern::find( m_client_dll, XOR( "8B 8E ? ? ? ? 85 C9 74 3E" ) ).add( 2 ).to< size_t >( );
 	studioHdr                       = pattern::find( m_client_dll, XOR( "8B 86 ? ? ? ? 89 44 24 10 85 C0" ) ).add( 2 ).to< size_t >( );
     UTIL_TraceLine                  = pattern::find( m_client_dll, XOR( "55 8B EC 83 E4 F0 83 EC 7C 56 52" ) );

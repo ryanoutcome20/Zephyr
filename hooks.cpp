@@ -3,37 +3,6 @@
 Hooks                g_hooks{ };;
 CustomEntityListener g_custom_entity_listener{ };;
 
-void Pitch_proxy( CRecvProxyData *data, Address ptr, Address out ) {
-	// normalize this fucker.
-	math::NormalizeAngle( data->m_Value.m_Float );
-
-	// clamp to remove retardedness.
-	math::clamp( data->m_Value.m_Float, -90.f, 90.f );
-
-	// call original netvar proxy.
-	if ( g_hooks.m_Pitch_original )
-		g_hooks.m_Pitch_original( data, ptr, out );
-}
-
-void Body_proxy( CRecvProxyData *data, Address ptr, Address out ) {
-	Stack stack;
-
-	static Address RecvTable_Decode{ pattern::find( g_csgo.m_engine_dll, XOR( "EB 0D FF 77 10" ) ) };
-
-	// call from entity going into pvs.
-	if ( stack.next( ).next( ).ReturnAddress( ) != RecvTable_Decode ) {
-		// convert to player.
-		Player *player = ptr.as< Player * >( );
-
-		// store data about the update.
-		g_resolver.OnBodyUpdate( player, data->m_Value.m_Float );
-	}
-
-	// call original proxy.
-	if ( g_hooks.m_Body_original )
-		g_hooks.m_Body_original( data, ptr, out );
-}
-
 void Force_proxy( CRecvProxyData *data, Address ptr, Address out ) {
 	// convert to ragdoll.
 	Ragdoll *ragdoll = ptr.as< Ragdoll * >( );
