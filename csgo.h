@@ -79,13 +79,11 @@ public:
 	CRender *m_render;
 	IMemAlloc *m_mem_alloc;
 	IClientShadowMgr *m_shadow_mgr;
-	// IClientEntityListener** m_entity_listeners;
 	CHud *m_hud;
 	C_CSGameRules *m_gamerules;
 	IViewRenderBeams *m_beams;
 	void *m_radar;
-	//void *m_hookable_cl;
-
+	
 public:
 	// convars.
 	ConVar *clear;
@@ -123,6 +121,7 @@ public:
 	ConVar *developer;
 	ConVar *cl_csm_shadows;
 	ConVar *cl_foot_contact_shadows;
+	ConVar *r_jiggle_bones;
 
 public:
 	// functions.
@@ -138,7 +137,6 @@ public:
 	IsBreakableEntity_t      IsBreakableEntity;
 	Address	                 SetAbsVelocity;
 	AngleMatrix_t            AngleMatrix;
-	Address					 DoProceduralFootPlant;
 	Address					 ComputeHitboxSurroundingBox;
 	Address					 GetSequenceActivity;
 	LoadFromBuffer_t		 LoadFromBuffer;

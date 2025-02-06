@@ -6,8 +6,12 @@ void Precipitation::Paint( ) {
 	// get mode.
 	int mode = g_menu.main.visuals.weather_modulation.get( );
 
-	// free our entity if we don't need him anymore.
-	if( !g_csgo.m_engine->IsInGame( ) || mode == 0 ) {
+	// don't run if we aren't in game.
+	if( !g_csgo.m_engine->IsInGame( ) )
+		return;
+
+	// cleanup our entity if we disabled our weather.
+	if( mode == 0 ) {
 		Free( );
 		return;
 	}
@@ -118,7 +122,9 @@ void Precipitation::Free( ) {
 	if ( !m_object )
 		return;
 
-	m_object->Release( );
+	// if the game hasn't freed the object then lets do it ourself.
+	if( !IsBadReadPtr( m_object, 4 ) )
+		m_object->Release( );
 
 	m_object = nullptr;
 }

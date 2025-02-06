@@ -346,6 +346,10 @@ public:
 		return get< int >(g_entoffsets.m_nPrecipType);
 	}
 
+	__forceinline vec3_t& m_envLightShadowDirection() {
+		return get< vec3_t >( g_entoffsets.m_envLightShadowDirection );
+	}
+
 public:
 	// virtual indices
 	enum indices : size_t {
@@ -503,35 +507,215 @@ public:
 	}
 };
 
+struct procedural_foot_t {
+	vec3_t m_vecPosAnim;
+	vec3_t m_vecPosAnimLast;
+	vec3_t m_vecPosPlant;
+	vec3_t m_vecPlantVel;
+	float  m_flLockAmount;
+	float  m_flLastPlantTime;
+};
+
+struct aimmatrix_transition_t {
+	float	m_flDurationStateHasBeenValid;
+	float	m_flDurationStateHasBeenInValid;
+	float	m_flHowLongToWaitUntilTransitionCanBlendIn;
+	float	m_flHowLongToWaitUntilTransitionCanBlendOut;
+	float	m_flBlendValue;
+};
+
+struct animstate_pose_param_cache_t {
+	bool		m_bInitialized;
+	int			m_nIndex;
+	const char* m_szName;
+};
+
+enum act {
+	ACT_CSGO_NULL = 957,
+	ACT_CSGO_DEFUSE,
+	ACT_CSGO_DEFUSE_WITH_KIT,
+	ACT_CSGO_FLASHBANG_REACTION,
+	ACT_CSGO_FIRE_PRIMARY,
+	ACT_CSGO_FIRE_PRIMARY_OPT_1,
+	ACT_CSGO_FIRE_PRIMARY_OPT_2,
+	ACT_CSGO_FIRE_SECONDARY,
+	ACT_CSGO_FIRE_SECONDARY_OPT_1,
+	ACT_CSGO_FIRE_SECONDARY_OPT_2,
+	ACT_CSGO_RELOAD,
+	ACT_CSGO_RELOAD_START,
+	ACT_CSGO_RELOAD_LOOP,
+	ACT_CSGO_RELOAD_END,
+	ACT_CSGO_OPERATE,
+	ACT_CSGO_DEPLOY,
+	ACT_CSGO_CATCH,
+	ACT_CSGO_SILENCER_DETACH,
+	ACT_CSGO_SILENCER_ATTACH,
+	ACT_CSGO_TWITCH,
+	ACT_CSGO_TWITCH_BUYZONE,
+	ACT_CSGO_PLANT_BOMB,
+	ACT_CSGO_IDLE_TURN_BALANCEADJUST,
+	ACT_CSGO_IDLE_ADJUST_STOPPEDMOVING,
+	ACT_CSGO_ALIVE_LOOP,
+	ACT_CSGO_FLINCH,
+	ACT_CSGO_FLINCH_HEAD,
+	ACT_CSGO_FLINCH_MOLOTOV,
+	ACT_CSGO_JUMP,
+	ACT_CSGO_FALL,
+	ACT_CSGO_CLIMB_LADDER,
+	ACT_CSGO_LAND_LIGHT,
+	ACT_CSGO_LAND_HEAVY,
+	ACT_CSGO_EXIT_LADDER_TOP,
+	ACT_CSGO_EXIT_LADDER_BOTTOM
+};
+
+enum animstate_pose_param_idx_t {
+	PLAYER_POSE_PARAM_FIRST = 0,
+	PLAYER_POSE_PARAM_LEAN_YAW = PLAYER_POSE_PARAM_FIRST,
+	PLAYER_POSE_PARAM_SPEED,
+	PLAYER_POSE_PARAM_LADDER_SPEED,
+	PLAYER_POSE_PARAM_LADDER_YAW,
+	PLAYER_POSE_PARAM_MOVE_YAW,
+	PLAYER_POSE_PARAM_RUN,
+	PLAYER_POSE_PARAM_BODY_YAW,
+	PLAYER_POSE_PARAM_BODY_PITCH,
+	PLAYER_POSE_PARAM_DEATH_YAW,
+	PLAYER_POSE_PARAM_STAND,
+	PLAYER_POSE_PARAM_JUMP_FALL,
+	PLAYER_POSE_PARAM_AIM_BLEND_STAND_IDLE,
+	PLAYER_POSE_PARAM_AIM_BLEND_CROUCH_IDLE,
+	PLAYER_POSE_PARAM_STRAFE_DIR,
+	PLAYER_POSE_PARAM_AIM_BLEND_STAND_WALK,
+	PLAYER_POSE_PARAM_AIM_BLEND_STAND_RUN,
+	PLAYER_POSE_PARAM_AIM_BLEND_CROUCH_WALK,
+	PLAYER_POSE_PARAM_MOVE_BLEND_WALK,
+	PLAYER_POSE_PARAM_MOVE_BLEND_RUN,
+	PLAYER_POSE_PARAM_MOVE_BLEND_CROUCH_WALK,
+	PLAYER_POSE_PARAM_COUNT
+};
+
+enum animstate_layer_t {
+	ANIMATION_LAYER_AIMMATRIX = 0,
+	ANIMATION_LAYER_WEAPON_ACTION,
+	ANIMATION_LAYER_WEAPON_ACTION_RECROUCH,
+	ANIMATION_LAYER_ADJUST,
+	ANIMATION_LAYER_MOVEMENT_JUMP_OR_FALL,
+	ANIMATION_LAYER_MOVEMENT_LAND_OR_CLIMB,
+	ANIMATION_LAYER_MOVEMENT_MOVE,
+	ANIMATION_LAYER_MOVEMENT_STRAFECHANGE,
+	ANIMATION_LAYER_WHOLE_BODY,
+	ANIMATION_LAYER_FLASHED,
+	ANIMATION_LAYER_FLINCH,
+	ANIMATION_LAYER_ALIVELOOP,
+	ANIMATION_LAYER_LEAN,
+	ANIMATION_LAYER_COUNT
+};
+
 class CCSGOPlayerAnimState {
 public:
-	PAD(0x1C);				// 0x0000
-	Player* m_outer;			// 0x001C
-	PAD(0x40);				// 0x0020
-	Player* m_player;			// 0x0060
-	PAD(0x8);					// 0x0064
-	float   m_time;				// 0x006C
-	int     m_frame;			// 0x0070
-	float   m_update_delta;		// 0x0074
-	float   m_eye_yaw;			// 0x0078
-	float   m_eye_pitch;		// 0x007C
-	float   m_goal_feet_yaw;	// 0x0080
-	float   m_cur_feet_yaw;		// 0x0084
-	PAD(0x1C);				// 0x0088
-	float   m_dip_cycle;        // 0x00A4
-	float   m_dip_adj;          // 0x00A8
-	PAD(0x40);				// 0x00A8
-	float   m_speed;			// 0x00EC
-	float   m_fall_velocity;    // 0x00F0
-	PAD(0x14);				// 0x00F0
-	bool    m_ground;			// 0x0108
-	bool    m_land;             // 0x0109
-	PAD(0x2);					// 0x010A 
-	PAD(0x21C);				// 0x010C
-	bool    m_dip_air;			// 0x0328
-	PAD(0x12);				// 0x0329
-	float   m_min_pitch;        // 0x033C
-	PAD(0x4);					// 0x0340
+	int* m_pLayerOrderPreset;
+	bool						 m_bFirstRunSinceInit;
+	bool						 m_bFirstFootPlantSinceInit;
+	int							 m_iLastUpdateFrame;
+	float						 m_flEyePositionSmoothLerp;
+	float						 m_flStrafeChangeWeightSmoothFalloff;
+	float						 m_flFlashedAmountEaseOutStart;
+	float						 m_flFlashedAmountEaseOutEnd;
+	aimmatrix_transition_t		 m_tStandWalkAim;
+	aimmatrix_transition_t		 m_tStandRunAim;
+	aimmatrix_transition_t		 m_tCrouchWalkAim;
+	int	    					 m_cachedModelIndex;
+	float						 m_flStepHeightLeft;
+	float						 m_flStepHeightRight;
+	Weapon* m_pWeaponLastBoneSetup;
+	Player* m_pPlayer;
+	Weapon* m_pWeapon;
+	Weapon* m_pWeaponLast;
+	float   					 m_flLastUpdateTime;
+	int     					 m_nLastUpdateFrame;
+	float   					 m_flLastUpdateIncrement;
+	float   					 m_flEyeYaw;
+	float   					 m_flEyePitch;
+	float   					 m_flFootYaw;
+	float   					 m_flFootYawLast;
+	float						 m_flMoveYaw;
+	float						 m_flMoveYawIdeal;
+	float						 m_flMoveYawCurrentToIdeal;
+	float						 m_flTimeToAlignLowerBody;
+	float						 m_flPrimaryCycle;
+	float						 m_flMoveWeight;
+	float						 m_flMoveWeightSmoothed;
+	float						 m_flAnimDuckAmount;
+	float						 m_flDuckAdditional;
+	float						 m_flRecrouchWeight;
+	vec3_t						 m_vecPositionCurrent;
+	vec3_t						 m_vecPositionLast;
+	vec3_t						 m_vecVelocity;
+	vec3_t						 m_vecVelocityNormalized;
+	vec3_t						 m_vecVelocityNormalizedNonZero;
+	float						 m_flVelocityLengthXY;
+	float						 m_flVelocityLengthZ;
+	float						 m_flSpeedAsPortionOfRunTopSpeed;
+	float						 m_flSpeedAsPortionOfWalkTopSpeed;
+	float						 m_flSpeedAsPortionOfCrouchTopSpeed;
+	float						 m_flDurationMoving;
+	float						 m_flDurationStill;
+	bool						 m_bOnGround;
+	bool						 m_bJumping;
+	float						 m_flLowerBodyRealignTimer;
+	bool						 m_bLanding;
+	float						 m_flJumpToFall;
+	float						 m_flDurationInAir;
+	float						 m_flLeftGroundHeight;
+	float						 m_flLandAnimMultiplier;
+	float						 m_flWalkToRunTransition;
+	bool						 m_bLandedOnGroundThisFrame;
+	bool						 m_bLeftTheGroundThisFrame;
+	float						 m_flInAirSmoothValue;
+	bool						 m_bOnLadder;
+	float						 m_flLadderWeight;
+	float						 m_flLadderSpeed;
+	bool						 m_bWalkToRunTransitionState;
+	bool						 m_bDefuseStarted;
+	bool						 m_bPlantAnimStarted;
+	bool						 m_bTwitchAnimStarted;
+	bool						 m_bAdjustStarted;
+	char						 m_ActivityModifiers[ 20 ];
+	float						 m_flNextTwitchTime;
+	float						 m_flTimeOfLastKnownInjury;
+	float						 m_flLastVelocityTestTime;
+	vec3_t						 m_vecVelocityLast;
+	vec3_t						 m_vecTargetAcceleration;
+	vec3_t						 m_vecAcceleration;
+	float						 m_flAccelerationWeight;
+	float						 m_flAimMatrixTransition;
+	float						 m_flAimMatrixTransitionDelay;
+	bool						 m_bFlashed;
+	float						 m_flStrafeChangeWeight;
+	float						 m_flStrafeChangeTargetWeight;
+	float						 m_flStrafeChangeCycle;
+	int							 m_nStrafeSequence;
+	bool						 m_bStrafeChanging;
+	float						 m_flDurationStrafing;
+	float						 m_flFootLerp;
+	bool						 m_bFeetCrossed;
+	bool						 m_bPlayerIsAccelerating;
+	animstate_pose_param_cache_t m_tPoseParamMappings[ PLAYER_POSE_PARAM_COUNT ];
+	bool						 m_bDeployRateLimiting;
+	float						 m_flDurationMoveWeightIsTooHigh;
+	float						 m_flStaticApproachSpeed;
+	int							 m_nPreviousMoveState;
+	float						 m_flStutterStep;
+	float						 m_flActionWeightBiasRemainder;
+	procedural_foot_t			 m_footLeft;
+	procedural_foot_t			 m_footRight;
+	float 						 m_flCameraSmoothHeight;
+	bool  						 m_bSmoothHeightValid;
+	float 						 m_flLastTimeVelocityOverTen;
+	float 						 m_flAimYawMin;
+	float 						 m_flAimYawMax;
+	float 						 m_flAimPitchMin;
+	float 						 m_flAimPitchMax;
+	int   						 m_nAnimstateModelVersion;
 }; // size: 0x344
 
 class CStudioHdr {
@@ -921,48 +1105,51 @@ public:
 		util::get_method< void(__thiscall*)(decltype(this), vec3_t*) >(this, GETEYEPOS)(this, pos);
 	}
 
-#define FIRSTPERSON_TO_THIRDPERSON_VERTICAL_TOLERANCE_MIN 4.0f
-#define FIRSTPERSON_TO_THIRDPERSON_VERTICAL_TOLERANCE_MAX 10.0f
-	__forceinline void ModifyEyePosition(CCSGOPlayerAnimState* state, vec3_t* pos)
-	{
-		if (!state)
+
+	#define FIRSTPERSON_TO_THIRDPERSON_VERTICAL_TOLERANCE_MIN 4.0f
+	#define FIRSTPERSON_TO_THIRDPERSON_VERTICAL_TOLERANCE_MAX 10.0f
+	__forceinline void ModifyEyePosition(CCSGOPlayerAnimState* state, vec3_t* pos) {
+		if ( !state )
 			return;
-		if (!state->m_player)
+		if ( !state->m_pPlayer )
 			return;
-		if (!state->m_land && state->m_player->m_flDuckAmount() == 0)
+		if ( !state->m_bLanding && state->m_pPlayer->m_flDuckAmount() == 0 )
 			return;
 
-		auto headbone = 8;
+		auto v5 = 8;
 
-		vec3_t vecHeadPos = state->m_player->GetBonePosition(headbone);
+		if ( v5 != -1 && state->m_pPlayer->m_BoneCache().m_pCachedBones ) {
+			vec3_t head_pos(
+				state->m_pPlayer->m_BoneCache().m_pCachedBones[ 8 ][ 0 ][ 3 ],
+				state->m_pPlayer->m_BoneCache().m_pCachedBones[ 8 ][ 1 ][ 3 ],
+				state->m_pPlayer->m_BoneCache().m_pCachedBones[ 8 ][ 2 ][ 3 ]);
 
-		vecHeadPos.z += 1.7f;
+			auto v12 = head_pos;
+			auto v7 = v12.z + 1.7;
 
-		if (vecHeadPos.z < pos->z)
-		{
-			float spline = 0.f;
-			float delta = (*pos).z - vecHeadPos.z;
+			auto v8 = pos->z;
+			if ( v8 > v7 ) // if (v8 > (v12 + 1.7))
+			{
+				float v13 = 0.f;
+				float v3 = (*pos).z - v7;
 
-			float flLerp = (delta - FIRSTPERSON_TO_THIRDPERSON_VERTICAL_TOLERANCE_MIN) / FIRSTPERSON_TO_THIRDPERSON_VERTICAL_TOLERANCE_MAX;
-			if (flLerp >= 0.0f)
-				spline = std::fminf(flLerp, 1.0f);
+				float v4 = (v3 - 4.f) * 0.16666667;
+				if ( v4 >= 0.f )
+					v13 = std::fminf(v4, 1.f);
 
-			(*pos).z += ((vecHeadPos.z - (*pos).z) * (((spline * spline) * 3.f) - (((spline * spline) * 2.f) * spline)));
-
-
+				(*pos).z = (((v7 - (*pos).z)) * (((v13 * v13) * 3.0) - (((v13 * v13) * 2.0) * v13))) + (*pos).z;
+			}
 		}
-
 	}
-
 
 	__forceinline vec3_t GetShootPosition() {
 		vec3_t pos;
 
 		GetEyePos(&pos);
 
-		if (*reinterpret_cast <int32_t*> (uintptr_t(this) + 0x39E1)) {
+		if ( *reinterpret_cast <int32_t*> (uintptr_t(this) + 0x39E1) ) {
 			auto v3 = m_PlayerAnimState();
-			if (v3) {
+			if ( v3 ) {
 				ModifyEyePosition(v3, &pos);
 			}
 		}

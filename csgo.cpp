@@ -107,10 +107,11 @@ bool CSGO::init( ) {
 	hud_scaling                             = m_cvar->FindVar( HASH( "hud_scaling" ) );
     sv_clip_penetration_traces_to_players   = m_cvar->FindVar( HASH( "sv_clip_penetration_traces_to_players" ) );
     weapon_accuracy_shotgun_spread_patterns = m_cvar->FindVar( HASH( "weapon_accuracy_shotgun_spread_patterns" ) );
-	cl_ragdoll_gravity						= m_cvar->FindVar(HASH("cl_ragdoll_gravity"));
-	developer								= m_cvar->FindVar(HASH("developer"));
-	cl_csm_shadows							= m_cvar->FindVar(HASH("cl_csm_shadows"));
-	cl_foot_contact_shadows					= m_cvar->FindVar(HASH("cl_foot_contact_shadows"));
+	cl_ragdoll_gravity						= m_cvar->FindVar( HASH( "cl_ragdoll_gravity" ) );
+	developer								= m_cvar->FindVar( HASH( "developer" ) );
+	cl_csm_shadows							= m_cvar->FindVar( HASH( "cl_csm_shadows" ) );
+	cl_foot_contact_shadows					= m_cvar->FindVar( HASH( "cl_foot_contact_shadows" ) );
+	r_jiggle_bones							= m_cvar->FindVar( HASH( "r_jiggle_bones" ) );
 
 	// hehe xd.
 	name->m_callbacks.RemoveAll( );
@@ -122,7 +123,7 @@ bool CSGO::init( ) {
     m_cl                 = **reinterpret_cast< CClientState *** > ( ( *reinterpret_cast< uintptr_t ** > ( m_engine ) )[ 12 ] + 0x10 );
 	m_game               = pattern::find( m_engine_dll, XOR( "A1 ? ? ? ? B9 ? ? ? ? FF 75 08 FF 50 34" ) ).add( 1 ).get< CGame* >( );
 	m_render             = pattern::find( m_engine_dll, XOR( "A1 ? ? ? ? B9 ? ? ? ? FF 75 0C FF 75 08 FF 50 0C" ) ).add( 1 ).get< CRender* >( );
-	m_shadow_mgr         = pattern::find( m_client_dll, XOR( "A1 ? ? ? ? FF 90 ? ? ? ? 6A 00" ) ).add( 1 ).get( ).as< IClientShadowMgr* >( );
+	m_shadow_mgr         = pattern::find( m_client_dll, XOR( "A1 ? ? ? ? FF 90 ? ? ? ? 6A 00" ) ).add( 1 ).get( ).as< IClientShadowMgr* >();
 	m_view_render        = pattern::find( m_client_dll, XOR( "8B 0D ? ? ? ? 8B 01 FF 50 4C 8B 06" ) ).add( 2 ).get< CViewRender* >( 2 );
 	// m_entity_listeners   = pattern::find( m_client_dll, XOR( "B9 ? ? ? ? E8 ? ? ? ? 5E 5D C2 04" ) ).add( 0x1 ).get< IClientEntityListener** >( 2 );
 	m_hud                = pattern::find( m_client_dll, XOR( "B9 ? ? ? ? 0F 94 C0 0F B6 C0 50 68" ) ).add( 0x1 ).get( ).as< CHud* >( );

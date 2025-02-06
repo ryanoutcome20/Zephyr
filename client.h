@@ -32,8 +32,6 @@ public:
 	void DoMove( );
 	void DrawHUD( );
 	void UpdateInformation( );
-	void SetAngles( );
-	void SetAngles2(ang_t angle);
 	void UpdateAnimations( );
 	void KillFeed( );
 
@@ -63,6 +61,7 @@ public:
 	bool	         m_old_shot;
 	float            m_abs_yaw;
 	float            m_poses[ 24 ];
+	C_AnimationLayer m_layers[ 13 ];
 
 	// active weapon variables.
 	Weapon*     m_weapon;
@@ -100,6 +99,9 @@ public:
 	ang_t     m_view_angles;
 	ang_t	  m_strafe_angles;
 	vec3_t	  m_forward_dir;
+
+	int		  m_lastack;
+	int		  m_lastseq;
 
     penetration::PenetrationOutput_t m_pen_data;
 

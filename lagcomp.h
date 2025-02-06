@@ -12,9 +12,9 @@ public:
 	};
 
 public:
-	bool StartPrediction( AimPlayer* player );
-	void PlayerMove( LagRecord* record );
-	void PredictAnimations( CCSGOPlayerAnimState* state, LagRecord* record );
+	LagRecord* StartPrediction( AimPlayer* data );
+	void	   PlayerMove( LagRecord* record );
+	void	   PredictAnimations( CCSGOPlayerAnimState* state, LagRecord* record, LagRecord* previous );
 };
 
 extern LagCompensation g_lagcomp;

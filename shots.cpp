@@ -18,7 +18,7 @@ void Shots::OnShotFire( Player *target, float damage, int bullets, LagRecord *re
 			shot.m_processed = false;
 
 			// set our shoot positions.
-			shot.m_pos = shot.m_impact_pos = g_cl.m_local->GetShootPosition( );
+			shot.m_pos = shot.m_impact_pos = g_cl.m_shoot_pos;
 
 			// this is the first bullet, only do this once.
 			if ( i == 0 ) {
@@ -78,7 +78,7 @@ void Shots::OnImpact( IGameEvent *evt ) {
 
 	// add to visual impacts if we have features that rely on it enabled.
 	if ( g_menu.main.visuals.impact_beams.get() )
-		m_vis_impacts.push_back({ pos, g_cl.m_local->GetShootPosition(), g_cl.m_local->m_nTickBase() });
+		m_vis_impacts.push_back({ pos, g_cl.m_local->GetShootPosition( ), g_cl.m_local->m_nTickBase() });
 
 	// the aimbot didn't shoot yet.
 	if ( m_shots.empty() )

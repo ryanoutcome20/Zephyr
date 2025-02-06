@@ -17,7 +17,7 @@ bool Hooks::IsHLTV( ) {
 	static Address SetupVelocity{ pattern::find( g_csgo.m_client_dll, XOR( "84 C0 75 38 8B 0D ? ? ? ? 8B 01 8B 80" ) ) };
 
 	// AccumulateLayers
-	if( g_bones.m_running )
+	if( g_bones.m_running || g_animations.m_lock_hltv )
 		return true;
 
 	// fix for animstate velocity.

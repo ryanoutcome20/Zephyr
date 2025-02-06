@@ -2,49 +2,47 @@
 
 Resolver g_resolver{};;
 
-LagRecord* Resolver::FindIdealRecord( AimPlayer* data ) {
-    LagRecord *first_valid, *current;
 
-	if( data->m_records.empty( ) )
-		return nullptr;
+LagRecord* Resolver::FindIdealRecord(AimPlayer* data) {
+	if ( data->m_records.empty() )
+		return nullptr; // we can't even start.
 
-    first_valid = nullptr;
+	// the first valid record.
+	LagRecord* first = nullptr;
 
-    // iterate records.
-	for( const auto &it : data->m_records ) {
-		if( it->dormant( ) || it->immune( ) || !it->valid( ) )
+	// loop through current records.
+	for ( const auto& record : data->m_records ) {
+		if ( record->immune() || !record->valid() )
 			continue;
 
-        // get current record.
-        current = it.get( );
+		// keep doing this until we find something that isn't an lby update.
+		if ( !first || first->m_mode == Modes::RESOLVE_BODY ) {
+			first = record.get();
+			continue;
+		}
 
-        // first record that was valid, store it for later.
-        if( !first_valid )
-            first_valid = current;
+		// check for high prority records.
+		if ( record->m_mode == Modes::RESOLVE_NONE || record->m_mode == Modes::RESOLVE_WALK )
+			return record.get();
 
-        // try to find a record with a shot, lby update, walking or no anti-aim.
-		if( it->m_shot || it->m_mode == Modes::RESOLVE_BODY || it->m_mode == Modes::RESOLVE_WALK || it->m_mode == Modes::RESOLVE_NONE )
-            return current;
+		// check for onshot.
+		if ( record->m_shot )
+			return record.get();
 	}
 
-	// none found above, return the first valid record if possible.
-	return ( first_valid ) ? first_valid : nullptr;
+	return first; // return the first valid record found.
 }
 
-LagRecord* Resolver::FindLastRecord( AimPlayer* data ) {
-    LagRecord* current;
-
-	if( data->m_records.empty( ) )
+LagRecord* Resolver::FindLastRecord(AimPlayer* data) {
+	if ( data->m_records.empty() )
 		return nullptr;
 
 	// iterate records in reverse.
-	for( auto it = data->m_records.crbegin( ); it != data->m_records.crend( ); ++it ) {
-		current = it->get( );
-
+	for ( const auto& record : data->m_records ) {
 		// if this record is valid.
 		// we are done since we iterated in reverse.
-		if( current->valid( ) && !current->immune( ) && !current->dormant( ) )
-			return current;
+		if ( record->valid() && !record->immune() )
+			return record.get( );
 	}
 
 	return nullptr;
@@ -59,49 +57,12 @@ void Resolver::OnBodyUpdate( Player* player, float value ) {
 }
 
 float Resolver::GetAwayAngle( LagRecord* record ) {
-	float  delta{ std::numeric_limits< float >::max( ) };
 	vec3_t pos;
 	ang_t  away;
 
-	// other cheats predict you by their own latency.
-	// they do this because, then they can put their away angle to exactly
-	// where you are on the server at that moment in time.
-
-	// the idea is that you would need to know where they 'saw' you when they created their user-command.
-	// lets say you move on your client right now, this would take half of our latency to arrive at the server.
-	// the delay between the server and the target client is compensated by themselves already, that is fortunate for us.
-
-	// we have no historical origins.
-	// no choice but to use the most recent one.
-	//if( g_cl.m_net_pos.empty( ) ) {
-		math::VectorAngles( g_cl.m_local->m_vecOrigin( ) - record->m_pred_origin, away );
-		return away.y;
-	//}
-
-	// half of our rtt.
-	// also known as the one-way delay.
-	//float owd = ( g_cl.m_latency / 2.f );
-
-	// since our origins are computed here on the client
-	// we have to compensate for the delay between our client and the server
-	// therefore the OWD should be subtracted from the target time.
-	//float target = record->m_pred_time; //- owd;
-
-	// iterate all.
-	//for( const auto &net : g_cl.m_net_pos ) {
-		// get the delta between this records time context
-		// and the target time.
-	//	float dt = std::abs( target - net.m_time );
-
-		// the best origin.
-	//	if( dt < delta ) {
-	//		delta = dt;
-	//		pos   = net.m_pos;
-	//	}
-	//}
-
-	//math::VectorAngles( pos - record->m_pred_origin, away );
-	//return away.y;
+	math::VectorAngles( g_cl.m_local->m_vecOrigin( ) - record->m_origin, away );
+	
+	return away.y;
 }
 
 void Resolver::MatchShot( AimPlayer* data, LagRecord* record ) {

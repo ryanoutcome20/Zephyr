@@ -104,6 +104,7 @@ namespace callbacks {
 	bool IsWeatherModulationAudioOn( );
 	bool IsSkyboxModulationOn( );
 	bool IsPropModulationOn( );
+	bool IsShadowModulationOn( );
 	bool IsConsoleModulationOn( );
 	bool IsAutopeekVisualizeOn( );
 	bool IsImpactBeamsOn( );
@@ -162,5 +163,4 @@ namespace callbacks {
 	bool KNIFE_BOWIE( );
 	bool KNIFE_BUTTERFLY( );
 	bool KNIFE_SHADOW_DAGGERS( );
-	bool AUTO_STOP( );
 }

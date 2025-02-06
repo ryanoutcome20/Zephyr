@@ -318,6 +318,9 @@
     <ClInclude Include="precipitation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="animations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bonesetup.cpp">
@@ -480,6 +483,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="precipitation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="animations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

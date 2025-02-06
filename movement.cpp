@@ -338,14 +338,12 @@ void Movement::AutoPeek( ) {
 		m_autopeek_active = false;
 		m_autopeek_origin = g_cl.m_local->GetAbsOrigin( );
 	}
-
-	bool can_stop = g_menu.main.movement.autostop_always_on.get() || (!g_menu.main.movement.autostop_always_on.get() && g_input.GetKeyState(g_menu.main.movement.autostop.get()));
-	if ( (g_input.GetKeyState(g_menu.main.movement.autopeek.get()) || can_stop) && g_aimbot.m_stop ) {
-		Movement::QuickStop();
-	}
 }
 
 void Movement::QuickStop( ) {
+	if ( !g_cl.m_processing )
+		return;
+
 	// convert velocity to angular momentum.
 	ang_t angle;
 	math::VectorAngles( g_cl.m_local->m_vecVelocity( ), angle );
@@ -362,7 +360,10 @@ void Movement::QuickStop( ) {
 
 	vec3_t stop = direction * -speed;
 
-	if( g_cl.m_speed > 13.f ) {
+	// get ideal speed.
+	float ideal = g_cl.m_weapon_info ? g_cl.m_weapon_info->m_max_player_speed : 150.f;
+
+	if( g_cl.m_speed > ( ideal * ( g_menu.main.movement.autostop_speed.get( ) / 100.f ) ) ) {
 		g_cl.m_cmd->m_forward_move = stop.x;
 		g_cl.m_cmd->m_side_move = stop.y;
 	}
@@ -382,14 +383,6 @@ void Movement::FakeWalk( ) {
 	if( !g_cl.m_local->GetGroundEntity( ) )
 		return;
 
-	// user was running previously and abrubtly held the fakewalk key
-	// we should quick-stop under this circumstance to hit the 0.22 flick
-	// perfectly, and speed up our fakewalk after running even more.
-	//if( g_cl.m_initial_flick ) {
-	//	Movement::QuickStop( );
-	//	return;
-	//}
-	
 	// reference:
 	// https://github.com/ValveSoftware/source-sdk-2013/blob/master/mp/src/game/shared/gamemovement.cpp#L1612
 

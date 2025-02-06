@@ -15,8 +15,13 @@ void Aimbot::knife( ) {
 		if( t->m_records.empty( ) )
 			continue;
 
+		// get our records we need.
+		LagRecord* last		 = g_resolver.FindLastRecord( t );
+		LagRecord* predicted = g_lagcomp.StartPrediction( t );
+		LagRecord* ideal	 = g_resolver.FindIdealRecord( t );
+
 		// see if target broke lagcomp.
-		if( g_menu.main.aimbot.lagfix.get( ) && g_lagcomp.StartPrediction( t ) ) {
+		if( g_menu.main.aimbot.lagfix.get( ) && predicted ) {
 			LagRecord* front = t->m_records.front( ).get( );
 
 			front->cache( );
@@ -38,27 +43,25 @@ void Aimbot::knife( ) {
 		// we can history aim.
 		else {
 
-			LagRecord* best = g_resolver.FindIdealRecord( t );
-			if( !best )
+			if( !ideal )
 				continue;
 
-			best->cache( );
+			ideal->cache( );
 
 			// trace with best.
 			for( const auto& a : m_knife_ang ) {
 
 				// check if we can knife.
-				if( !CanKnife( best, a, target.stab ) )
+				if( !CanKnife( ideal, a, target.stab ) )
 					continue;
 
 				// set target data.
 				target.angle  = a;
-				target.record = best;
+				target.record = ideal;
 				break;
 			}
 
-			LagRecord* last = g_resolver.FindLastRecord( t );
-			if( !last || last == best )
+			if( !last || last == ideal )
 				continue;
 
 			last->cache( );
@@ -86,7 +89,7 @@ void Aimbot::knife( ) {
 	// set out data and choke.
 	if( target.record ) {
 		// set target tick.
-		g_cl.m_cmd->m_tick = game::TIME_TO_TICKS( target.record->m_pred_time + g_cl.m_lerp );
+		g_cl.m_cmd->m_tick = game::TIME_TO_TICKS( target.record->m_sim_time + g_cl.m_lerp );
 
 		// set view angles.
 		g_cl.m_cmd->m_view_angles = target.angle;

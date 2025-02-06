@@ -7,14 +7,6 @@ enum HitscanMode : int {
 	PREFER  = 4
 };
 
-struct AnimationBackup_t {
-	vec3_t           m_origin, m_abs_origin;
-	vec3_t           m_velocity, m_abs_velocity;
-	int              m_flags, m_eflags;
-	float            m_duck, m_body;
-	C_AnimationLayer m_layers[ 13 ];
-};
-
 struct HitscanData_t {
 	float  m_damage;
 	vec3_t m_pos;
@@ -67,7 +59,7 @@ public:
 	//std::deque< float >            m_prefer_air;
 
 public:
-	void UpdateAnimations( LagRecord* record );
+	void HandleLagCompensation( );
 	void OnNetUpdate( Player* player );
 	void OnRoundStart( Player* player );
 	void SetupHitboxes( LagRecord* record, bool history );

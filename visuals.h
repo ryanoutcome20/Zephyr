@@ -3,9 +3,9 @@
 class Visuals {
 public:
 	std::array< bool, 64 >                  m_draw;
-    std::array< float, 64 >                  m_scaled_health;
-    std::array< float, 64 >                  m_scaled_ammo;
-	std::array< float, 2048 >              m_opacities;
+    std::array< float, 64 >                 m_scaled_health;
+    std::array< float, 64 >                 m_scaled_ammo;
+	std::array< float, 2048 >               m_opacities;
 	vec2_t                                  m_crosshair;
 	bool                                    m_thirdperson;
 	float					                m_hit_start, m_hit_end, m_hit_duration;
@@ -19,6 +19,11 @@ public:
     float       m_planted_c4_radius;
     float       m_planted_c4_radius_scaled;
     std::string m_last_bombsite;
+
+
+    // info about cascade light handler.
+    Entity      *m_cascade_light;
+    vec3_t      m_cascade_shadow_direction;
 
 	IMaterial* smoke1;
 	IMaterial* smoke2;
@@ -96,6 +101,7 @@ public:
 	void SpreadCrosshair( );
     void PenetrationCrosshair( );
     void DrawPlantedC4();
+    void UpdateShadows( );
 	void draw( Entity* ent );
 	void DrawProjectile( Weapon* ent );
 	void DrawItem( Weapon* item );

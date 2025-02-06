@@ -43,6 +43,8 @@ void callbacks::ConfigLoad( ) {
 
 	g_config.load( &g_menu.main, config.data( ) );
 	g_notify.add( tfm::format( XOR( "Loaded config %s\n" ), config.data( ) ) );
+
+	g_visuals.ModulateWorld( );
 }
 
 void callbacks::ConfigSave( ) {
@@ -410,6 +412,10 @@ bool callbacks::IsPropModulationOn( ) {
 	return g_menu.main.visuals.prop_modulation.get();
 }
 
+bool callbacks::IsShadowModulationOn( ) {
+	return g_menu.main.visuals.shadow_modulation.get( );
+}
+
 bool callbacks::IsConsoleModulationOn( ) {
 	return g_menu.main.visuals.console_modulation.get( );
 }
@@ -754,8 +760,4 @@ bool callbacks::KNIFE_SHADOW_DAGGERS( ) {
 		return false;
 
 	return g_cl.m_weapon_id == Weapons_t::KNIFE_SHADOW_DAGGERS;
-}
-
-bool callbacks::AUTO_STOP( ) {
-	return !g_menu.main.movement.autostop_always_on.get();
 }

@@ -265,14 +265,15 @@ void Visuals::think( ) {
 	PenetrationCrosshair( );
 	Hitmarker( );
 	DrawPlantedC4( );
+	UpdateShadows( );
 }
 
 void Visuals::Spectators( ) {
 	if( !g_menu.main.visuals.spectators.get( ) )
 		return;
 
-	std::vector< std::string > spectators{ XOR( "spectators" ) };
-	int h = render::menu_shade.m_size.m_height;
+	std::vector< std::string > spectators{ XOR( "Spectators" ) };
+	int h = render::notifications.m_size.m_height;
 
 	for( int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i ) {
 		Player* player = g_csgo.m_entlist->GetClientEntity< Player* >( i );
@@ -303,14 +304,14 @@ void Visuals::Spectators( ) {
 	for( size_t i{ }; i < spectators.size( ); ++i ) {
 		const std::string& name = spectators[ i ];
 
-		render::menu_shade.string( g_cl.m_width - 20, ( g_cl.m_height / 2 ) - ( total_size / 2 ) + ( i * ( h - 1 ) ),
+		render::notifications.string( g_cl.m_width - 20, ( g_cl.m_height / 2 ) - ( total_size / 2 ) + ( i * ( h - 1 ) ),
 			{ 255, 255, 255, 179 }, name, render::ALIGN_RIGHT );
 	}
 }
 
 void Visuals::StatusIndicators( ) {
 	// dont do if dead.
-	if( !g_cl.m_processing )
+	if ( !g_cl.m_processing )
 		return;
 
 	// compute hud size.
@@ -320,7 +321,7 @@ void Visuals::StatusIndicators( ) {
 	std::vector< Indicator_t > indicators{ };
 
 	// LC
-	if( g_menu.main.visuals.indicators.get( 1 ) ) {
+	if ( g_menu.main.visuals.indicators.get( 1 ) ) {
 		if( g_cl.m_local->m_vecVelocity( ).length_2d( ) > 270.f || g_cl.m_lagcomp ) {
 			Indicator_t ind{ };
 			ind.color = g_cl.m_lagcomp ? colors::green: colors::red;
@@ -331,7 +332,7 @@ void Visuals::StatusIndicators( ) {
 	}
 
 	// LBY
-	if( g_menu.main.visuals.indicators.get( 0 ) ) {
+	if ( g_menu.main.visuals.indicators.get( 0 ) ) {
 		// get the absolute change between current lby and animated angle.
 		float change = std::abs( math::NormalizedAngle( g_cl.m_body - g_cl.m_angle.y ) );
 
@@ -342,7 +343,7 @@ void Visuals::StatusIndicators( ) {
 	}
 
 	// PING
-	if( g_menu.main.visuals.indicators.get( 2 ) ) {
+	if ( g_menu.main.visuals.indicators.get( 2 ) ) {
 		Indicator_t ind{ };
 		ind.color = (g_aimbot.m_fake_latency || g_menu.main.misc.fake_latency_always.get()) ? colors::green : colors::red;
 		ind.text = XOR( "PING" );
@@ -366,14 +367,14 @@ void Visuals::StatusIndicators( ) {
 		indicators.push_back(ind);
 	}
 
-	if( indicators.empty( ) )
+	if ( indicators.empty( ) )
 		return;
 
 	// iterate and draw indicators.
-	for( size_t i{ }; i < indicators.size( ); ++i ) {
+	for ( size_t i{ }; i < indicators.size( ); ++i ) {
 		auto& indicator = indicators[ i ];
 
-		render::indicator.string( 20, g_cl.m_height - 80 - ( 30 * i ), indicator.color, indicator.text );
+		render::indicator.string( 20, g_cl.m_height - 90 - ( 30 * i ), indicator.color, indicator.text );
 	}
 }
 
@@ -381,34 +382,34 @@ void Visuals::AutopeekIndicator( ) {
 	if ( !g_cl.m_processing )
 		return;
 
-	if ( !g_menu.main.visuals.autopeek_indicator.get() )
+	if ( !g_menu.main.visuals.autopeek_indicator.get( ) )
 		return;
 
-	if ( g_input.GetKeyState(g_menu.main.movement.autopeek.get()) ) {
+	if ( g_input.GetKeyState( g_menu.main.movement.autopeek.get( ) ) ) {
 		render::worldcircle( g_movement.m_autopeek_origin, 15.f, 5.f, 1.f, g_menu.main.visuals.autopeek_color.get( ) );
 	}
 }
 
 void Visuals::SpreadCrosshair( ) {
 	// dont do if dead.
-	if( !g_cl.m_processing )
+	if ( !g_cl.m_processing )
 		return;
 
-	if( !g_menu.main.visuals.spread_xhair.get( ) )
+	if ( !g_menu.main.visuals.spread_xhair.get( ) )
 		return;
 
 	// get active weapon.
 	Weapon* weapon = g_cl.m_local->GetActiveWeapon( );
-	if( !weapon )
+	if ( !weapon )
 		return;
 
 	WeaponInfo* data = weapon->GetWpnData( );
-	if( !data )
+	if ( !data )
 		return;
 
 	// do not do this on: bomb, knife and nades.
 	CSWeaponType type = data->m_weapon_type;
-	if( type == WEAPONTYPE_KNIFE || type == WEAPONTYPE_C4 || type == WEAPONTYPE_GRENADE )
+	if ( type == WEAPONTYPE_KNIFE || type == WEAPONTYPE_C4 || type == WEAPONTYPE_GRENADE )
 		return;
 
 	// calc radius.
@@ -432,7 +433,7 @@ void Visuals::PenetrationCrosshair( ) {
 	bool  valid_player_hit;
 	Color final_color;
 
-	if( !g_menu.main.visuals.pen_crosshair.get( ) || !g_cl.m_processing )
+	if ( !g_menu.main.visuals.pen_crosshair.get( ) || !g_cl.m_processing )
 		return;
 
 	x = g_cl.m_width / 2;
@@ -440,10 +441,10 @@ void Visuals::PenetrationCrosshair( ) {
 
 
 	valid_player_hit = ( g_cl.m_pen_data.m_target && g_cl.m_pen_data.m_target->enemy( g_cl.m_local ) );
-	if( valid_player_hit )
+	if ( valid_player_hit )
 		final_color = colors::transparent_yellow;
 
-	else if( g_cl.m_pen_data.m_pen )
+	else if ( g_cl.m_pen_data.m_pen )
 		final_color = colors::transparent_green;
 
 	else
@@ -457,7 +458,7 @@ void Visuals::PenetrationCrosshair( ) {
 }
 
 void Visuals::draw( Entity* ent ) {
-	if( ent->IsPlayer( ) ) {
+	if ( ent->IsPlayer( ) ) {
 		Player* player = ent->as< Player* >( );
 
 		// dont draw dead players.
@@ -468,31 +469,31 @@ void Visuals::draw( Entity* ent ) {
 		DrawPlayer( player );
 	}
 
-	else if( ent->IsBaseCombatWeapon( ) && !ent->dormant( ) )
+	else if ( ent->IsBaseCombatWeapon( ) && !ent->dormant( ) )
 		DrawItem( ent->as< Weapon* >( ) );
 
-	else if( g_menu.main.visuals.proj.get( ) )
+	else if ( g_menu.main.visuals.proj.get( ) )
 		DrawProjectile( ent->as< Weapon* >( ) );
 }
 
 void Visuals::DrawProjectile( Weapon* ent ) {
 	vec2_t screen;
 	vec3_t origin = ent->GetAbsOrigin( );
-	if( !render::WorldToScreen( origin, screen ) )
+	if ( !render::WorldToScreen( origin, screen ) )
 		return;
 
 	Color col = g_menu.main.visuals.proj_color.get( );
 	col.a( ) = 180;
 
 	// draw decoy.
-	if( ent->is( HASH( "CDecoyProjectile" ) ) )
+	if ( ent->is( HASH( "CDecoyProjectile" ) ) )
 		render::esp_small.string( screen.x, screen.y, col, XOR( "DECOY" ), render::ALIGN_CENTER );
 
 	// draw molotov.
-	else if( ent->is( HASH( "CMolotovProjectile" ) ) )
+	else if ( ent->is( HASH( "CMolotovProjectile" ) ) )
 		render::esp_small.string( screen.x, screen.y, col, XOR( "MOLLY" ), render::ALIGN_CENTER );
 
-	else if( ent->is( HASH( "CBaseCSGrenadeProjectile" ) ) ) {
+	else if ( ent->is( HASH( "CBaseCSGrenadeProjectile" ) ) ) {
 		const model_t* model = ent->GetModel( );
 
 		if( model ) {
@@ -513,7 +514,7 @@ void Visuals::DrawProjectile( Weapon* ent ) {
 	}
 
 	// find classes.
-	else if( ent->is( HASH( "CInferno" ) ) ) {
+	else if ( ent->is( HASH( "CInferno" ) ) ) {
 		// fire range.
 		if( g_menu.main.visuals.proj_sphere.get( 1 ) )
 			render::sphere( origin, 150.f, 5.f, 1.f, g_menu.main.visuals.proj_sphere_color.get( ) );
@@ -525,7 +526,7 @@ void Visuals::DrawProjectile( Weapon* ent ) {
 		render::esp_small.string( screen.x, screen.y, col, XOR( "FIRE" ), render::ALIGN_CENTER );
 	}
 
-	else if( ent->is( HASH( "CSmokeGrenadeProjectile" ) ) ) { 
+	else if ( ent->is( HASH( "CSmokeGrenadeProjectile" ) ) ) { 
 		// smoke ground.
 		if ( ent->m_nSmokeEffectTickBegin( ) && g_menu.main.visuals.proj_ground.get( 0 ) )
 			render::worldcircle( origin, 175.f, 5.f, 1.f, g_menu.main.visuals.proj_ground_color.get( ) );
@@ -537,21 +538,21 @@ void Visuals::DrawProjectile( Weapon* ent ) {
 void Visuals::DrawItem( Weapon* item ) {
 	// we only want to draw shit without owner.
 	Entity* owner = g_csgo.m_entlist->GetClientEntityFromHandle( item->m_hOwnerEntity( ) );
-	if( owner )
+	if ( owner )
 		return;
 
 	// is the fucker even on the screen?
 	vec2_t screen;
 	vec3_t origin = item->GetAbsOrigin( );
-	if( !render::WorldToScreen( origin, screen ) )
+	if ( !render::WorldToScreen( origin, screen ) )
 		return;
 
 	WeaponInfo* data = item->GetWpnData( );
-	if( !data )
+	if ( !data )
 		return;
 
 	// render bomb esp.
-	if( item->is( HASH( "CC4" ) ) ) {
+	if ( item->is( HASH( "CC4" ) ) ) {
 		if( g_menu.main.visuals.dropped_c4.get( ) )
 			render::esp_small.string( screen.x, screen.y, g_menu.main.visuals.dropped_c4_color.get( ), XOR( "BOMB" ), render::ALIGN_CENTER );
 
@@ -560,7 +561,7 @@ void Visuals::DrawItem( Weapon* item ) {
 	}
 
 	// if not bomb
-	if( !g_menu.main.visuals.items.get( ) )
+	if ( !g_menu.main.visuals.items.get( ) )
 		return;
 
 	// normal item, get its name.
@@ -573,10 +574,10 @@ void Visuals::DrawItem( Weapon* item ) {
 	render::esp_small.string( screen.x, screen.y, g_menu.main.visuals.item_color.get(), name, render::ALIGN_CENTER );
 
 	// nades do not have ammo.
-	if( data->m_weapon_type == WEAPONTYPE_GRENADE || data->m_weapon_type == WEAPONTYPE_KNIFE )
+	if ( data->m_weapon_type == WEAPONTYPE_GRENADE || data->m_weapon_type == WEAPONTYPE_KNIFE )
 		return;
 
-	if( item->m_iItemDefinitionIndex( ) == NULL || item->m_iItemDefinitionIndex( ) == C4 )
+	if ( item->m_iItemDefinitionIndex( ) == NULL || item->m_iItemDefinitionIndex( ) == C4 )
 		return;
 
 	// render ammo text.
@@ -930,7 +931,7 @@ void Visuals::DrawPlayer( Player* player ) {
 
 			// money.
 			if( *it == 0 )
-				flags.push_back( { tfm::format( XOR( "$%i" ), player->m_iAccount( ) ), { 150, 200, 60, low_alpha } } );
+				flags.push_back( { tfm::format( XOR( "$%i" ), player->m_iAccount( ) ), { 0, 255, 0, low_alpha } } );
 
 			// armor.
 			if( *it == 1 ) {
@@ -1195,6 +1196,17 @@ void Visuals::DrawPlantedC4( ) {
 		if( g_menu.main.visuals.planted_c4.get(3) && g_cl.m_local->alive( ) )
 			render::esp_small.string( screen_pos.x, ( int ) screen_pos.y + render::esp_small.m_size.m_height, damage_color, damage_str, render::ALIGN_CENTER );
 	}
+}
+
+void Visuals::UpdateShadows( ) {
+	if ( !m_cascade_light )
+		return;
+
+	m_cascade_light->m_envLightShadowDirection( ) = g_menu.main.visuals.shadow_modulation.get() ? vec3_t{ 
+		g_menu.main.visuals.shadow_modulation_x.get( ) / 100.f,
+		g_menu.main.visuals.shadow_modulation_y.get( ) / 100.f,
+		g_menu.main.visuals.shadow_modulation_z.get( ) / 100.f
+	} : m_cascade_shadow_direction;
 }
 
 bool Visuals::GetPlayerBoxRect( Player* player, Rect& box ) {

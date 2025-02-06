@@ -147,8 +147,6 @@ void Hooks::init( ) {
 	m_debug_spread.add( ConVar::GETBOOL, util::force_cast( &Hooks::DebugSpreadGetBool ) );
 
 	// set netvar proxies.
-	g_netvars.SetProxy( HASH( "DT_CSPlayer" ), HASH( "m_angEyeAngles[0]" ), Pitch_proxy, m_Pitch_original );
-	g_netvars.SetProxy( HASH( "DT_CSPlayer" ), HASH( "m_flLowerBodyYawTarget" ), Body_proxy, m_Body_original );
 	g_netvars.SetProxy( HASH( "DT_CSRagdoll" ), HASH( "m_vecForce" ), Force_proxy, m_Force_original );
 
 	// unlock hidden cvars.

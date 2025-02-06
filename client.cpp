@@ -33,14 +33,14 @@ void Client::DrawHUD() {
 	// get tickrate.
 	int rate = (int)std::round(1.f / g_csgo.m_globals->m_interval);
 
-	std::string text = tfm::format(XOR("zephyr | rtt: %ims | rate: %i | %s"), ms, rate, time.str().data());
+	std::string text = tfm::format(XOR("Zephyr | rtt: %ims | rate: %i | %s"), ms, rate, time.str().data());
 	render::FontSize_t size = render::hud.size(text);
 
 	// background.
-	render::rect_filled(m_width - size.m_width - 20, 10, size.m_width + 10, size.m_height + 2, { 240, 110, 140, 130 });
+	render::rect_filled(m_width - size.m_width - 20, 10, size.m_width + 10, size.m_height + 2, { 0, 0, 0, 120 });
 
 	// text.
-	render::hud.string(m_width - 15, 10, { 240, 160, 180, 250 }, text, render::ALIGN_RIGHT);
+	render::hud.string(m_width - 15, 10, { 255, 255, 255, 179 }, text, render::ALIGN_RIGHT);
 }
 
 void Client::KillFeed() {
@@ -95,7 +95,22 @@ void Client::OnMapload() {
 	m_local = g_csgo.m_entlist->GetClientEntity< Player* >(g_csgo.m_engine->GetLocalPlayer());
 
 	// world materials.
-	Visuals::ModulateWorld();
+	g_visuals.ModulateWorld();
+
+	// reset our shadows.
+	g_visuals.m_cascade_light = nullptr;
+	g_visuals.m_cascade_shadow_direction = vec3_t{ };
+
+	// get our new shadow entity (if available)
+	for ( int i{ 1 }; i <= g_csgo.m_entlist->GetHighestEntityIndex(); ++i ) {
+		Entity* ent = g_csgo.m_entlist->GetClientEntity(i);
+	
+		if ( !ent || !ent->is( HASH( "CCascadeLight" ) ) )
+			continue;
+
+		g_visuals.m_cascade_light = ent;
+		g_visuals.m_cascade_shadow_direction = ent->m_envLightShadowDirection( );
+	}
 
 	// init knife shit.
 	g_skins.load();
@@ -204,6 +219,9 @@ void Client::DoMove() {
 	// run any strafe angle required movement code.
 	if ( m_movetype != MOVETYPE_NOCLIP && m_movetype != MOVETYPE_LADDER ) {
 		g_movement.AutoPeek( );
+
+		if( g_menu.main.movement.autostop.get( ) && g_aimbot.m_stop )
+			g_movement.QuickStop( );
 	}
 
 	// predict input.
@@ -216,7 +234,11 @@ void Client::DoMove() {
 	math::AngleVectors(m_view_angles, &m_forward_dir);
 
 	// store stuff after input pred.
-	m_shoot_pos = m_local->GetShootPosition();
+	m_ground = (m_flags & FL_ONGROUND);
+	m_speed  = g_cl.m_local->m_vecVelocity().length();
+
+	// get shoot position.
+	g_animations.UpdateShootPosition( );
 
 	// reset shit.
 	m_weapon = nullptr;
@@ -363,36 +385,6 @@ void Client::OnTick(CUserCmd* cmd) {
 	g_inputpred.restore();
 }
 
-void Client::SetAngles() {
-	if (!g_cl.m_local || !g_cl.m_processing)
-		return;
-
-	// set the nointerp flag.
-	g_cl.m_local->m_fEffects() |= EF_NOINTERP;
-
-	// apply the rotation.
-	g_cl.m_local->SetAbsAngles(m_rotation);
-	g_cl.m_local->m_angRotation() = m_rotation;
-	g_cl.m_local->m_angNetworkAngles() = m_rotation;
-
-	// set radar angles.
-	if (g_csgo.m_input->CAM_IsThirdPerson())
-		g_csgo.m_prediction->SetLocalViewAngles(m_radar);
-}
-
-void Client::SetAngles2(ang_t angle) {
-	if (!g_cl.m_local || !g_cl.m_processing || !g_menu.main.antiaim.fake_yaw.get())
-		return;
-
-	// set the nointerp flag.
-	g_cl.m_local->m_fEffects() |= EF_NOINTERP;
-
-	// apply the rotation.
-	g_cl.m_local->SetAbsAngles(angle);
-	g_cl.m_local->m_angRotation() = angle;
-	g_cl.m_local->m_angNetworkAngles() = angle;
-}
-
 void Client::UpdateAnimations() {
 	if (!g_cl.m_local || !g_cl.m_processing)
 		return;
@@ -401,17 +393,24 @@ void Client::UpdateAnimations() {
 	if (!state)
 		return;
 
-	// prevent model sway on player.
-	g_cl.m_local->m_AnimOverlay()[12].m_weight = 0.f;
+	// set the required flags.
+	m_local->AddEffect(EF_NOINTERP);
 
-	// update animations with last networked data.
-	g_cl.m_local->SetPoseParameters(g_cl.m_poses);
+	m_local->AddEntityFlag(EFL_DIRTY_ABSVELOCITY);
+	m_local->AddEntityFlag(EFL_DIRTY_ABSANGVELOCITY);
+	m_local->AddEntityFlag(EFL_DIRTY_ABSTRANSFORM);
+
+	// apply the rotation.
+	m_local->SetAbsAngles(m_rotation);
+	m_local->m_angRotation() = m_rotation;
+	m_local->m_angNetworkAngles() = m_rotation;
+
+	// rebuild our animations.UpdateClientsideAnimationState
+	g_animations.UpdateClientsideAnimationState( m_poses, m_layers );
 
 	// update abs yaw with last networked abs yaw.
-	g_cl.m_local->SetAbsAngles(ang_t(0.f, g_cl.m_abs_yaw, 0.f));
+	m_local->SetAbsAngles(ang_t(0.f, m_abs_yaw, 0.f));
 }
-
-
 
 void Client::UpdateInformation() {
 	if (g_cl.m_lag > 0)
@@ -428,10 +427,6 @@ void Client::UpdateInformation() {
 	// current angle will be animated.
 	m_angle = g_cl.m_cmd->m_view_angles;
 
-	//// fix landing anim.
-	//if (state->m_land && !state->m_dip_air && state->m_dip_cycle > 0.f)
-	//	m_angle.x = -12.f;
-
 	math::clamp(m_angle.x, -90.f, 90.f);
 	m_angle.normalize();
 
@@ -442,27 +437,24 @@ void Client::UpdateInformation() {
 	g_cl.m_local->m_flLowerBodyYawTarget() = m_body;
 
 	// CCSGOPlayerAnimState::Update, bypass already animated checks.
-	if (state->m_frame == g_csgo.m_globals->m_frame)
-		state->m_frame -= 1;
+	if ( state->m_flLastUpdateIncrement == g_csgo.m_globals->m_frame )
+		state->m_flLastUpdateIncrement -= 1;
 
 	// call original, bypass hook.
 	g_hooks.m_UpdateClientSideAnimation(g_cl.m_local);
 
-	// get last networked poses.
-	g_cl.m_local->GetPoseParameters(g_cl.m_poses);
-
 	// store updated abs yaw.
-	g_cl.m_abs_yaw = state->m_goal_feet_yaw;
+	g_cl.m_abs_yaw = state->m_flFootYaw;
 
 	// we landed.
-	if (!m_ground && state->m_ground) {
+	if (!m_ground && state->m_bOnGround) {
 		m_body = m_angle.y;
 		m_body_pred = m_anim_time;
 	}
 
 	// walking, delay lby update by .22.
-	else if (state->m_speed > 0.1f) {
-		if (state->m_ground)
+	else if (state->m_flVelocityLengthXY > 0.1f) {
+		if (state->m_bOnGround)
 			m_body = m_angle.y;
 
 		m_body_pred = m_anim_time + 0.22f;
@@ -474,10 +466,14 @@ void Client::UpdateInformation() {
 		m_body_pred = m_anim_time + 1.1f;
 	}
 
+	// get last networked poses.
+	g_cl.m_local->GetPoseParameters(m_poses);
+	g_cl.m_local->GetAnimLayers(m_layers);
+
 	// save updated data.
 	m_rotation = g_cl.m_local->m_angAbsRotation();
-	m_speed = state->m_speed;
-	m_ground = state->m_ground;
+	m_speed = g_cl.m_local->m_vecVelocity( ).length( );
+	m_ground = state->m_bOnGround;
 }
 
 void Client::print(const std::string text, ...) {
@@ -502,7 +498,7 @@ void Client::print(const std::string text, ...) {
 	va_end(list);
 
 	// print to console.
-	g_csgo.m_cvar->ConsoleColorPrintf(colors::burgundy, XOR("[zephyr] "));
+	g_csgo.m_cvar->ConsoleColorPrintf(colors::burgundy, XOR("[Zephyr] "));
 	g_csgo.m_cvar->ConsoleColorPrintf(colors::white, buf.c_str());
 }
 

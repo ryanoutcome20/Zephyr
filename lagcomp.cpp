@@ -1,258 +1,143 @@
 #include "includes.h"
 
-LagCompensation g_lagcomp{};
+LagCompensation g_lagcomp{};;
 
-#define LAG_COMPENSATION_TELEPORTED_DISTANCE_SQR ( 64.0f * 64.0f )
-bool LagCompensation::StartPrediction(AimPlayer* data) {
+LagRecord* LagCompensation::StartPrediction( AimPlayer* data ) {
 	// we have no data to work with.
-	// this should never happen if we call this
-	if (data->m_records.empty())
-		return false;
+	if (data->m_records.size( ) <= 2)
+		return nullptr;
 
-	// meme.
-	if (data->m_player->dormant())
-		return false;
+	CCSGOPlayerAnimState* state = data->m_player->m_PlayerAnimState( );
 
-	// compute the true amount of updated records
-	// since the last time the player entered pvs.
-	size_t size{};
-
-	// iterate records.
-	for (const auto& it : data->m_records) {
-		if (it->dormant())
-			break;
-
-		// increment total amount of data.
-		++size;
-	}
+	if (!state)
+		return nullptr;
 
 	// get first record.
-	LagRecord* record = data->m_records[0].get();
+	LagRecord* current = data->m_records.front( ).get( );
+	LagRecord* previous = data->m_records[ 1 ].get( );
 
-	// reset all prediction related variables.
-	// this has been a recurring problem in all my hacks lmfao.
-	// causes the prediction to stack on eachother.
-	record->predict();
+	// get tick information.
+	int latency_ticks = g_cl.m_latency_ticks * 2;
+	int tick = g_cl.m_arrival_tick;
 
-	// check if lc broken.
-	if (size > 1 && ((record->m_origin - data->m_records[1]->m_origin).length_sqr() > LAG_COMPENSATION_TELEPORTED_DISTANCE_SQR
-		|| size > 2 && (data->m_records[1]->m_origin - data->m_records[2]->m_origin).length_sqr() > LAG_COMPENSATION_TELEPORTED_DISTANCE_SQR))
-		record->m_broke_lc = true;
+	// sanity checks.
+	if (!current || !previous)
+		return nullptr;
 
-	// we are not breaking lagcomp at this point.
-	// return false so it can aim at all the records it once
-	// since server-sided lagcomp is still active and we can abuse that.
-	if (!record->m_broke_lc)
-		return false;
+	if (current->immune( ) || previous->immune( ))
+		return nullptr;
 
-	int simulation = game::TIME_TO_TICKS(record->m_sim_time);
+	if (!current->m_broke_lc || current->m_shift)
+		return nullptr;
 
-	// this is too much lag to fix.
-	if (std::abs(g_cl.m_arrival_tick - simulation) >= 128)
-		return true;
+	if ((current->m_sim_time + current->m_lag) >= game::TICKS_TO_TIME( tick ))
+		return current;
 
-	// compute the amount of lag that we will predict for, if we have one set of data, use that.
-	// if we have more data available, use the prevoius lag delta to counter weird fakelags that switch between 14 and 2.
-	int lag = (size <= 2) ? game::TIME_TO_TICKS(record->m_sim_time - data->m_records[1]->m_sim_time)
-		: game::TIME_TO_TICKS(data->m_records[1]->m_sim_time - data->m_records[2]->m_sim_time);
+	data->m_records.emplace_front( std::make_shared< LagRecord >( data->m_player ) );
 
-	// clamp this just to be sure.
-	math::clamp(lag, 1, 15);
+	LagRecord* record = data->m_records.front().get();
 
-	// get the delta in ticks between the last server net update
-	// and the net update on which we created this record.
-	int updatedelta = g_cl.m_server_tick - record->m_tick;
+	const float curtime = g_csgo.m_globals->m_curtime;
+	const float frametime = g_csgo.m_globals->m_frametime;
 
-	// if the lag delta that is remaining is less than the current netlag
-	// that means that we can shoot now and when our shot will get processed
-	// the origin will still be valid, therefore we do not have to predict.
-	if (g_cl.m_latency_ticks <= lag - updatedelta)
-		return true;
+	record->m_sim_time = game::TICKS_TO_TIME( tick );
 
-	// the next update will come in, wait for it.
-	int next = record->m_tick + 1;
-	if (next + lag >= g_cl.m_arrival_tick)
-		return true;
+	// backup data.
+	AnimationBackup_t backup;
 
-	float change = 0.f, dir = 0.f;
+	backup.m_origin = data->m_player->m_vecOrigin( );
+	backup.m_abs_origin = data->m_player->GetAbsOrigin( );
+	backup.m_velocity = data->m_player->m_vecVelocity( );
+	backup.m_abs_velocity = data->m_player->m_vecAbsVelocity( );
+	backup.m_flags = data->m_player->m_fFlags( );
+	backup.m_eflags = data->m_player->m_iEFlags( );
+	backup.m_duck = data->m_player->m_flDuckAmount( );
+	backup.m_body = data->m_player->m_flLowerBodyYawTarget( );
+	data->m_player->GetAnimLayers( backup.m_layers );
 
-	// get the direction of the current velocity.
-	if (record->m_velocity.y != 0.f || record->m_velocity.x != 0.f)
-		dir = math::rad_to_deg(std::atan2(record->m_velocity.y, record->m_velocity.x));
+	for (int i = 0; i < latency_ticks; ++i) {
+		if (!(record->m_flags & FL_ONGROUND))
+			current->m_origin -= g_csgo.sv_gravity->GetFloat( ) * g_csgo.m_globals->m_interval;
 
-	// we have more than one update
-	// we can compute the direction.
-	if (size > 1) {
-		// get the delta time between the 2 most recent records.
-		float dt = record->m_sim_time - data->m_records[1]->m_sim_time;
+		PlayerMove( record );
 
-		// init to 0.
-		float prevdir = 0.f;
-
-		// get the direction of the prevoius velocity.
-		if (data->m_records[1]->m_velocity.y != 0.f || data->m_records[1]->m_velocity.x != 0.f)
-			prevdir = math::rad_to_deg(std::atan2(data->m_records[1]->m_velocity.y, data->m_records[1]->m_velocity.x));
-
-		// compute the direction change per tick.
-		change = (math::NormalizedAngle(dir - prevdir) / dt) * g_csgo.m_globals->m_interval;
+		PredictAnimations( state, record, previous );
 	}
 
-	if (std::abs(change) > 6.f)
-		change = 0.f;
+	g_csgo.m_globals->m_curtime = record->m_sim_time;
 
-	// get the pointer to the players animation state.
-	CCSGOPlayerAnimState* state = data->m_player->m_PlayerAnimState();
+	g_bones.setup( data->m_player, record->m_bones, record );
 
-	// backup the animation state.
-	CCSGOPlayerAnimState backup{};
-	if (state)
-		std::memcpy(&backup, state, sizeof(CCSGOPlayerAnimState));
+	data->m_player->m_vecOrigin( ) = backup.m_origin;
+	data->m_player->m_vecVelocity( ) = backup.m_velocity;
+	data->m_player->m_vecAbsVelocity( ) = backup.m_abs_velocity;
+	data->m_player->m_fFlags( ) = backup.m_flags;
+	data->m_player->m_iEFlags( ) = backup.m_eflags;
+	data->m_player->m_flDuckAmount( ) = backup.m_duck;
+	data->m_player->m_flLowerBodyYawTarget( ) = backup.m_body;
+	data->m_player->SetAbsOrigin( backup.m_abs_origin );
+	data->m_player->SetAnimLayers( backup.m_layers );
 
-	// add in the shot prediction here.
-	int shot = 0;
+	g_csgo.m_globals->m_curtime = curtime;
+	g_csgo.m_globals->m_frametime = frametime;
 
-	/*Weapon* pWeapon = data->m_player->GetActiveWeapon( );
-	if( pWeapon && !data->m_fire_bullet.empty( ) ) {
-
-		static Address offset = g_netvars.get( HASH( "DT_BaseCombatWeapon" ), HASH( "m_fLastShotTime" ) );
-		float last = pWeapon->get< float >( offset );
-
-		if( game::TIME_TO_TICKS( data->m_fire_bullet.front( ).m_sim_time - last ) == 1 ) {
-			WeaponInfo* wpndata = pWeapon->GetWpnData( );
-
-			if( wpndata )
-				shot = game::TIME_TO_TICKS( last + wpndata->m_cycletime ) + 1;
-		}
-	}*/
-
-	int pred = 0;
-
-	// start our predicton loop.
-	while (true) {
-		// can the player shoot within his lag delta.
-		/*if( shot && shot >= simulation && shot < simulation + lag ) {
-
-			// if so his new lag will be the time until he shot again.
-			lag = shot - simulation;
-			math::clamp( lag, 3, 15 );
-
-			// only predict a shot once.
-			shot = 0;
-		}*/
-
-		// see if by predicting this amount of lag
-		// we do not break stuff.
-		next += lag;
-		if (next >= g_cl.m_arrival_tick)
-			break;
-
-		// predict lag.
-		for (int sim{}; sim < lag; ++sim) {
-			// predict movement direction by adding the direction change per tick to the previous direction.
-			// make sure to normalize it, in case we go over the -180/180 turning point.
-			dir = math::NormalizedAngle(dir + change);
-
-			// pythagorean theorem
-			// a^2 + b^2 = c^2
-			// we know a and b, we square them and add them together, then root.
-			float hyp = record->m_pred_velocity.length_2d();
-
-			// compute the base velocity for our new direction.
-			// since at this point the hypotenuse is known for us and so is the angle.
-			// we can compute the adjacent and opposite sides like so:
-			// cos(x) = a / h -> a = cos(x) * h
-			// sin(x) = o / h -> o = sin(x) * h
-			record->m_pred_velocity.x = std::cos(math::deg_to_rad(dir)) * hyp;
-			record->m_pred_velocity.y = std::sin(math::deg_to_rad(dir)) * hyp;
-
-			// predict player.
-			// convert newly computed velocity
-			// to origin and flags.
-			PlayerMove(record);
-
-			// move time forward by one.
-			record->m_pred_time += g_csgo.m_globals->m_interval;
-
-			// increment total amt of predicted ticks.
-			++pred;
-
-			// the server animates every first choked command.
-			// therefore we should do that too.
-			if (sim == 0 && state)
-				PredictAnimations(state, record);
-		}
-	}
-
-	// restore state.
-	if (state)
-		std::memcpy(state, &backup, sizeof(CCSGOPlayerAnimState));
-
-	if (pred <= 0)
-		return true;
-
-	// lagcomp broken, invalidate bones.
-	record->invalidate();
-
-	// re-setup bones for this record.
-	g_bones.setup(data->m_player, nullptr, record);
-
-	return true;
+	return record;
 }
 
-void LagCompensation::PlayerMove(LagRecord* record) {
+void LagCompensation::PlayerMove( LagRecord* record ) {
 	vec3_t                start, end, normal;
 	CGameTrace            trace;
 	CTraceFilterWorldOnly filter;
 
 	// define trace start.
-	start = record->m_pred_origin;
+	start = record->m_origin;
 
 	// move trace end one tick into the future using predicted velocity.
-	end = start + (record->m_pred_velocity * g_csgo.m_globals->m_interval);
+	end = start + ( record->m_velocity * g_csgo.m_globals->m_interval );
 
 	// trace.
-	g_csgo.m_engine_trace->TraceRay(Ray(start, end, record->m_mins, record->m_maxs), CONTENTS_SOLID, &filter, &trace);
+	g_csgo.m_engine_trace->TraceRay( Ray( start, end, record->m_mins, record->m_maxs ), CONTENTS_SOLID, &filter, &trace );
 
 	// we hit shit
 	// we need to fix hit.
-	if (trace.m_fraction != 1.f) {
+	if( trace.m_fraction != 1.f ) {
 
 		// fix sliding on planes.
-		for (int i{}; i < 2; ++i) {
-			record->m_pred_velocity -= trace.m_plane.m_normal * record->m_pred_velocity.dot(trace.m_plane.m_normal);
+		for( int i{}; i < 2; ++i ) {
+			record->m_velocity -= trace.m_plane.m_normal * record->m_velocity.dot( trace.m_plane.m_normal );
 
-			float adjust = record->m_pred_velocity.dot(trace.m_plane.m_normal);
-			if (adjust < 0.f)
-				record->m_pred_velocity -= (trace.m_plane.m_normal * adjust);
+			float adjust = record->m_velocity.dot( trace.m_plane.m_normal );
+			if( adjust < 0.f )
+				record->m_velocity -= ( trace.m_plane.m_normal * adjust );
 
 			start = trace.m_endpos;
-			end = start + (record->m_pred_velocity * (g_csgo.m_globals->m_interval * (1.f - trace.m_fraction)));
+			end   = start + ( record->m_velocity * ( g_csgo.m_globals->m_interval * ( 1.f - trace.m_fraction ) ) );
 
-			g_csgo.m_engine_trace->TraceRay(Ray(start, end, record->m_mins, record->m_maxs), CONTENTS_SOLID, &filter, &trace);
-			if (trace.m_fraction == 1.f)
+			g_csgo.m_engine_trace->TraceRay( Ray( start, end, record->m_mins, record->m_maxs ), CONTENTS_SOLID, &filter, &trace );
+			if( trace.m_fraction == 1.f )
 				break;
 		}
 	}
 
 	// set new final origin.
-	start = end = record->m_pred_origin = trace.m_endpos;
+	start = end = record->m_origin = trace.m_endpos;
 
 	// move endpos 2 units down.
 	// this way we can check if we are in/on the ground.
 	end.z -= 2.f;
 
 	// trace.
-	g_csgo.m_engine_trace->TraceRay(Ray(start, end, record->m_mins, record->m_maxs), CONTENTS_SOLID, &filter, &trace);
+	g_csgo.m_engine_trace->TraceRay( Ray( start, end, record->m_mins, record->m_maxs ), CONTENTS_SOLID, &filter, &trace );
 
 	// strip onground flag.
-	record->m_pred_flags &= ~FL_ONGROUND;
+	record->m_anim_flags &= ~FL_ONGROUND;
 
 	// add back onground flag if we are onground.
-	if (trace.m_fraction != 1.f && trace.m_plane.m_normal.z > 0.7f)
-		record->m_pred_flags |= FL_ONGROUND;
+	if( trace.m_fraction != 1.f && trace.m_plane.m_normal.z > 0.7f )
+		record->m_anim_flags |= FL_ONGROUND;
 }
 
-void LagCompensation::PredictAnimations(CCSGOPlayerAnimState* state, LagRecord* record) {
+void LagCompensation::PredictAnimations( CCSGOPlayerAnimState* state, LagRecord* record, LagRecord* previous ) {
 	struct AnimBackup_t {
 		float  curtime;
 		float  frametime;
@@ -264,54 +149,54 @@ void LagCompensation::PredictAnimations(CCSGOPlayerAnimState* state, LagRecord* 
 	// get player ptr.
 	Player* player = record->m_player;
 
-	// backup data.
-	AnimBackup_t backup;
-	backup.curtime = g_csgo.m_globals->m_curtime;
-	backup.frametime = g_csgo.m_globals->m_frametime;
-	backup.flags = player->m_fFlags();
-	backup.eflags = player->m_iEFlags();
-	backup.velocity = player->m_vecAbsVelocity();
-
 	// set globals appropriately for animation.
-	g_csgo.m_globals->m_curtime = record->m_pred_time;
+	g_csgo.m_globals->m_curtime = record->m_sim_time;
 	g_csgo.m_globals->m_frametime = g_csgo.m_globals->m_interval;
 
 	// EFL_DIRTY_ABSVELOCITY
 	// skip call to C_BaseEntity::CalcAbsoluteVelocity
-	player->m_iEFlags() &= ~0x1000;
+	player->m_iEFlags( ) &= ~( EFL_DIRTY_ABSVELOCITY | EFL_DIRTY_ABSTRANSFORM );
 
+	bool bot = game::IsFakePlayer( player->index( ) );
+
+	if (record->m_flags & FL_ONGROUND) {
+		record->m_layers[ ANIMATION_LAYER_MOVEMENT_JUMP_OR_FALL ].m_cycle = 0.0f;
+		record->m_layers[ ANIMATION_LAYER_MOVEMENT_JUMP_OR_FALL ].m_weight = 0.0f;
+	}
+	else if (previous && (!(previous->m_flags & FL_ONGROUND) && (record->m_flags & FL_ONGROUND))) {
+		record->m_layers[ ANIMATION_LAYER_MOVEMENT_LAND_OR_CLIMB ].m_cycle = 1.0f;
+		record->m_layers[ ANIMATION_LAYER_MOVEMENT_LAND_OR_CLIMB ].m_weight = 1.0f;
+	}
+	
 	// set predicted flags and velocity.
-	player->m_fFlags() = record->m_pred_flags;
-	player->m_vecAbsVelocity() = record->m_pred_velocity;
+	player->m_vecOrigin( ) = record->m_origin;
+	player->SetAbsOrigin( record->m_origin );
+
+	player->m_vecVelocity( ) = player->m_vecAbsVelocity( ) = record->m_anim_velocity;
+
+	player->m_flDuckAmount( ) = record->m_anim_duck;
+	player->m_flLowerBodyYawTarget( ) = record->m_body;
+
+	player->m_fFlags( ) = record->m_flags;
 
 	// enable re-animation in the same frame if animated already.
-	if (state->m_frame >= g_csgo.m_globals->m_frame)
-		state->m_frame = g_csgo.m_globals->m_frame - 1;
+	if ( state->m_flLastUpdateIncrement >= g_csgo.m_globals->m_frame )
+		state->m_flLastUpdateIncrement = g_csgo.m_globals->m_frame - 1;
 
-	bool fake = g_menu.main.aimbot.correct.get();
+	bool fake = !bot && g_menu.main.aimbot.correct.get( );
 
 	// rerun the resolver since we edited the origin.
-	if (fake)
-		g_resolver.ResolveAngles(player, record);
+	if ( fake )
+		g_resolver.ResolveAngles( player, record );
+
+	player->m_angEyeAngles( ) = record->m_eye_angles;
 
 	// update animations.
-	game::UpdateAnimationState(state, record->m_eye_angles);
+	g_animations.UpdateClientsideAnimations( player );
 
-	// rerun the pose correction cuz we are re-setupping them.
-	if (fake)
-		g_resolver.ResolvePoses(player, record);
+	record->m_abs_ang = player->GetAbsAngles( );
 
-	// get new rotation poses and layers.
-	player->GetPoseParameters(record->m_poses);
-	player->GetAnimLayers(record->m_layers);
-	record->m_abs_ang = player->GetAbsAngles();
-
-	// restore globals.
-	g_csgo.m_globals->m_curtime = backup.curtime;
-	g_csgo.m_globals->m_frametime = backup.frametime;
-
-	// restore player data.
-	player->m_fFlags() = backup.flags;
-	player->m_iEFlags() = backup.eflags;
-	player->m_vecAbsVelocity() = backup.velocity;
+	player->GetAnimLayers( record->m_layers );
+	player->SetAbsAngles( record->m_abs_ang );
+	player->GetPoseParameters( record->m_poses );
 }

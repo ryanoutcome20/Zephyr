@@ -75,7 +75,7 @@ public:
 			else
 				color.a( ) = 255;
 
-			render::menu_shade.string( x, y, color, notify->m_text );
+			render::notifications.string( x, y, color, notify->m_text );
 			y += size;
 		}
 	}

@@ -54,6 +54,7 @@ namespace render {
 
 	extern Font menu;
 	extern Font menu_shade;
+	extern Font notifications;
 	extern Font esp;
 	extern Font esp_small;
 	extern Font hud;

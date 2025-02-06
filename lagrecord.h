@@ -69,6 +69,13 @@ public:
 	C_AnimationLayer m_layers[ 13 ];
 	float            m_poses[ 24 ];
 	vec3_t           m_anim_velocity;
+	int				 m_anim_flags;
+	float            m_anim_duck;
+	float			 m_foot_yaw;
+	float			 m_move_yaw;
+	float		     m_move_yaw_current_to_ideal;
+	float			 m_move_yaw_ideal;
+	float			 m_move_weight_smoothed;
 
 	// bone stuff.
 	bool       m_setup;
@@ -76,10 +83,7 @@ public:
 
 	// lagfix stuff.
 	bool   m_broke_lc;
-	vec3_t m_pred_origin;
-	vec3_t m_pred_velocity;
-	float  m_pred_time;
-	int    m_pred_flags;
+	bool   m_shift;
 
 	// resolver stuff.
 	size_t m_mode;
@@ -141,18 +145,18 @@ public:
 		m_tick      = g_csgo.m_cl->m_server_tick;
 	
 		// netvars.
-		m_pred_time     = m_sim_time = player->m_flSimulationTime( );
-		m_old_sim_time  = player->m_flOldSimulationTime( );
-		m_pred_flags    = m_flags  = player->m_fFlags( );
-		m_pred_origin   = m_origin = player->m_vecOrigin( );
+		m_duck			= m_anim_duck = player->m_flDuckAmount( );
+		m_anim_flags    = m_flags  = player->m_fFlags( );
+		m_anim_velocity = m_velocity = player->m_vecVelocity();
 		m_old_origin    = player->m_vecOldOrigin( );
 		m_eye_angles    = player->m_angEyeAngles( );
 		m_abs_ang       = player->GetAbsAngles( );
 		m_body          = player->m_flLowerBodyYawTarget( );
 		m_mins          = player->m_vecMins( );
 		m_maxs          = player->m_vecMaxs( );
-		m_duck          = player->m_flDuckAmount( );
-		m_pred_velocity = m_velocity = player->m_vecVelocity( );
+		m_sim_time		= player->m_flSimulationTime();
+		m_old_sim_time  = player->m_flOldSimulationTime();
+		m_origin		= player->m_vecOrigin();
 
 		// save networked animlayers.
 		player->GetAnimLayers( m_layers );
@@ -166,15 +170,18 @@ public:
 
 		// compute animtime.
 		m_anim_time = m_old_sim_time + g_csgo.m_globals->m_interval;
-	}
 
-	// function: restores 'predicted' variables to their original.
-	__forceinline void predict( ) {
-		m_broke_lc      = false;
-		m_pred_origin   = m_origin;
-		m_pred_velocity = m_velocity;
-		m_pred_time     = m_sim_time;
-		m_pred_flags    = m_flags;
+		// update our state based stuff.
+		CCSGOPlayerAnimState* state = player->m_PlayerAnimState( );
+
+		if( !state )
+			return;
+
+		m_foot_yaw					= state->m_flFootYaw;
+		m_move_yaw					= state->m_flMoveYaw;
+		m_move_yaw_current_to_ideal = state->m_flMoveYawCurrentToIdeal;
+		m_move_yaw_ideal			= state->m_flMoveYawIdeal;
+		m_move_weight_smoothed		= state->m_flMoveWeightSmoothed;
 	}
 
 	// function: writes current record to bone cache.
@@ -185,12 +192,12 @@ public:
 		cache->m_pCachedBones    = m_bones;
 		cache->m_CachedBoneCount = 128;
 
-		m_player->m_vecOrigin( ) = m_pred_origin;
+		m_player->m_vecOrigin( ) = m_origin;
 		m_player->m_vecMins( )   = m_mins;
 		m_player->m_vecMaxs( )   = m_maxs;
 
 		m_player->SetAbsAngles( m_abs_ang );
-		m_player->SetAbsOrigin( m_pred_origin );
+		m_player->SetAbsOrigin( m_origin);
 	}
 
 	__forceinline bool dormant( ) {

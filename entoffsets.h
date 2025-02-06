@@ -127,6 +127,8 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bFireIsBurning;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nSmokeEffectTickBegin;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nPrecipType;
+    XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nMusicID;
+    XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_envLightShadowDirection;
 
     void init( ) {
         // initialize a xored netvar.
@@ -224,6 +226,8 @@ public:
         INIT_XOREDNETVAR( m_hMyWeapons,			        HASH( "DT_CSPlayer" ),             HASH( "m_hMyWeapons" ) );
         INIT_XOREDNETVAR( m_bFireIsBurning,             HASH( "DT_Inferno" ),              HASH( "m_bFireIsBurning" ) );
         INIT_XOREDNETVAR( m_nPrecipType,                HASH( "DT_Precipitation" ),        HASH( "m_nPrecipType" ) );
+        INIT_XOREDNETVAR( m_envLightShadowDirection,    HASH( "DT_CascadeLight" ),         HASH( "m_envLightShadowDirection" ) );
+        INIT_XOREDNETVAR( m_nMusicID,                   HASH( "DT_CSPlayerResource"),      HASH( "m_nMusicID" ) );
         INIT_XOREDNETVAR( m_nSmokeEffectTickBegin,      HASH( "DT_SmokeGrenadeProjectile" ), HASH( "m_nSmokeEffectTickBegin" ) );
 
         INIT_XOREDNETVAR_SPECIFIC( m_flOldSimulationTime,        g_netvars.get( HASH( "DT_BaseEntity" ),       HASH( "m_flSimulationTime" ) ) + sizeof( float ) );

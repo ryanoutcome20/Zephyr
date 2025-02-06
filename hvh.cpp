@@ -7,7 +7,7 @@ void HVH::IdealPitch( ) {
 	if( !state )
 		return;
 
-	g_cl.m_cmd->m_view_angles.x = state->m_min_pitch;
+	g_cl.m_cmd->m_view_angles.x = state->m_flAimPitchMin;
 }
 
 void HVH::AntiAimPitch( ) {

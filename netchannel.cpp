@@ -12,7 +12,7 @@ int Hooks::SendDatagram( void* data ) {
 		return g_hooks.m_net_channel.GetOldMethod< SendDatagram_t >(INetChannel::SENDDATAGRAM)(this, data);
 
 	// backup our networking variables.
-	int backup_in_seq = channel->m_in_seq;
+	int backup_in_seq	 = channel->m_in_seq;
 	int backup_rel_state = channel->m_in_rel_state;
 
 	// fake latency.
@@ -32,11 +32,14 @@ int Hooks::SendDatagram( void* data ) {
 			}
 		}
 	}
+	
+	// call exploit handler.
+	g_exploits.Loss( channel );
 
 	// call our old method and reset our backup data.
 	int ret = g_hooks.m_net_channel.GetOldMethod< SendDatagram_t >(INetChannel::SENDDATAGRAM)(this, data);
 
-	channel->m_in_seq = backup_in_seq;
+	channel->m_in_seq		= backup_in_seq;
 	channel->m_in_rel_state = backup_rel_state;
 
 	return ret;

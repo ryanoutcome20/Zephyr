@@ -635,7 +635,7 @@ public:
 		health_color.AddShowCallback(callbacks::IsHealthOverrideOn);
 		RegisterElement(&health_color);
 
-		health_color_gradient.setup(XOR("secondary color"), XOR("health_color"), colors::burgundy);
+		health_color_gradient.setup(XOR("secondary color"), XOR("health_color_gradient"), colors::burgundy);
 		health_color_gradient.AddShowCallback(callbacks::IsHealthOverrideGradient);
 		RegisterElement(&health_color_gradient);
 
@@ -674,7 +674,7 @@ public:
 		offscreen_color.AddShowCallback(callbacks::IsOffscreenOn);
 		RegisterElement(&offscreen_color, 1);
 
-		offscreen_dist.setup("", XOR("offscreen_distance"), 30.f, 300.f, false, 0, 250.f, 5.f);
+		offscreen_dist.setup("", XOR("offscreen_distance"), 30.f, 235.f, false, 0, 235.f, 5.f);
 		offscreen_dist.AddShowCallback(callbacks::IsOffscreenOn);
 		RegisterElement(&offscreen_dist, 1);
 
@@ -982,9 +982,13 @@ public:
 	Checkbox	  weather_modulation;
 	Checkbox	  weather_audio;
 	Slider		  weather_audio_volume;
-	Checkbox    console_modulation;
-	Colorpicker console_color;
-	Slider		   console_blend;
+	Checkbox	  shadow_modulation;
+	Slider		  shadow_modulation_x;
+	Slider		  shadow_modulation_y;
+	Slider		  shadow_modulation_z;
+	Checkbox      console_modulation;
+	Colorpicker   console_color;
+	Slider		  console_blend;
 
 	// col2.
 	MultiDropdown removals;
@@ -1158,6 +1162,21 @@ public:
 		weather_audio_volume.AddShowCallback(callbacks::IsWeatherModulationAudioOn);
 		RegisterElement(&weather_audio_volume);
 
+		shadow_modulation.setup(XOR("shadow modulation"), XOR("shadow_modulation"));
+		RegisterElement(&shadow_modulation);
+
+		shadow_modulation_x.setup("", XOR("shadow_modulation_x"), -100.f, 100.f, false, 0, 0.f, 5.f, XOR(L"%"));
+		shadow_modulation_x.AddShowCallback(callbacks::IsShadowModulationOn);
+		RegisterElement(&shadow_modulation_x);
+
+		shadow_modulation_y.setup("", XOR("shadow_modulation_y"), -100.f, 100.f, false, 0, 0.f, 5.f, XOR(L"%"));
+		shadow_modulation_y.AddShowCallback(callbacks::IsShadowModulationOn);
+		RegisterElement(&shadow_modulation_y);
+
+		shadow_modulation_z.setup("", XOR("shadow_modulation_z"), -100.f, 100.f, false, 0, 0.f, 5.f, XOR(L"%"));
+		shadow_modulation_z.AddShowCallback(callbacks::IsShadowModulationOn);
+		RegisterElement(&shadow_modulation_z);
+
 		console_modulation.setup(XOR("console modulation"), XOR("console_modulation"));
 		RegisterElement(&console_modulation);
 
@@ -1279,10 +1298,10 @@ public:
 	Checkbox duck_delay;
 
 	Keybind  fakewalk;
+	Keybind  lagwalk;
 	Keybind  autopeek;
-	Keybind  autostop;
-	Checkbox autostop_always_on;
-
+	Checkbox autostop;
+	Slider   autostop_speed;
 public:
 	void init() {
 		SetTitle(XOR("movement"));
@@ -1313,15 +1332,17 @@ public:
 		fakewalk.setup(XOR("fake-walk"), XOR("fakewalk"));
 		RegisterElement(&fakewalk, 1);
 
+		lagwalk.setup(XOR("lag-walk"), XOR("lagwalk"));
+		RegisterElement(&lagwalk, 1);
+
 		autopeek.setup(XOR("automatic peek"), XOR("autopeek"));
 		RegisterElement(&autopeek, 1);
 
-		autostop_always_on.setup(XOR("automatic stop always on"), XOR("auto_stop_always"));
-		RegisterElement(&autostop_always_on, 1);
-
 		autostop.setup(XOR("automatic stop"), XOR("autostop"));
-		autostop.AddShowCallback(callbacks::AUTO_STOP);
 		RegisterElement(&autostop, 1);
+
+		autostop_speed.setup("", XOR("autostop_speed"), 1.f, 100.f, false, 0, 15.f, 1.f, XOR(L"%"));
+		RegisterElement(&autostop_speed, 1);
 	}
 };
 

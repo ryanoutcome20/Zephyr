@@ -1,14 +1,37 @@
 #include "includes.h"
 
 void Hooks::DoExtraBoneProcessing( int a2, int a3, int a4, int a5, int a6, int a7 ) {
-	// no reason to run this as it just calculates some stuff for fingers and feet. these
-	// things should be rebuilt later and this serves no purpose other than draining
-	// fps.
-	
-	if( !g_bones.m_running )
-		return g_hooks.m_DoExtraBoneProcessing(this, a2, a3, a4, a5, a6, a7);
+	// cast thisptr to player ptr.
+	Player* player = (Player*)this;
 
-	return;
+	/*
+		zero out animstate player pointer so CCSGOPlayerAnimState::DoProceduralFootPlant will not do anything.
+
+		.text:103BB25D 8B 56 60                                mov     edx, [esi+60h]
+		.text:103BB260 85 D2                                   test    edx, edx
+		.text:103BB262 0F 84 B4 0E 00 00                       jz      loc_103BC11C
+	*/
+
+	// get animstate ptr.
+	CCSGOPlayerAnimState* animstate = player->m_PlayerAnimState();
+
+	// backup pointer.
+	Player* backup{ nullptr };
+
+	if ( animstate ) {
+		// backup player ptr.
+		backup = animstate->m_pPlayer;
+
+		// null player ptr, GUWOP gang.
+		animstate->m_pPlayer = nullptr;
+	}
+
+	// call og.
+	g_hooks.m_DoExtraBoneProcessing(this, a2, a3, a4, a5, a6, a7);
+
+	// restore ptr.
+	if ( animstate && backup )
+		animstate->m_pPlayer = backup;
 }
 
 void Hooks::CalcView( vec3_t& origin, ang_t& angles, float& znear, float& zfar, float& fov ) {
@@ -40,11 +63,11 @@ void Hooks::BuildTransformations( int a2, int a3, int a4, int a5, int a6, int a7
 }
 
 void Hooks::UpdateClientSideAnimation( ) {
-	if( g_cl.m_processing )
-		g_cl.SetAngles( );
-	else {
+	// cast thisptr to player ptr.
+	Player* player = (Player*)this;
+
+	if( !player || player->dormant( ) || !player->alive( ) )
 		g_hooks.m_UpdateClientSideAnimation( this );
-	}
 }
 
 Weapon *Hooks::GetActiveWeapon( ) {

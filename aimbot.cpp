@@ -2,302 +2,104 @@
 
 Aimbot g_aimbot{ };;
 
-void AimPlayer::UpdateAnimations(LagRecord* record) {
-	CCSGOPlayerAnimState* state = m_player->m_PlayerAnimState();
-	if (!state)
+
+void AimPlayer::HandleLagCompensation() {
+	if ( m_records.size() <= 2 )
 		return;
 
-	// player respawned.
-	if (m_player->m_flSpawnTime() != m_spawn) {
-		// reset animation state.
-		game::ResetAnimationState(state);
+	// constant variables
+	bool breaking_lc = false;
 
-		// note new spawn time.
-		m_spawn = m_player->m_flSpawnTime();
+	// get our current and previous record.
+	LagRecord* current = m_records.front().get();;
+	LagRecord* previous = m_records[ 1 ].get();
+
+	if ( !current || !previous )
+		return;
+
+	// regular breaking lag compensation
+	breaking_lc = (current->m_origin - previous->m_origin).length_sqr() > 4096.f;
+
+	// best time.
+	float best_time = 0.f;
+
+	// shift tick lag compensation
+	for ( auto it = m_records.rbegin(); it != m_records.rend(); it++ ) {
+		LagRecord* now = it->get();
+
+		if ( !now )
+			continue;
+
+		if ( best_time < now->m_sim_time )
+			best_time = now->m_sim_time;
+		else
+			now->m_shift = true;
+
+		now->m_broke_lc = breaking_lc;
 	}
-
-	// backup curtime.
-	float curtime = g_csgo.m_globals->m_curtime;
-	float frametime = g_csgo.m_globals->m_frametime;
-
-	// set curtime to animtime.
-	// set frametime to ipt just like on the server during simulation.
-	g_csgo.m_globals->m_curtime = record->m_anim_time;
-	g_csgo.m_globals->m_frametime = g_csgo.m_globals->m_interval;
-
-	// backup stuff that we do not want to fuck with.
-	AnimationBackup_t backup;
-
-	backup.m_origin = m_player->m_vecOrigin();
-	backup.m_abs_origin = m_player->GetAbsOrigin();
-	backup.m_velocity = m_player->m_vecVelocity();
-	backup.m_abs_velocity = m_player->m_vecAbsVelocity();
-	backup.m_flags = m_player->m_fFlags();
-	backup.m_eflags = m_player->m_iEFlags();
-	backup.m_duck = m_player->m_flDuckAmount();
-	backup.m_body = m_player->m_flLowerBodyYawTarget();
-	m_player->GetAnimLayers(backup.m_layers);
-
-	// is player a bot?
-	bool bot = game::IsFakePlayer(m_player->index());
-
-	// reset fakewalk state.
-	record->m_fake_walk = false;
-	record->m_mode = Resolver::Modes::RESOLVE_NONE;
-
-	// fix velocity.
-	// https://github.com/VSES/SourceEngine2007/blob/master/se2007/game/client/c_baseplayer.cpp#L659
-	if (record->m_lag > 0 && record->m_lag < 16 && m_records.size() >= 2) {
-		// get pointer to previous record.
-		LagRecord* previous = m_records[1].get();
-
-		if (previous && !previous->dormant())
-			record->m_velocity = (record->m_origin - previous->m_origin) * (1.f / game::TICKS_TO_TIME(record->m_lag));
-	}
-
-	// set this fucker, it will get overriden.
-	record->m_anim_velocity = record->m_velocity;
-
-	// fix various issues with the game eW91dHViZS5jb20vZHlsYW5ob29r
-	// these issues can only occur when a player is choking data.
-	if (record->m_lag > 1 && !bot) {
-		// detect fakewalk.
-		float speed = record->m_velocity.length();
-
-		if (record->m_flags & FL_ONGROUND && record->m_layers[6].m_weight == 0.f && speed > 0.1f && speed < 100.f)
-			record->m_fake_walk = true;
-
-		if (record->m_fake_walk)
-			record->m_anim_velocity = record->m_velocity = { 0.f, 0.f, 0.f };
-
-		// we need atleast 2 updates/records
-		// to fix these issues.
-		if (m_records.size() >= 2) {
-			// get pointer to previous record.
-			LagRecord* previous = m_records[1].get();
-
-			if (previous && !previous->dormant()) {
-				// set previous flags.
-				m_player->m_fFlags() = previous->m_flags;
-
-				// strip the on ground flag.
-				m_player->m_fFlags() &= ~FL_ONGROUND;
-
-				// been onground for 2 consecutive ticks? fuck yeah.
-				if (record->m_flags & FL_ONGROUND && previous->m_flags & FL_ONGROUND)
-					m_player->m_fFlags() |= FL_ONGROUND;
-
-				//if( record->m_layers[ 4 ].m_weight != 0.f && previous->m_layers[ 4 ].m_weight == 0.f && record->m_layers[ 5 ].m_weight != 0.f )
-				//	m_player->m_fFlags( ) |= FL_ONGROUND;
-
-				// fix jump_fall.
-				if (record->m_layers[4].m_weight != 1.f && previous->m_layers[4].m_weight == 1.f && record->m_layers[5].m_weight != 0.f)
-					m_player->m_fFlags() |= FL_ONGROUND;
-
-				if (record->m_flags & FL_ONGROUND && !(previous->m_flags & FL_ONGROUND))
-					m_player->m_fFlags() &= ~FL_ONGROUND;
-
-				// fix crouching players.
-				// the duck amount we receive when people choke is of the last simulation.
-				// if a player chokes packets the issue here is that we will always receive the last duckamount.
-				// but we need the one that was animated.
-				// therefore we need to compute what the duckamount was at animtime.
-
-				// delta in duckamt and delta in time..
-				float duck = record->m_duck - previous->m_duck;
-				float time = record->m_sim_time - previous->m_sim_time;
-
-				// get the duckamt change per tick.
-				float change = (duck / time) * g_csgo.m_globals->m_interval;
-
-				// fix crouching players.
-				m_player->m_flDuckAmount() = previous->m_duck + change;
-
-				if (!record->m_fake_walk) {
-					// fix the velocity till the moment of animation.
-					vec3_t velo = record->m_velocity - previous->m_velocity;
-
-					// accel per tick.
-					vec3_t accel = (velo / time) * g_csgo.m_globals->m_interval;
-
-					// set the anim velocity to the previous velocity.
-					// and predict one tick ahead.
-					record->m_anim_velocity = previous->m_velocity + accel;
-				}
-			}
-		}
-	}
-
-	// // better fake angle detection.
-	// size_t consistency{};
-	// size_t size = std::min( 5u, m_records.size( ) );
-	// 
-	// for( size_t i{}; i < size; i++ ) {
-	//     // if we have lag on this record.
-	//     if( m_records[ i ].get( )->m_lag > 1 )
-	//         ++consistency;
-	// }
-	// 
-	// // compute lag consistency scale.
-	// float scale = ( float )consistency / ( float )size;
-	// 
-	// // if faking angles more than 80% of the time
-	// // and not bot, player uses fake angles.
-	// bool fake = g_menu.main.aimbot.correct.get( ) && !bot && scale > 0.8f;
-
-	// size_t consistency{ 0u };
-	// size_t size{ m_records.size( ) };
-	// 
-	// // add up records the player didn't lag.
-	// for( size_t i{ 0u }; i < size; i++ ) {
-	//     if( m_records[ i ].get( )->m_lag < 1 )
-	//         ++consistency;
-	// }
-	// 
-	// // compute lag consistency scale.
-	// float scale = ( float )consistency / size;
-	// 
-	// // lagged too much.
-	// bool fake = !bot && scale < 0.5f;
-
-	bool fake = !bot && g_menu.main.aimbot.correct.get();
-
-	// if using fake angles, correct angles.
-	if (fake)
-		g_resolver.ResolveAngles(m_player, record);
-
-	// set stuff before animating.
-	m_player->m_vecOrigin() = record->m_origin;
-	m_player->m_vecVelocity() = m_player->m_vecAbsVelocity() = record->m_anim_velocity;
-	m_player->m_flLowerBodyYawTarget() = record->m_body;
-
-	// EFL_DIRTY_ABSVELOCITY
-	// skip call to C_BaseEntity::CalcAbsoluteVelocity
-	m_player->m_iEFlags() &= ~0x1000;
-
-	// write potentially resolved angles.
-	m_player->m_angEyeAngles() = record->m_eye_angles;
-
-	// fix animating in same frame.
-	if (state->m_frame == g_csgo.m_globals->m_frame)
-		state->m_frame -= 1;
-
-	// 'm_animating' returns true if being called from SetupVelocity, passes raw velocity to animstate.
-	m_player->m_bClientSideAnimation() = true;
-	m_player->UpdateClientSideAnimation();
-	m_player->m_bClientSideAnimation() = false;
-
-	// correct poses if fake angles.
-	if (fake)
-		g_resolver.ResolvePoses(m_player, record);
-
-	// store updated/animated poses and rotation in lagrecord.
-	m_player->GetPoseParameters(record->m_poses);
-	record->m_abs_ang = m_player->GetAbsAngles();
-
-	// restore backup data.
-	m_player->m_vecOrigin() = backup.m_origin;
-	m_player->m_vecVelocity() = backup.m_velocity;
-	m_player->m_vecAbsVelocity() = backup.m_abs_velocity;
-	m_player->m_fFlags() = backup.m_flags;
-	m_player->m_iEFlags() = backup.m_eflags;
-	m_player->m_flDuckAmount() = backup.m_duck;
-	m_player->m_flLowerBodyYawTarget() = backup.m_body;
-	m_player->SetAbsOrigin(backup.m_abs_origin);
-	m_player->SetAnimLayers(backup.m_layers);
-
-	// IMPORTANT: do not restore poses here, since we want to preserve them for rendering.
-	// also dont restore the render angles which indicate the model rotation.
-
-	// restore globals.
-	g_csgo.m_globals->m_curtime = curtime;
-	g_csgo.m_globals->m_frametime = frametime;
 }
 
 void AimPlayer::OnNetUpdate(Player* player) {
 	bool reset = (!g_menu.main.aimbot.enable.get() || player->m_lifeState() == LIFE_DEAD || !player->enemy(g_cl.m_local));
 	bool disable = (!reset && !g_cl.m_processing);
 
-	// if this happens, delete all the lagrecords.
-	if (reset) {
-		player->m_bClientSideAnimation() = true;
+	if ( !player || player->dormant() ) {
 		m_records.clear();
 		return;
 	}
 
-	// just disable anim if this is the case.
-	if (disable) {
+	if ( reset ) {
+		g_animations.UpdateClientsideAnimations(player);
+
+		m_records.clear();
+
+		return;
+	}
+
+	// if this happens, delete all the lagrecords.
+	if ( disable ) {
 		player->m_bClientSideAnimation() = true;
 		return;
 	}
 
 	// update player ptr if required.
 	// reset player if changed.
-	if (m_player != player)
+	if ( m_player != player )
 		m_records.clear();
 
 	// update player ptr.
 	m_player = player;
 
-	// indicate that this player has been out of pvs.
-	// insert dummy record to separate records
-	// to fix stuff like animation and prediction.
-	if (player->dormant()) {
-		bool insert = true;
+	bool update = (m_records.empty() || player->m_flSimulationTime() > m_records.front().get()->m_sim_time); // there is no new record slotted yet, therefore, front will give us our old record.
 
-		// we have any records already?
-		if (!m_records.empty()) {
+	if ( update && m_records.size() >= 2 ) {
+		LagRecord* previous = m_records[ 1 ].get();
 
-			LagRecord* front = m_records.front().get();
-
-			// we already have a dormancy separator.
-			if (front->dormant())
-				insert = false;
-		}
-
-		if (insert) {
-			// add new record.
-			m_records.emplace_front(std::make_shared< LagRecord >(player));
-
-			// get reference to newly added record.
-			LagRecord* current = m_records.front().get();
-
-			// mark as dormant.
-			current->m_dormant = true;
+		if ( previous ) {
+			if ( m_player->m_AnimOverlay()[ ANIMATION_LAYER_ALIVELOOP ].m_cycle == previous->m_layers[ ANIMATION_LAYER_ALIVELOOP ].m_cycle ) {
+				m_player->m_flSimulationTime() = previous->m_sim_time;
+				update = false;
+			}
 		}
 	}
 
-	bool update = (m_records.empty() || player->m_flSimulationTime() > m_records.front().get()->m_sim_time);
-
-	if (!update && !player->dormant() && player->m_vecOrigin() != player->m_vecOldOrigin()) {
-		update = true;
-
-		// fix data.
-		player->m_flSimulationTime() = game::TICKS_TO_TIME(g_csgo.m_cl->m_server_tick);
-	}
-
-	// this is the first data update we are receving
-	// OR we received data with a newer simulation context.
-	if (update) {
+	// this is the first data update we are receving.
+	if ( update ) {
 		// add new record.
 		m_records.emplace_front(std::make_shared< LagRecord >(player));
 
 		// get reference to newly added record.
 		LagRecord* current = m_records.front().get();
 
-		// mark as non dormant.
-		current->m_dormant = false;
-
 		// update animations on current record.
-		// call resolver.
-		UpdateAnimations(current);
-
-		// create bone matrix for this record.
-		g_bones.setup(m_player, nullptr, current);
+		g_animations.OnNetUpdate(m_player, current);
 	}
 
+	// handle our lag compensation information.
+	HandleLagCompensation(); // broken lag comp and shifting is detected here.
+
 	// no need to store insane amt of data.
-	while (m_records.size() > 256)
+	while ( m_records.size() > 64 )
 		m_records.pop_back();
 }
 
@@ -348,7 +150,7 @@ void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
 		m_hitboxes.push_back({ HITBOX_BODY, HitscanMode::PREFER });
 
 	// prefer, in air.
-	if (g_menu.main.aimbot.baim1.get(4) && !(record->m_pred_flags & FL_ONGROUND))
+	if (g_menu.main.aimbot.baim1.get(4) && !(record->m_flags & FL_ONGROUND))
 		m_hitboxes.push_back({ HITBOX_BODY, HitscanMode::PREFER });
 
 	bool only{ false };
@@ -372,7 +174,7 @@ void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
 	}
 
 	// only, in air.
-	if (g_menu.main.aimbot.baim2.get(3) && !(record->m_pred_flags & FL_ONGROUND)) {
+	if (g_menu.main.aimbot.baim2.get(3) && !(record->m_flags & FL_ONGROUND)) {
 		only = true;
 		m_hitboxes.push_back({ HITBOX_BODY, HitscanMode::PREFER });
 	}
@@ -549,10 +351,15 @@ void Aimbot::find() {
 		if (t->m_records.empty())
 			continue;
 
+		// get our records we need.
+		LagRecord* last		 = g_resolver.FindLastRecord(t);
+		LagRecord* predicted = g_lagcomp.StartPrediction(t);
+		LagRecord* ideal	 = g_resolver.FindIdealRecord(t);
+
 		// this player broke lagcomp.
 		// his bones have been resetup by our lagcomp.
 		// therfore now only the front record is valid.
-		if (g_menu.main.aimbot.lagfix.get() && g_lagcomp.StartPrediction(t)) {
+		if ( g_menu.main.aimbot.lagfix.get() && predicted ) {
 			LagRecord* front = t->m_records.front().get();
 
 			t->SetupHitboxes(front, false);
@@ -573,7 +380,6 @@ void Aimbot::find() {
 		// player did not break lagcomp.
 		// history aim is possible at this point.
 		else {
-			LagRecord* ideal = g_resolver.FindIdealRecord(t);
 			if (!ideal)
 				continue;
 
@@ -590,7 +396,6 @@ void Aimbot::find() {
 				best.record = ideal;
 			}
 
-			LagRecord* last = g_resolver.FindLastRecord(t);
 			if (!last || last == ideal)
 				continue;
 
@@ -728,7 +533,7 @@ bool AimPlayer::SetupHitboxPoints(LagRecord* record, BoneArray* bones, int index
 	float scale = g_menu.main.aimbot.scale.get() / 100.f;
 
 	// big inair fix.
-	if (!(record->m_pred_flags & FL_ONGROUND))
+	if (!(record->m_flags & FL_ONGROUND))
 		scale = 0.7f;
 
 	float bscale = g_menu.main.aimbot.body_scale.get() / 100.f;
@@ -833,7 +638,7 @@ bool AimPlayer::SetupHitboxPoints(LagRecord* record, BoneArray* bones, int index
 
 				// add this point only under really specific circumstances.
 				// if we are standing still and have the lowest possible pitch pose.
-				if (state && record->m_anim_velocity.length() <= 0.1f && record->m_eye_angles.x <= state->m_min_pitch) {
+				if (state && record->m_anim_velocity.length() <= 0.1f && record->m_eye_angles.x <= state->m_flAimPitchMin) {
 
 					// bottom point.
 					points.push_back({ bbox->m_maxs.x - r, bbox->m_maxs.y, bbox->m_maxs.z });
@@ -1052,7 +857,7 @@ bool Aimbot::SelectTarget(LagRecord* record, const vec3_t& aim, float damage) {
 
 		// distance.
 	case 0:
-		dist = (record->m_pred_origin - g_cl.m_shoot_pos).length();
+		dist = (record->m_origin - g_cl.m_shoot_pos).length();
 
 		if (dist < m_best_dist) {
 			m_best_dist = dist;
@@ -1104,7 +909,7 @@ bool Aimbot::SelectTarget(LagRecord* record, const vec3_t& aim, float damage) {
 
 		// height.
 	case 5:
-		height = record->m_pred_origin.z - g_cl.m_local->m_vecOrigin().z;
+		height = record->m_origin.z - g_cl.m_local->m_vecOrigin().z;
 
 		if (height < m_best_height) {
 			m_best_height = height;

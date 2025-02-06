@@ -365,7 +365,7 @@ void Chams::RenderOverlay( Player* player, Color col, int blend, int index ) {
 	player->DrawModel( );
 }
 
-void Chams::RenderChams(Player* player) {
+void Chams::RenderChams( Player* player ) {
 	// only draw the localplayer without chams.
 	if( g_menu.main.players.chams_local_real_blend_scope.get( )  && player->m_bIsScoped() ) { 
 		SetAlpha(0.5f);
@@ -374,6 +374,9 @@ void Chams::RenderChams(Player* player) {
 
 		return;
 	}
+
+	// render fake angle chams.
+	RenderGhostChams( player );
 
 	// check if we are enabled.
 	if( g_menu.main.players.chams_local_real.get( ) ) {
@@ -387,18 +390,17 @@ void Chams::RenderChams(Player* player) {
 	// draw our overlay if needed.
 	if( g_menu.main.players.chams_local_real_overlay.get( ) )
 		RenderOverlay( player, g_menu.main.players.chams_local_real_overlay_color.get( ), g_menu.main.players.chams_local_real_overlay_blend.get( ), g_menu.main.players.chams_local_real_overlay_material.get( ) );
-
-	// draw ghost chams.
-	RenderGhostChams(player);
 }
 
 void Chams::RenderGhostChams(Player* player) {
-	// set our angles. radar is an easy way of tracking our fake.
-	g_cl.SetAngles2(ang_t(0.f, g_cl.m_radar.y, 0.f));
+	if ( !g_csgo.m_input->CAM_IsThirdPerson() )
+		return;
+
+	g_csgo.m_prediction->SetLocalViewAngles( g_cl.m_radar );
 
 	if ( g_menu.main.players.chams_local_fake.get() ) {
 		// set material and color.
-		SetupMaterial( g_menu.main.players.chams_local_fake_material.get( ), g_menu.main.players.chams_local_fake_color.get( ), g_menu.main.players.chams_local_fake_blend.get( ), false );
+		SetupMaterial(g_menu.main.players.chams_local_fake_material.get(), g_menu.main.players.chams_local_fake_color.get(), g_menu.main.players.chams_local_fake_blend.get(), false);
 
 		// draw our model.
 		player->DrawModel();
@@ -408,8 +410,7 @@ void Chams::RenderGhostChams(Player* player) {
 	if ( g_menu.main.players.chams_local_fake_overlay.get() )
 		RenderOverlay(player, g_menu.main.players.chams_local_fake_overlay_color.get(), g_menu.main.players.chams_local_fake_overlay_blend.get(), g_menu.main.players.chams_local_fake_overlay_material.get());
 
-	// set our original angles.
-	g_cl.SetAngles( );
+	g_csgo.m_prediction->SetLocalViewAngles( g_cl.m_angle );
 }
 
 bool Chams::DrawModel(uintptr_t ctx, const DrawModelState_t& state, const ModelRenderInfo_t& info, matrix3x4_t* bone) {

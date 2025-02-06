@@ -58,12 +58,6 @@ void Hooks::FrameStageNotify( Stage_t stage ) {
 	g_cl.m_local = g_csgo.m_entlist->GetClientEntity< Player* >( g_csgo.m_engine->GetLocalPlayer( ) );
 
 	if( stage == FRAME_RENDER_START ) {	
-		// apply local player animated angles.
-		g_cl.SetAngles( );
-
-		// apply local player animation fix.
-		g_cl.UpdateAnimations( );
-
         // draw our custom beams.
         g_visuals.DrawBeams( );
 
@@ -85,6 +79,9 @@ void Hooks::FrameStageNotify( Stage_t stage ) {
 	else if( stage == FRAME_NET_UPDATE_END ) {
 		// this is the last stage called, prefer it over anything else
 		// when messing with clientside data (animations, bones, etc).
+
+		// update animations.
+		g_cl.UpdateAnimations( );
 
 		// run our no smoke.
 		g_visuals.NoSmoke( );
