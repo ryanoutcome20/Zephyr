@@ -99,7 +99,7 @@ bool CSGO::init( ) {
     view_recoil_tracking                    = m_cvar->FindVar( HASH( "view_recoil_tracking" ) );
 	cl_fullupdate                           = m_cvar->FindVar( HASH( "cl_fullupdate" ) );
 	r_DrawSpecificStaticProp                = m_cvar->FindVar( HASH( "r_DrawSpecificStaticProp" ) );
-	sv_skyname								= m_cvar->FindVar( HASH("sv_skyname") );
+	sv_skyname								= m_cvar->FindVar( HASH( "sv_skyname" ) );
 	mat_ambient_light_r						= m_cvar->FindVar( HASH( "mat_ambient_light_r") );
 	mat_ambient_light_g						= m_cvar->FindVar( HASH( "mat_ambient_light_g" ) );
 	mat_ambient_light_b						= m_cvar->FindVar( HASH( "mat_ambient_light_b" ) );

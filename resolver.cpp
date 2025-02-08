@@ -3,8 +3,8 @@
 Resolver g_resolver{};;
 
 
-LagRecord* Resolver::FindIdealRecord(AimPlayer* data) {
-	if ( data->m_records.empty() )
+LagRecord* Resolver::FindIdealRecord( AimPlayer* data ) {
+	if ( data->m_records.empty( ) )
 		return nullptr; // we can't even start.
 
 	// the first valid record.
@@ -12,37 +12,41 @@ LagRecord* Resolver::FindIdealRecord(AimPlayer* data) {
 
 	// loop through current records.
 	for ( const auto& record : data->m_records ) {
-		if ( record->immune() || !record->valid() )
+		if ( record->immune( ) || !record->valid( ) )
 			continue;
 
 		// keep doing this until we find something that isn't an lby update.
 		if ( !first || first->m_mode == Modes::RESOLVE_BODY ) {
-			first = record.get();
+			first = record.get( );
 			continue;
 		}
 
 		// check for high prority records.
 		if ( record->m_mode == Modes::RESOLVE_NONE || record->m_mode == Modes::RESOLVE_WALK )
-			return record.get();
+			return record.get( );
 
 		// check for onshot.
 		if ( record->m_shot )
-			return record.get();
+			return record.get( );
 	}
 
 	return first; // return the first valid record found.
 }
 
-LagRecord* Resolver::FindLastRecord(AimPlayer* data) {
+LagRecord* Resolver::FindLastRecord( AimPlayer* data ) {
+	LagRecord* current;
+
 	if ( data->m_records.empty() )
 		return nullptr;
 
 	// iterate records in reverse.
-	for ( const auto& record : data->m_records ) {
+	for( auto it = data->m_records.crbegin( ); it != data->m_records.crend( ); ++it ) {
+		current = it->get( );
+
 		// if this record is valid.
 		// we are done since we iterated in reverse.
-		if ( record->valid() && !record->immune() )
-			return record.get( );
+		if ( current->valid( ) && !current->immune( ) )
+			return current;
 	}
 
 	return nullptr;

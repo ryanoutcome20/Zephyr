@@ -86,6 +86,9 @@ IMaterial* Materials::New( const char* vmt, const char* shader ) {
 
 void Materials::Modulate( std::vector< IMaterial* > materials, Color color, bool reset ) {
 	for ( const auto& material : materials ) {
+		if( !material )
+			continue;
+
 		// we are resetting our colors, set back to non modulated.
 		if( reset ) { 
 			material->ColorModulate(1.f, 1.f, 1.f);

@@ -289,8 +289,6 @@ void Animations::UpdateInterpolation( ) {
 		if ( !map )
 			continue;
 
-		
-
 		// get map entries.
 		int entries = map->m_nInterpolatedEntries;
 

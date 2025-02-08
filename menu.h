@@ -21,6 +21,8 @@ public:
 	Checkbox      knifebot;
 	Checkbox	  zeusbot;
 	Checkbox	  ignore_moving_limbs;
+	Checkbox	  modify_unlag;
+	Slider		  modify_unlag_maximum;
 
 	// col2.
 	Dropdown      zoom;
@@ -101,6 +103,13 @@ public:
 
 		ignore_moving_limbs.setup(XOR("ignore moving limbs"), XOR("ignore_moving_limbs"));
 		RegisterElement(&ignore_moving_limbs);
+
+		modify_unlag.setup(XOR("modify maximum unlag"), XOR("modify_unlag"));
+		RegisterElement(&modify_unlag);
+
+		modify_unlag_maximum.setup("", XOR("modify_unlag_maximum"), 0.f, 1000.f, false, 0, 200.f, 25.f, XOR(L"ms"));
+		modify_unlag_maximum.AddShowCallback(callbacks::IsModifyUnlagOn);
+		RegisterElement(&modify_unlag_maximum);
 
 		// col2.
 		zoom.setup(XOR("auto scope"), XOR("zoom"), { XOR("off"), XOR("always"), XOR("hitchance fail") });
@@ -1198,7 +1207,8 @@ public:
 			XOR("post-processing"),
 			XOR("flash"),
 			XOR("scope"),
-			XOR("shadows")
+			XOR("shadows"),
+			XOR("viewbob")
 		});
 		RegisterElement(&removals, 1);
 

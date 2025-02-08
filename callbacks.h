@@ -22,6 +22,7 @@ namespace callbacks {
 	bool IsPenetrationOn( );
 	bool IsMultipointOn( );
 	bool IsMultipointBodyOn( );
+	bool IsModifyUnlagOn( );
 
 	bool IsAntiAimModeStand( );
 	bool HasStandYaw( );

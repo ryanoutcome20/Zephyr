@@ -234,36 +234,30 @@ bool Chams::GenerateLerpedMatrix(int index, BoneArray* out) {
 	AimPlayer* data;
 
 	Player* ent = g_csgo.m_entlist->GetClientEntity< Player* >(index);
-	if (!ent)
+	if ( !ent )
 		return false;
 
-	if (!g_aimbot.IsValidTarget(ent))
+	if ( !g_aimbot.IsValidTarget(ent) )
 		return false;
 
-	data = &g_aimbot.m_players[index - 1];
-	if (!data || data->m_records.empty())
+	data = &g_aimbot.m_players[ index - 1 ];
+	if ( !data || data->m_records.empty() )
 		return false;
 
-	if (data->m_records.size() < 2)
+	if ( data->m_records.size() < 2 )
 		return false;
 
 	auto* channel_info = g_csgo.m_engine->GetNetChannelInfo();
-	if (!channel_info)
+	if ( !channel_info )
 		return false;
 
-	static float max_unlag = 0.2f;
-	static auto sv_maxunlag = g_csgo.m_cvar->FindVar(HASH("sv_maxunlag"));
-	if (sv_maxunlag) {
-		max_unlag = sv_maxunlag->GetFloat();
-	}
-
-	for (auto it = data->m_records.rbegin(); it != data->m_records.rend(); it++) {
+	for ( auto it = data->m_records.rbegin(); it != data->m_records.rend(); it++ ) {
 		current_record = it->get();
 
 		bool end = it + 1 == data->m_records.rend();
 
-		if (current_record && current_record->valid() && (!end && ((it + 1)->get()))) {
-			if (current_record->m_origin.dist_to(ent->GetAbsOrigin()) < 1.f) {
+		if ( current_record && current_record->valid() && (!end && ((it + 1)->get())) ) {
+			if ( current_record->m_origin.dist_to(ent->GetAbsOrigin()) < 1.f ) {
 				return false;
 			}
 
@@ -271,8 +265,9 @@ bool Chams::GenerateLerpedMatrix(int index, BoneArray* out) {
 			float  time_next = end ? ent->m_flSimulationTime() : (it + 1)->get()->m_sim_time;
 
 			float total_latency = channel_info->GetAvgLatency(0) + channel_info->GetAvgLatency(1);
-			
-			float correct = std::clamp(total_latency, 0.f, max_unlag) + g_cl.m_lerp;
+			math::clamp( total_latency, 0.f, g_cl.m_unlag );
+
+			float correct = total_latency + g_cl.m_lerp;
 			float time_delta = time_next - current_record->m_sim_time;
 			float add = end ? 1.f : time_delta;
 			float deadtime = current_record->m_sim_time + correct + add;
@@ -283,15 +278,15 @@ bool Chams::GenerateLerpedMatrix(int index, BoneArray* out) {
 			float mul = 1.f / add;
 			vec3_t lerp = math::Interpolate(next, current_record->m_origin, std::clamp(delta * mul, 0.f, 1.f));
 
-			matrix3x4_t ret[128];
+			matrix3x4_t ret[ 128 ];
 
 			std::memcpy(ret,
 				current_record->m_bones,
 				sizeof(ret));
 
-			for (size_t i{ }; i < 128; ++i) {
-				vec3_t matrix_delta = current_record->m_bones[i].GetOrigin() - current_record->m_origin;
-				ret[i].SetOrigin(matrix_delta + lerp);
+			for ( size_t i{ }; i < 128; ++i ) {
+				vec3_t matrix_delta = current_record->m_bones[ i ].GetOrigin() - current_record->m_origin;
+				ret[ i ].SetOrigin(matrix_delta + lerp);
 			}
 
 			std::memcpy(out,
@@ -322,7 +317,7 @@ void Chams::RenderHistoryChams(int index) {
 		if (!data || data->m_records.empty())
 			return;
 
-		record = g_resolver.FindLastRecord(data);
+		record = g_resolver.FindLastRecord( data );
 		if (!record)
 			return;
 
@@ -331,7 +326,7 @@ void Chams::RenderHistoryChams(int index) {
 
 		// was the matrix properly setup?
 		BoneArray arr[128];
-		if (Chams::GenerateLerpedMatrix(index, arr)) {
+		if (GenerateLerpedMatrix(index, arr)) {
 			// backup the bone cache before we fuck with it.
 			auto backup_bones = player->m_BoneCache().m_pCachedBones;
 

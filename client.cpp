@@ -19,28 +19,35 @@ ulong_t __stdcall Client::init(void* arg) {
 }
 
 void Client::DrawHUD() {
-	if (!g_csgo.m_engine->IsInGame())
+	if ( !g_csgo.m_engine->IsInGame( ) )
 		return;
 
 	// get time.
-	time_t t = std::time(nullptr);
+	time_t t = std::time( nullptr );
 	std::ostringstream time;
-	time << std::put_time(std::localtime(&t), ("%H:%M:%S"));
+	time << std::put_time( std::localtime( &t ), ( "%H:%M:%S" ) );
 
 	// get round trip time in milliseconds.
-	int ms = std::max(0, (int)std::round(g_cl.m_latency * 1000.f));
+	int ms = std::max( 0, ( int )std::round( g_cl.m_latency * 1000.f ) );
 
 	// get tickrate.
-	int rate = (int)std::round(1.f / g_csgo.m_globals->m_interval);
+	int rate = ( int )std::round( 1.f / g_csgo.m_globals->m_interval );
 
-	std::string text = tfm::format(XOR("Zephyr | rtt: %ims | rate: %i | %s"), ms, rate, time.str().data());
-	render::FontSize_t size = render::hud.size(text);
+	std::string text = tfm::format( XOR( "Zephyr | rtt: %ims | rate: %i | %s" ), ms, rate, time.str( ).data( ) );
+	render::FontSize_t size = render::hud.size( text );
 
 	// background.
-	render::rect_filled(m_width - size.m_width - 20, 10, size.m_width + 10, size.m_height + 2, { 0, 0, 0, 120 });
+	render::rect_filled( m_width - size.m_width - 20, 10, size.m_width + 10, size.m_height + 2, { 0, 0, 0, 120 } );
+
+	// outline.
+	Color outline = g_gui.m_color;
+
+	outline.a( ) = 120;
+
+	render::rect( m_width - size.m_width - 20, 10, size.m_width + 10, size.m_height + 2, outline );
 
 	// text.
-	render::hud.string(m_width - 15, 10, { 255, 255, 255, 179 }, text, render::ALIGN_RIGHT);
+	render::hud.string( m_width - 15, 10, { 255, 255, 255, 179 }, text, render::ALIGN_RIGHT );
 }
 
 void Client::KillFeed() {
@@ -63,8 +70,8 @@ void Client::KillFeed() {
 		NoticeText_t* notice = &feed->notices[i];
 
 		// this is a local player kill, delay it.
-		if (notice->fade == 1.5f)
-			notice->fade = FLT_MAX;
+		if (notice->spawn_time == 1.5f)
+			notice->spawn_time = FLT_MAX;
 	}
 }
 
@@ -146,12 +153,22 @@ void Client::StartMove(CUserCmd* cmd) {
 	m_max_lag = (m_local->m_fFlags() & FL_ONGROUND) ? 16 : 14;
 	m_lag = g_csgo.m_cl->m_choked_commands;
 	m_lerp = game::GetClientInterpAmount();
+	m_unlag = .2f;
 	m_latency = g_csgo.m_net->GetLatency(INetChannel::FLOW_OUTGOING);
 	math::clamp(m_latency, 0.f, 1.f);
 	m_latency_ticks = game::TIME_TO_TICKS(m_latency);
 	m_server_tick = g_csgo.m_cl->m_server_tick;
 	m_arrival_tick = m_server_tick + m_latency_ticks;
 
+	// adjust our unlag if needed.
+	if ( g_aimbot.m_fake_latency || g_menu.main.misc.fake_latency_always.get() ) {
+		m_unlag += g_menu.main.misc.fake_latency_amt.get( ) / 800.f;
+	} 
+
+	else if ( g_menu.main.aimbot.modify_unlag.get() ) {
+		m_unlag = g_menu.main.aimbot.modify_unlag_maximum.get( ) / 1000.f;
+	}
+ 
 	// run our exploit handler
 	g_exploits.Command( );
 
@@ -498,7 +515,7 @@ void Client::print(const std::string text, ...) {
 	va_end(list);
 
 	// print to console.
-	g_csgo.m_cvar->ConsoleColorPrintf(colors::burgundy, XOR("[Zephyr] "));
+	g_csgo.m_cvar->ConsoleColorPrintf(g_gui.m_color, XOR("[Zephyr] "));
 	g_csgo.m_cvar->ConsoleColorPrintf(colors::white, buf.c_str());
 }
 

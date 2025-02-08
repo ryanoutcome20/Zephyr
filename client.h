@@ -85,6 +85,7 @@ public:
 	bool*    m_final_packet;
 	bool	 m_old_packet;
 	float	 m_lerp;
+	float	 m_unlag;
 	float    m_latency;
 	int      m_latency_ticks;
 	int      m_server_tick;

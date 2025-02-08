@@ -210,21 +210,24 @@ public:
 
 	// function: checks if LagRecord obj is hittable if we were to fire at it now.
 	bool valid( ) {
-		// use prediction curtime for this.
-		float curtime = game::TICKS_TO_TIME( g_cl.m_local->m_nTickBase( ) );
+		INetChannel* info = g_csgo.m_engine->GetNetChannelInfo();
 
-		// correct is the amount of time we have to correct game time,
-		float correct = g_cl.m_lerp + g_cl.m_latency;
+		if ( !m_setup )
+			return false;
 
-		// stupid fake latency goes into the incoming latency.
-		float in = g_csgo.m_net->GetLatency( INetChannel::FLOW_INCOMING );
-		correct += in;
+		// initialize correction.
+		// https://github.com/perilouswithadollarsign/cstrike15_src/blob/f82112a2388b841d72cb62ca48ab1846dfcc11c8/game/server/player_lagcompensation.cpp#L269
+		float correction = g_cl.m_lerp;
 
-		// check bounds [ 0, sv_maxunlag ]
-		math::clamp( correct, 0.f, g_csgo.sv_maxunlag->GetFloat( ) );
+		if( info )
+			correction = info->GetLatency( INetChannel::FLOW_OUTGOING ) + info->GetLatency( INetChannel::FLOW_INCOMING );
 
-		// calculate difference between tick sent by player and our latency based tick.
-		// ensure this record isn't too old.
-		return std::abs( correct - ( curtime - m_sim_time ) ) < 0.19f;
+		// clamp our correction.
+		correction = std::clamp(correction, 0.f, g_cl.m_unlag);
+
+		// get predicted curtime.
+		float curtime = g_cl.m_local->alive() ? game::TICKS_TO_TIME( g_cl.m_local->m_nTickBase( ) ) : g_csgo.m_globals->m_curtime;
+
+		return std::fabs( correction - ( curtime - m_sim_time ) ) < 0.2f;
 	}
 };

@@ -2,14 +2,14 @@
 
 struct NoticeText_t {
 	wchar_t text[ 512 ];
-	int unk0; // 0x400
-	float unk1; // 0x404
-	float unk2; // 0x408
-	int unk3;   // 0x40C
-	float time; // 0x410
-	int unk4;	// 0x414
-	float fade; // 0x418
-	int unk5;   // 0x41C
+	bool remove; // 0x400
+	float panel; // 0x404
+	float height; // 0x408
+	int state;   // 0x40C
+	float spawn_time; // 0x410
+	float state_time;	// 0x414
+	float lifetime_mod; // 0x418
+	float y;   // 0x41C
 };
 
 struct KillFeed_t {

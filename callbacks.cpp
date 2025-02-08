@@ -45,6 +45,7 @@ void callbacks::ConfigLoad( ) {
 	g_notify.add( tfm::format( XOR( "Loaded config %s\n" ), config.data( ) ) );
 
 	g_visuals.ModulateWorld( );
+	g_precipitation.m_setup = false;
 }
 
 void callbacks::ConfigSave( ) {
@@ -58,22 +59,22 @@ void callbacks::ConfigCreate( ) {
 	std::string config = g_menu.main.config.config_edit.gets( );
 
 	g_config.save( &g_menu.main, config );
-	g_notify.add(tfm::format(XOR("Created config %s\n"), config ));
+	g_notify.add( tfm::format(XOR("Created config %s\n"), config ) );
 
-	g_config.update(&g_menu.main);
+	g_config.update( &g_menu.main );
 }
 
 void callbacks::ConfigDelete() {
-	std::string config = g_menu.main.config.config.GetActiveItem();
+	std::string config = g_menu.main.config.config.GetActiveItem( );
 
 	g_config.remove( &g_menu.main, config.data( ) );
-	g_notify.add(tfm::format(XOR("Removed config %s\n"), config.data( ) ));
+	g_notify.add( tfm::format(XOR("Removed config %s\n"), config.data( ) ) );
 
-	g_config.update(&g_menu.main);
+	g_config.update( &g_menu.main );
 }
 
 void callbacks::ConfigRefresh( ) {
-	g_config.update(&g_menu.main);
+	g_config.update( &g_menu.main );
 }
 
 bool callbacks::IsBaimHealth( ) {
@@ -98,6 +99,10 @@ bool callbacks::IsMultipointOn( ) {
 
 bool callbacks::IsMultipointBodyOn( ) {
 	return g_menu.main.aimbot.multipoint.get( 2 );
+}
+
+bool callbacks::IsModifyUnlagOn( ) {
+	return g_menu.main.aimbot.modify_unlag.get( );
 }
 
 bool callbacks::IsAntiAimModeStand( ) {

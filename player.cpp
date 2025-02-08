@@ -34,17 +34,6 @@ void Hooks::DoExtraBoneProcessing( int a2, int a3, int a4, int a5, int a6, int a
 		animstate->m_pPlayer = backup;
 }
 
-void Hooks::CalcView( vec3_t& origin, ang_t& angles, float& znear, float& zfar, float& fov ) {
-	// get the players pointer.
-	Player* player = (Player*)this;
-
-	// adjust our origin to match with the actual shoot pos.
-	if( player && player->m_bIsLocalPlayer( ) && g_cl.m_local )
-		origin = origin - ( g_cl.m_local->GetShootPosition( ) );
-
-	return g_hooks.m_CalcView( this, origin, angles, znear, zfar, fov );
-}
-
 void Hooks::BuildTransformations( int a2, int a3, int a4, int a5, int a6, int a7 ) {
 	// cast thisptr to player ptr.
 	Player* player = ( Player* )this;
@@ -111,7 +100,6 @@ void CustomEntityListener::OnEntityCreated( Entity *ent ) {
 		        if( player->index( ) == g_csgo.m_engine->GetLocalPlayer( ) ) {
 		        	g_hooks.m_UpdateClientSideAnimation = vmt->add< Hooks::UpdateClientSideAnimation_t >( Player::UPDATECLIENTSIDEANIMATION, util::force_cast( &Hooks::UpdateClientSideAnimation ) );
                     g_hooks.m_GetActiveWeapon           = vmt->add< Hooks::GetActiveWeapon_t >( Player::GETACTIVEWEAPON, util::force_cast( &Hooks::GetActiveWeapon ) );
-					g_hooks.m_CalcView						   = vmt->add< Hooks::CalcView_t >( Player::CALCVIEW, util::force_cast( &Hooks::CalcView ) );
 				}
             }
         }

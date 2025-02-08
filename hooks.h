@@ -20,7 +20,6 @@ public:
 	using UpdateClientSideAnimation_t  = void( __thiscall* )( void* );
     using GetActiveWeapon_t            = Weapon*( __thiscall * )( void* );
 	using DoExtraBoneProcessing_t      = void( __thiscall* )( void*, int, int, int, int, int, int );
-	using CalcView_t								 = void( __thiscall* )( void*, vec3_t&, ang_t&, float&, float&, float& );
 	using BuildTransformations_t       = void( __thiscall* )( void*, int, int, int, int, int, int );
 	using CalcViewModelView_t          = void( __thiscall* )( void*, vec3_t&, ang_t& );
 	using InPrediction_t               = bool( __thiscall* )( void* );
@@ -82,7 +81,6 @@ public:
 	void                     ComputeShadowDepthTextures( const CViewSetup& view, bool setup );
 	bool                     DebugSpreadGetBool( );
 	void                     DoExtraBoneProcessing( int a2, int a3, int a4, int a5, int a6, int a7 );
-	void						CalcView( vec3_t& origin, ang_t& angles, float& znear, float& zfar, float& fov );
 	void                     BuildTransformations( int a2, int a3, int a4, int a5, int a6, int a7 );
 	bool                     IsConnected( );
 	bool                     IsHLTV( );
@@ -120,7 +118,7 @@ public:
 
 	// cvars
 	VMT m_debug_spread;
-
+	
 	// wndproc old ptr.
 	WNDPROC m_old_wndproc;
 
@@ -129,7 +127,6 @@ public:
 	UpdateClientSideAnimation_t m_UpdateClientSideAnimation;
     GetActiveWeapon_t           m_GetActiveWeapon;
 	BuildTransformations_t      m_BuildTransformations;
-	CalcView_t						  m_CalcView;
 
 	// netvar proxies.
     RecvVarProxy_t m_Force_original;
