@@ -63,6 +63,7 @@ namespace callbacks {
 	bool IsChamsLocal( );
 	bool IsChamsLocalReal( );
 	bool IsChamsLocalRealOverlay( );
+	bool IsChamsLocalBlendScopedOn( );
 	bool IsChamsLocalFake( );
 	bool IsChamsLocalFakeOverlay( );
 
@@ -77,6 +78,7 @@ namespace callbacks {
 	bool IsWeaponFriendly( );
 	bool IsWeaponLocal( );
 	bool IsGlowOn( );
+	bool IsGlowStyleOutline( );
 	bool IsGlowEnemy( );
 	bool IsGlowFriendly( );
 	bool IsGlowLocal( );
@@ -84,6 +86,7 @@ namespace callbacks {
 	bool IsSkeletonFriendly( );
 	bool IsSkeletonLocal( );
 	bool IsOffscreenOn( );
+	bool IsOffscreenPulsateOn( );
 	bool IsHealthOn( );
 	bool IsHealthOverrideOn( );
 	bool IsHealthOverrideGradient( );
@@ -107,7 +110,11 @@ namespace callbacks {
 	bool IsPropModulationOn( );
 	bool IsShadowModulationOn( );
 	bool IsConsoleModulationOn( );
+	bool IsVisualizeSpreadOn( );
+	bool IsPenetrationCrosshairOn( );
+	bool IsPenetrationCrosshairTextOn( );
 	bool IsAutopeekVisualizeOn( );
+	bool IsGrenadeTracerOn( );
 	bool IsImpactBeamsOn( );
 	bool IsImpactBoxesServer( );
 	bool IsImpactBoxesClient( );
@@ -115,7 +122,11 @@ namespace callbacks {
 
 	bool IsAutoBuyOn( );
 	bool IsNotificationsOn( );
+	bool IsHitmarkerOn( );
 	bool IsSpawnExploitOn( );
+	bool IsCrashExploitOn( );
+
+	bool IsAutomaticStopOn( );
 
 	bool IsConfigMM( );
 	bool IsConfigNS( );

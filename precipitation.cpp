@@ -87,18 +87,6 @@ bool Precipitation::Init( ) {
 	if ( m_object )
 		return true;
 
-	// check if we have an entity already (aztec for example).
-	for ( int i{ 1 }; i <= g_csgo.m_entlist->GetHighestEntityIndex( ); ++i ) {
-		Entity* ent = g_csgo.m_entlist->GetClientEntity( i );
-		if ( !ent )
-			continue;
-
-		if ( ent->is( HASH( "CPrecipitation" ) ) ) {
-			m_object = ent;
-			return true;
-		}
-	}
-
 	// get our class object.
 	ClientClass* CPrecipitation = GetClass( );
 

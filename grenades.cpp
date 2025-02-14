@@ -37,12 +37,17 @@ void Grenades::paint( ) {
 	// or actually.. the first point, we are drawing in reverse.
 	vec3_t prev = m_path.front( );
 
+	// get our color.
+	Color color = g_menu.main.visuals.tracer_lines.get( );
+
+	color.a( ) = g_menu.main.visuals.tracer_lines_blend.get( ) * 2.55f;
+
 	// iterate and draw path.
 	for( const auto& cur : m_path ) {
 		vec2_t screen0, screen1;
 
 		if( render::WorldToScreen( prev, screen0 ) && render::WorldToScreen( cur, screen1 ) )
-			render::line( screen0, screen1, { 60, 180, 225 } );
+			render::line( screen0, screen1, color );
 
 		// store point for next iteration.
 		prev = cur;
@@ -97,12 +102,8 @@ void Grenades::paint( ) {
 	if( target.second ) {
 		vec2_t screen;
 
-		// replace the last bounce with green.
-		if( !m_bounces.empty( ) )
-			m_bounces.back( ).color = { 0, 255, 0, 255 };
-
 		if( render::WorldToScreen( prev, screen ) )
-			render::esp_small.string( screen.x, screen.y + 5, { 255, 255, 255, 180 }, tfm::format( XOR( "%i" ), ( int )target.first ), render::ALIGN_CENTER );
+			render::esp.string( screen.x, screen.y + 5, { 255, 255, 255, 180 }, tfm::format( XOR( "%i" ), ( int )target.first ), render::ALIGN_CENTER );
 	}
 
 	// render bounces.
@@ -190,13 +191,23 @@ void Grenades::simulate( ) {
 			m_start = trace.m_endpos;
 	}
 
+	// get final point colors.
+	Color last = g_menu.main.visuals.tracer_boxes_final.get( );
+
+	last.a( ) = g_menu.main.visuals.tracer_boxes_final_blend.get( ) * 2.55f;
+
 	// store final point.
 	// likely the point of detonation.
 	m_path.push_back( m_start );
-	m_bounces.push_back( { m_start, colors::red } );
+	m_bounces.push_back( { m_start, last } );
 }
 
 void Grenades::setup( ) {
+	// set the color that will be pushed into the vector for rendering.
+	m_color = g_menu.main.visuals.tracer_boxes.get( );
+
+	m_color.a( ) = g_menu.main.visuals.tracer_boxes_blend.get( ) * 2.55f;
+	
 	// get the last CreateMove angles.
 	ang_t angle = g_cl.m_view_angles;
 
@@ -401,7 +412,7 @@ void Grenades::ResolveFlyCollisionBounce( CGameTrace& trace ) {
 		PhysicsPushEntity( trace.m_endpos, velocity * ( left * g_csgo.m_globals->m_interval ), trace, g_cl.m_local );
 	}
 
-	m_bounces.push_back( { trace.m_endpos, colors::white } );
+	m_bounces.push_back( { trace.m_endpos, m_color } );
 }
 
 void Grenades::PhysicsPushEntity( vec3_t& start, const vec3_t& move, CGameTrace& trace, Entity* ent ) {

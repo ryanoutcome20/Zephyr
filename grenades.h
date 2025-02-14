@@ -22,6 +22,7 @@ private:
 	bounces_t m_bounces;
 	float     m_vel, m_power;
 	vec3_t    m_start, m_velocity, m_move;
+	Color     m_color;
 
 public:
 	void   reset( );

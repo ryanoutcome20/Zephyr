@@ -48,6 +48,8 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iHealth;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iAccount;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bHasDefuser;
+    XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bIsDefusing;
+    XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bIsGrabbingHostage;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bIsBuyMenuOpen;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nHitboxSet;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_angAbsRotation;
@@ -157,7 +159,9 @@ public:
         INIT_XOREDNETVAR( m_iHealth,                    HASH( "DT_CSPlayer" ),             HASH( "m_iHealth" ) );
         INIT_XOREDNETVAR( m_iAccount,                   HASH( "DT_CSPlayer" ),             HASH( "m_iAccount" ) );
         INIT_XOREDNETVAR( m_bHasDefuser,                HASH( "DT_CSPlayer" ),             HASH( "m_bHasDefuser" ) );
-        INIT_XOREDNETVAR( m_bIsBuyMenuOpen,                 HASH("DT_CSPlayer"),           HASH("m_bIsBuyMenuOpen"));
+        INIT_XOREDNETVAR( m_bIsGrabbingHostage,         HASH( "DT_CSPlayer" ),             HASH( "m_bIsGrabbingHostage" ) );
+        INIT_XOREDNETVAR( m_bIsDefusing,                HASH( "DT_CSPlayer" ),             HASH( "m_bIsDefusing" ) );
+        INIT_XOREDNETVAR( m_bIsBuyMenuOpen,             HASH("DT_CSPlayer"),               HASH("m_bIsBuyMenuOpen"));
         INIT_XOREDNETVAR( m_nHitboxSet,                 HASH( "DT_BaseAnimating" ),        HASH( "m_nHitboxSet" ) );
         INIT_XOREDNETVAR( m_angAbsRotation,             HASH( "C_BaseEntity" ),            HASH( "m_angAbsRotation" ) );
         INIT_XOREDNETVAR( m_angRotation,                HASH( "C_BaseEntity" ),            HASH( "m_angRotation" ) );

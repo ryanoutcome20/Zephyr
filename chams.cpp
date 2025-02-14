@@ -363,7 +363,7 @@ void Chams::RenderOverlay( Player* player, Color col, int blend, int index ) {
 void Chams::RenderChams( Player* player ) {
 	// only draw the localplayer without chams.
 	if( g_menu.main.players.chams_local_real_blend_scope.get( )  && player->m_bIsScoped() ) { 
-		SetAlpha(0.5f);
+		SetAlpha( g_menu.main.players.chams_local_real_blend_scope_blend.get( ) / 100.f );
 
 		player->DrawModel( );
 

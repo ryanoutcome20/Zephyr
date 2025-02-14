@@ -442,19 +442,31 @@ void Visuals::PenetrationCrosshair( ) {
 
 	valid_player_hit = ( g_cl.m_pen_data.m_target && g_cl.m_pen_data.m_target->enemy( g_cl.m_local ) );
 	if ( valid_player_hit )
-		final_color = colors::transparent_yellow;
+		final_color = g_menu.main.visuals.pen_crosshair_hit.get( );
 
 	else if ( g_cl.m_pen_data.m_pen )
-		final_color = colors::transparent_green;
+		final_color = g_menu.main.visuals.pen_crosshair_valid.get();
 
 	else
-		final_color = colors::transparent_red;
+		final_color = g_menu.main.visuals.pen_crosshair_solid.get();
 
-	// todo - dex; use fmt library to get damage string here?
-	//             draw damage string?
+	final_color.a( ) = 200;
 
 	// draw small square in center of screen.
 	render::rect_filled( x - 1, y - 1, 3, 3, final_color );
+
+	// draw our text.
+	if  ( ( valid_player_hit || g_cl.m_pen_data.m_pen ) && g_menu.main.visuals.pen_crosshair_text.get( ) ) {
+		// get color.
+		Color color = g_menu.main.visuals.pen_crosshair_text_color.get();
+		
+		color.a( ) = 200;
+
+		// convert text to int.
+		int dmg = (int)g_cl.m_pen_data.m_damage;
+
+		render::esp_small.string( x + 10, y - 10, color, tfm::format(XOR("%i"), dmg), render::ALIGN_CENTER);
+	}
 }
 
 void Visuals::draw( Entity* ent ) {
@@ -690,25 +702,26 @@ void Visuals::OffScreen( Player* player, int alpha ) {
 		// note - dex; reference: 
 		// https://github.com/VSES/SourceEngine2007/blob/43a5c90a5ada1e69ca044595383be67f40b33c61/src_main/game/client/tf/tf_hud_damageindicator.cpp#L182
 		offscreen_rotation = -offscreen_rotation;
+		
+		// get our color.
+		color = g_menu.main.players.offscreen_color.get();
 
-		// setup vertices for the triangle.
-		float size = g_menu.main.players.offscreen_size.get( );
+		// get alpha channel.
+		if ( g_menu.main.players.offscreen_pulsate.get( ) && alpha == 255 ) {
+			float pulsate = std::sin( g_csgo.m_globals->m_realtime * ( g_menu.main.players.offscreen_pulsate_speed.get( ) / 10.f ) );
 
-		verts[ 0 ] = { offscreen_pos.x, offscreen_pos.y };        // 0,  0
-		verts[ 1 ] = { offscreen_pos.x - size, offscreen_pos.y + size * 2 }; // -1, 1
-		verts[ 2 ] = { offscreen_pos.x + size, offscreen_pos.y + size * 2 }; // 1,  1
+			// normalize.
+			pulsate = ( pulsate + 1.f ) * 0.5f;
 
-		// rotate all vertices to point towards our target.
-		verts[ 0 ] = render::RotateVertex( offscreen_pos, verts[ 0 ], offscreen_rotation );
-		verts[ 1 ] = render::RotateVertex( offscreen_pos, verts[ 1 ], offscreen_rotation );
-		verts[ 2 ] = render::RotateVertex( offscreen_pos, verts[ 2 ], offscreen_rotation );
+			// load, 50.f is the minimum.
+			color.a( ) = 50.f + 200.f * pulsate;
+		}
+
+		else if( alpha != 255 )
+			color.a( ) = alpha / 2;
 
 		// render!
-		color = g_menu.main.players.offscreen_color.get();
-		color.a( ) = ( alpha == 255 ) ? alpha : alpha / 2;
-
-		g_csgo.m_surface->DrawSetColor( color );
-		g_csgo.m_surface->DrawTexturedPolygon( 3, verts );
+		render::triangle( offscreen_pos, g_menu.main.players.offscreen_size.get( ), offscreen_rotation, color );
 	}
 }
 
@@ -1353,6 +1366,7 @@ void Visuals::RenderGlow( ) {
 
 	float blend = g_menu.main.players.glow_blend.get( ) / 100.f;
 	int style = g_menu.main.players.glow_style.get( );
+	bool bloom = g_menu.main.players.glow_bloom.get( );
 
 	for( int i{ }; i < g_csgo.m_glow->m_object_definitions.Count( ); ++i ) {
 		GlowObjectDefinition_t* obj = &g_csgo.m_glow->m_object_definitions[ i ];
@@ -1396,7 +1410,7 @@ void Visuals::RenderGlow( ) {
 		obj->m_render_style = style;
 		obj->m_render_occluded = true;
 		obj->m_render_unoccluded = false;
-		obj->m_render_full_bloom = false;
+		obj->m_render_full_bloom = bloom;
 		obj->m_color = { ( float ) color.r( ) / 255.f, ( float ) color.g( ) / 255.f, ( float ) color.b( ) / 255.f };
 		obj->m_alpha = opacity * blend;
 	}

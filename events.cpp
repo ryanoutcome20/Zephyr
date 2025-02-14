@@ -71,6 +71,9 @@ void events::round_start( IGameEvent* evt ) {
 			}
 		}
 	}
+
+	// update world materials.
+	g_visuals.ModulateWorld( );
 }
 
 void events::round_end( IGameEvent* evt ) {

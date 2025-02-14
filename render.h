@@ -72,6 +72,7 @@ namespace render {
 	void circle( int x, int y, int radius, int segments, Color color );
 	void gradient( int x, int y, int w, int h, Color color1, Color color2 );
 	void sphere( vec3_t origin, float radius, float angle, float scale, Color color );
+	void triangle( vec2_t pos, float size, float rotation, Color color );
 	void worldcircle(vec3_t origin, float radius, float angle, float scale, Color color);
 	Vertex RotateVertex( const vec2_t& p, const Vertex& v, float angle );
 }

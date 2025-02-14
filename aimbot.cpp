@@ -110,9 +110,13 @@ void AimPlayer::OnRoundStart(Player* player) {
 	m_missed_shots = 0;
 
 	// reset stand and body index.
-	m_stand_index = 0;
-	m_stand_index2 = 0;
-	m_body_index = 0;
+	m_brute_index    = 0;
+	m_body_index     = 0;
+	m_lastmove_index = 0;
+	m_smart_index    = 0;
+
+	// reset body counter.
+	m_last_body = 0;
 
 	m_records.clear();
 	m_hitboxes.clear();

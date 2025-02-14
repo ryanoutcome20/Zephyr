@@ -130,6 +130,24 @@ void render::sphere( vec3_t origin, float radius, float angle, float scale, Colo
 	}
 }
 
+void render::triangle( vec2_t pos, float size, float rotation, Color color ) {
+	Vertex verts[ 3 ];
+
+	// initialize our verts.
+	verts[ 0 ] = { pos.x, pos.y };
+	verts[ 1 ] = { pos.x - size, pos.y + size * 2 };
+	verts[ 2 ] = { pos.x + size, pos.y + size * 2 };
+
+	// rotate our verts.
+	verts[ 0 ] = render::RotateVertex( pos, verts[ 0 ], rotation );
+	verts[ 1 ] = render::RotateVertex( pos, verts[ 1 ], rotation );
+	verts[ 2 ] = render::RotateVertex( pos, verts[ 2 ], rotation );
+
+	// render our triangle.
+	g_csgo.m_surface->DrawSetColor( color );
+	g_csgo.m_surface->DrawTexturedPolygon( 3, verts );
+}
+
 void render::worldcircle( vec3_t origin, float radius, float angle, float scale, Color color ) {
 	std::vector< Vertex > vertices{};
 

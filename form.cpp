@@ -1,8 +1,8 @@
 #include "includes.h"
 
 void Form::draw( ) {
-	// opacity should reach 1 in 500 milliseconds.
-	constexpr float frequency = 1.f / 0.5f;
+	// opacity should reach 1 in 250 milliseconds.
+	constexpr float frequency = 1.f / 0.25f;
 
 	// the increment / decrement per frame.
 	float step = frequency * g_csgo.m_globals->m_frametime;
@@ -14,7 +14,7 @@ void Form::draw( ) {
 	// clamp the opacity.
 	math::clamp( m_opacity, 0.f, 1.f );
 
-	m_alpha = 0xff * m_opacity;
+	m_alpha = 255 * m_opacity;
 	if( !m_alpha )
 		return;
 

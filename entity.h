@@ -843,6 +843,14 @@ public:
 		return get< int >(g_entoffsets.m_iAccount);
 	}
 
+	__forceinline bool& m_bIsDefusing() {
+		return get< bool >(g_entoffsets.m_bIsDefusing);
+	}
+
+	__forceinline bool& m_bIsGrabbingHostage() {
+		return get< bool >(g_entoffsets.m_bIsGrabbingHostage);
+	}
+
 	__forceinline bool& m_bHasDefuser() {
 		return get< bool >(g_entoffsets.m_bHasDefuser);
 	}

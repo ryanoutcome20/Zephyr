@@ -104,6 +104,10 @@ void Client::OnMapload() {
 	// world materials.
 	g_visuals.ModulateWorld();
 
+	// reset animation / bone data.
+	g_bones.m_running = false;
+	g_animations.m_lock_hltv = false;
+	
 	// reset our shadows.
 	g_visuals.m_cascade_light = nullptr;
 	g_visuals.m_cascade_shadow_direction = vec3_t{ };

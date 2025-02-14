@@ -415,7 +415,7 @@ bool HVH::DoEdgeAntiAim( Player *player, ang_t &out ) {
 
 void HVH::DoRealAntiAim( ) {
 
-	if ( g_menu.main.antiaim.anti_lastmove.get( ) && g_cl.m_speed < 15.f && m_mode != AntiAimMode::STAND ) {
+	if ( g_menu.main.antiaim.anti_lastmove.get( ) && g_cl.m_speed < 45.f && m_mode == AntiAimMode::WALK ) {
 		g_cl.m_cmd->m_view_angles.y = -m_direction;
 	}
 
@@ -722,7 +722,8 @@ void HVH::AntiAim( ) {
 			DoRealAntiAim( );
 
 		// run the fake on sendpacket true.
-		else DoFakeAntiAim( );
+		else 
+			DoFakeAntiAim( );
 	}
 
 	// no fake, just run real.

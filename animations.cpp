@@ -55,9 +55,9 @@ bool Animations::FixFakewalk( Player* player, LagRecord* record ) {
 		return false;
 
 	if ( record->m_velocity.length_sqr( ) > 0.1f
-		&& record->m_layers[ ANIMATION_LAYER_MOVEMENT_MOVE ].m_weight == 0.0f
-		&& record->m_layers[ ANIMATION_LAYER_LEAN ].m_weight == 0.0f
-		&& record->m_layers[ ANIMATION_LAYER_MOVEMENT_MOVE ].m_playback_rate < 0.0001f )
+		&& record->m_layers[ ANIMATION_LAYER_MOVEMENT_JUMP_OR_FALL ].m_weight == 0.0f
+		&& record->m_layers[ ANIMATION_LAYER_MOVEMENT_LAND_OR_CLIMB ].m_weight == 0.0f
+		&& record->m_layers[ ANIMATION_LAYER_MOVEMENT_MOVE ].m_playback_rate == 0.f )
 		record->m_fake_walk = true;
 
 	if ( record->m_fake_walk )

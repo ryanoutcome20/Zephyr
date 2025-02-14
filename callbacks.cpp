@@ -12,7 +12,7 @@ void callbacks::ForceFullUpdate( ) {
 	g_csgo.m_cl->m_delta_tick = -1;
 }
 
-void callbacks::ToggleMinimalDamageOverride() {
+void callbacks::ToggleMinimalDamageOverride( ) {
 	g_aimbot.m_override = !g_aimbot.m_override;
 }
 
@@ -233,15 +233,15 @@ bool callbacks::IsChamsFriendly( ) {
 	return g_menu.main.players.chams_selection.get() == 1;
 }
 
-bool callbacks::IsChamsFriendlyVisible() {
+bool callbacks::IsChamsFriendlyVisible( ) {
 	return g_menu.main.players.chams_friendly_visible.get();
 }
 
-bool callbacks::IsChamsFriendlyOverlay() {
+bool callbacks::IsChamsFriendlyOverlay( ) {
 	return g_menu.main.players.chams_friendly_visible_overlay.get();
 }
 
-bool callbacks::IsChamsFriendlyInvisible() {
+bool callbacks::IsChamsFriendlyInvisible( ) {
 	return g_menu.main.players.chams_friendly_invisible.get();
 }
 
@@ -249,19 +249,23 @@ bool callbacks::IsChamsLocal( ) {
 	return g_menu.main.players.chams_selection.get() == 2;
 }
 
-bool callbacks::IsChamsLocalReal() {
+bool callbacks::IsChamsLocalReal( ) {
 	return g_menu.main.players.chams_local_real.get();
 }
 
-bool callbacks::IsChamsLocalRealOverlay() {
+bool callbacks::IsChamsLocalRealOverlay( ) {
 	return g_menu.main.players.chams_local_real_overlay.get();
 }
 
-bool callbacks::IsChamsLocalFake() {
+bool callbacks::IsChamsLocalBlendScopedOn( ) {
+	return g_menu.main.players.chams_local_real_blend_scope.get( );
+}
+
+bool callbacks::IsChamsLocalFake( ) {
 	return g_menu.main.players.chams_local_fake.get();
 }
 
-bool callbacks::IsChamsLocalFakeOverlay() {
+bool callbacks::IsChamsLocalFakeOverlay( ) {
 	return g_menu.main.players.chams_local_fake_overlay.get();
 }
 
@@ -309,6 +313,10 @@ bool callbacks::IsGlowOn( ) {
 	return !g_menu.main.players.glow.GetActiveIndices( ).empty( );
 }
 
+bool callbacks::IsGlowStyleOutline( ) {
+	return g_menu.main.players.glow_style.get( ) == 0;
+}
+
 bool callbacks::IsGlowEnemy() {
 	return g_menu.main.players.glow.get( 0 );
 }
@@ -335,6 +343,10 @@ bool callbacks::IsSkeletonLocal( ) {
 
 bool callbacks::IsOffscreenOn( ) {
 	return g_menu.main.players.offscreen.get( );
+}
+
+bool callbacks::IsOffscreenPulsateOn( ) {
+	return g_menu.main.players.offscreen_pulsate.get( );
 }
 
 bool callbacks::IsHealthOn( ) {
@@ -425,8 +437,24 @@ bool callbacks::IsConsoleModulationOn( ) {
 	return g_menu.main.visuals.console_modulation.get( );
 }
 
+bool callbacks::IsVisualizeSpreadOn( ) {
+	return g_menu.main.visuals.spread_xhair.get( );
+}
+
+bool callbacks::IsPenetrationCrosshairOn( ) {
+	return g_menu.main.visuals.pen_crosshair.get( );
+}
+
+bool callbacks::IsPenetrationCrosshairTextOn() {
+	return g_menu.main.visuals.pen_crosshair_text.get();
+}
+
 bool callbacks::IsAutopeekVisualizeOn( ) {
 	return g_menu.main.visuals.autopeek_indicator.get( );
+}
+
+bool callbacks::IsGrenadeTracerOn( ) {
+	return g_menu.main.visuals.tracers.get( );
 }
 
 bool callbacks::IsImpactBeamsOn( ) {
@@ -453,8 +481,20 @@ bool callbacks::IsNotificationsOn() {
 	return g_menu.main.misc.notifications.get( 4 );
 }
 
+bool callbacks::IsHitmarkerOn() {
+	return g_menu.main.misc.hitmarker.get( );
+}
+
 bool callbacks::IsSpawnExploitOn() {
 	return g_menu.main.misc.spawn_exploit.get( );
+}
+
+bool callbacks::IsCrashExploitOn( ) {
+	return g_menu.main.misc.active_exploit.get( ) == 3;
+}
+
+bool callbacks::IsAutomaticStopOn( ) {
+	return g_menu.main.movement.autostop.get( );
 }
 
 bool callbacks::IsConfigMM( ) {

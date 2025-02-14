@@ -447,7 +447,7 @@ public:
 		lag_mode.AddShowCallback( callbacks::IsFakeLagOn );
 		RegisterElement(&lag_mode, 1);
 
-		lag_limit.setup(XOR("limit"), XOR("lag_limit"), 2, 16, true, 0, 2, 1.f);
+		lag_limit.setup(XOR("limit"), XOR("lag_limit"), 2, 14, true, 0, 2, 1.f);
 		lag_limit.AddShowCallback( callbacks::IsFakeLagOn );
 		RegisterElement(&lag_limit, 1);
 
@@ -456,7 +456,7 @@ public:
 		lag_extend.SetToggleCallback(callbacks::ToggleExtendedLag);
 		RegisterElement(&lag_extend, 1);
 
-		lag_extended_limit.setup("", XOR("lag_extended_limit"), 2, 16, false, 0, 2, 1.f);
+		lag_extended_limit.setup("", XOR("lag_extended_limit"), 2, 14, false, 0, 2, 1.f);
 		lag_extended_limit.AddShowCallback( callbacks::IsFakeLagOn );
 		RegisterElement(&lag_extended_limit, 1);
 
@@ -473,6 +473,7 @@ public:
 
 class PlayersTab : public Tab {
 public:
+	Checkbox      dormant;
 	MultiDropdown box;
 	Colorpicker   box_enemy;
 	Colorpicker   box_friendly;
@@ -490,34 +491,36 @@ public:
 	Colorpicker   ammo_friendly;
 	Colorpicker   ammo_local;
 	MultiDropdown health;
-	Dropdown		  health_override_mode;
-	Colorpicker		   health_color;
-	Colorpicker		   health_color_gradient;
-	Checkbox			   health_color_fade_off;
-	Dropdown		   health_color_fade_off_direction;
+	Dropdown	  health_override_mode;
+	Colorpicker	  health_color;
+	Colorpicker	  health_color_gradient;
+	Checkbox	  health_color_fade_off;
+	Dropdown	  health_color_fade_off_direction;
 
 	// col2.
 	Checkbox      lby_update;
 	Colorpicker   lby_update_color;
-	Checkbox		 shot_matrix;
+	Checkbox	  shot_matrix;
 	Colorpicker   shot_matrix_color;
-	Slider			 shot_matrix_time;
+	Slider		  shot_matrix_time;
 	Checkbox      offscreen;
 	Colorpicker   offscreen_color;
-	Slider			 offscreen_dist;
-	Slider			 offscreen_size;
+	Slider		  offscreen_dist;
+	Slider		  offscreen_size;
+	Checkbox      offscreen_pulsate;
+	Slider        offscreen_pulsate_speed;
 	MultiDropdown glow;
 	Colorpicker   glow_enemy;
 	Colorpicker   glow_friendly;
 	Colorpicker   glow_local;
-	Slider		     glow_blend;
-	Dropdown	 glow_style;
+	Slider		  glow_blend;
+	Dropdown	  glow_style;
+	Checkbox	  glow_bloom;
 	MultiDropdown skeleton;
 	Colorpicker   skeleton_enemy;
 	Colorpicker   skeleton_friendly;
 	Colorpicker   skeleton_local;
-	Checkbox      dormant;
-	Dropdown		  chams_selection;
+	Dropdown	  chams_selection;
 	
 	// enemy subtab.
 	Checkbox			  chams_enemy_visible;
@@ -561,6 +564,7 @@ public:
 	Colorpicker		  chams_local_real_overlay_color;
 	Slider				  chams_local_real_overlay_blend;
 	Checkbox		      chams_local_real_blend_scope;
+	Slider				  chams_local_real_blend_scope_blend;
 	Checkbox			  chams_local_fake;
 	Dropdown		  chams_local_fake_material;
 	Colorpicker		  chams_local_fake_color;
@@ -573,6 +577,9 @@ public:
 public:
 	void init() {
 		SetTitle(XOR("players"));
+
+		dormant.setup(XOR("dormant enemies"), XOR("dormant"));
+		RegisterElement(&dormant);
 
 		box.setup(XOR("boxes"), XOR("box"), { XOR("enemy"), XOR("friendly"), XOR("local") });
 		RegisterElement(&box);
@@ -650,6 +657,7 @@ public:
 
 		health_color_fade_off.setup(XOR("fade off"), XOR("health_color_fade_off"));
 		health_color_fade_off.AddShowCallback(callbacks::IsNotHealthOverrideGradient);
+		health_color_fade_off.AddShowCallback(callbacks::IsHealthOn);
 		RegisterElement(&health_color_fade_off);
 
 		health_color_fade_off_direction.setup("", XOR("health_color_fade_off_direction"), { XOR("down"), XOR("up") }, false);
@@ -676,10 +684,10 @@ public:
 		shot_matrix_time.AddShowCallback(callbacks::IsShotMatrixOn);
 		RegisterElement(&shot_matrix_time, 1);
 
-		offscreen.setup(XOR("enemy offscreen esp"), XOR("offscreen"));
+		offscreen.setup(XOR("offscreen arrows"), XOR("offscreen"));
 		RegisterElement(&offscreen, 1);
 
-		offscreen_color.setup(XOR("offscreen esp color"), XOR("offscreen_color"), colors::white);
+		offscreen_color.setup(XOR("color"), XOR("offscreen_color"), colors::white);
 		offscreen_color.AddShowCallback(callbacks::IsOffscreenOn);
 		RegisterElement(&offscreen_color, 1);
 
@@ -690,6 +698,15 @@ public:
 		offscreen_size.setup("", XOR("offscreen_size"), 6.f, 18.f, false, 0.f, 12.f);
 		offscreen_size.AddShowCallback(callbacks::IsOffscreenOn);
 		RegisterElement(&offscreen_size, 1);
+
+		offscreen_pulsate.setup(XOR("pulsate"), XOR("offscreen_pulsate"));
+		offscreen_pulsate.AddShowCallback(callbacks::IsOffscreenOn);
+		RegisterElement(&offscreen_pulsate, 1);
+
+		offscreen_pulsate_speed.setup("", XOR("offscreen_pulsate_speed"), 1.f, 100.f, false, 0.f, 50.f, 1.f, XOR(L"%"));
+		offscreen_pulsate_speed.AddShowCallback(callbacks::IsOffscreenOn);
+		offscreen_pulsate_speed.AddShowCallback(callbacks::IsOffscreenPulsateOn);
+		RegisterElement(&offscreen_pulsate_speed, 1);
 
 		glow.setup(XOR("glow"), XOR("glow"), { XOR("enemy"), XOR("friendly"), XOR("local") });
 		RegisterElement(&glow, 1);
@@ -714,6 +731,11 @@ public:
 		glow_style.AddShowCallback(callbacks::IsGlowOn);
 		RegisterElement(&glow_style, 1);
 
+		glow_bloom.setup(XOR("bloom"), XOR("glow_bloom"));
+		glow_bloom.AddShowCallback(callbacks::IsGlowOn);
+		glow_bloom.AddShowCallback(callbacks::IsGlowStyleOutline);
+		RegisterElement(&glow_bloom, 1);
+
 		skeleton.setup(XOR("skeleton"), XOR("skeleton"), { XOR("enemy"), XOR("friendly"), XOR("local") });
 		RegisterElement(&skeleton, 1);
 
@@ -728,9 +750,6 @@ public:
 		skeleton_local.setup(XOR("local color"), XOR("skeleton_local"), { 255, 255, 255 });
 		skeleton_local.AddShowCallback(callbacks::IsSkeletonLocal);
 		RegisterElement(&skeleton_local, 1);
-
-		dormant.setup(XOR("dormant enemies"), XOR("dormant"));
-		RegisterElement(&dormant, 1);
 
 		chams_selection.setup( XOR("chams selection"), XOR("chams_selection"), { XOR("enemy"), XOR("friendly"), XOR("local") });
 		RegisterElement(&chams_selection, 1);
@@ -750,7 +769,7 @@ public:
 		chams_enemy_visible_color.AddShowCallback(callbacks::IsChamsEnemyVisible);
 		RegisterElement(&chams_enemy_visible_color, 1);
 
-		chams_enemy_visible_blend.setup("", XOR("chams_enemy_visible_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_enemy_visible_blend.setup("", XOR("chams_enemy_visible_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_enemy_visible_blend.AddShowCallback(callbacks::IsChamsEnemy);
 		chams_enemy_visible_blend.AddShowCallback(callbacks::IsChamsEnemyVisible);
 		RegisterElement(&chams_enemy_visible_blend, 1);
@@ -769,7 +788,7 @@ public:
 		chams_enemy_visible_overlay_color.AddShowCallback(callbacks::IsChamsEnemyOverlay);
 		RegisterElement(&chams_enemy_visible_overlay_color, 1);
 
-		chams_enemy_visible_overlay_blend.setup("", XOR("chams_enemy_visible_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_enemy_visible_overlay_blend.setup("", XOR("chams_enemy_visible_overlay_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_enemy_visible_overlay_blend.AddShowCallback(callbacks::IsChamsEnemy);
 		chams_enemy_visible_overlay_blend.AddShowCallback(callbacks::IsChamsEnemyOverlay);
 		RegisterElement(&chams_enemy_visible_overlay_blend, 1);
@@ -789,7 +808,7 @@ public:
 		chams_enemy_invisible_color.AddShowCallback(callbacks::IsChamsEnemyInvisible);
 		RegisterElement(&chams_enemy_invisible_color, 1);
 
-		chams_enemy_invisible_blend.setup("", XOR("chams_enemy_invisible_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_enemy_invisible_blend.setup("", XOR("chams_enemy_invisible_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_enemy_invisible_blend.AddShowCallback(callbacks::IsChamsEnemy);
 		chams_enemy_invisible_blend.AddShowCallback(callbacks::IsChamsEnemyInvisible);
 		RegisterElement(&chams_enemy_invisible_blend, 1);
@@ -809,7 +828,7 @@ public:
 		chams_enemy_history_color.AddShowCallback(callbacks::IsChamsEnemyHistory);
 		RegisterElement(&chams_enemy_history_color, 1);
 
-		chams_enemy_history_blend.setup("", XOR("chams_enemy_history_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_enemy_history_blend.setup("", XOR("chams_enemy_history_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_enemy_history_blend.AddShowCallback(callbacks::IsChamsEnemy);
 		chams_enemy_history_blend.AddShowCallback(callbacks::IsChamsEnemyHistory);
 		RegisterElement(&chams_enemy_history_blend, 1);
@@ -829,7 +848,7 @@ public:
 		chams_friendly_visible_color.AddShowCallback(callbacks::IsChamsFriendlyVisible);
 		RegisterElement(&chams_friendly_visible_color, 1);
 
-		chams_friendly_visible_blend.setup("", XOR("chams_friendly_visible_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_friendly_visible_blend.setup("", XOR("chams_friendly_visible_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_friendly_visible_blend.AddShowCallback(callbacks::IsChamsFriendly);
 		chams_friendly_visible_blend.AddShowCallback(callbacks::IsChamsFriendlyVisible);
 		RegisterElement(&chams_friendly_visible_blend, 1);
@@ -848,7 +867,7 @@ public:
 		chams_friendly_visible_overlay_color.AddShowCallback(callbacks::IsChamsFriendlyOverlay);
 		RegisterElement(&chams_friendly_visible_overlay_color, 1);
 
-		chams_friendly_visible_overlay_blend.setup("", XOR("chams_friendly_visible_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_friendly_visible_overlay_blend.setup("", XOR("chams_friendly_visible_overlay_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_friendly_visible_overlay_blend.AddShowCallback(callbacks::IsChamsFriendly);
 		chams_friendly_visible_overlay_blend.AddShowCallback(callbacks::IsChamsFriendlyOverlay);
 		RegisterElement(&chams_friendly_visible_overlay_blend, 1);
@@ -868,7 +887,7 @@ public:
 		chams_friendly_invisible_color.AddShowCallback(callbacks::IsChamsFriendlyInvisible);
 		RegisterElement(&chams_friendly_invisible_color, 1);
 
-		chams_friendly_invisible_blend.setup("", XOR("chams_friendly_invisible_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_friendly_invisible_blend.setup("", XOR("chams_friendly_invisible_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_friendly_invisible_blend.AddShowCallback(callbacks::IsChamsFriendly);
 		chams_friendly_invisible_blend.AddShowCallback(callbacks::IsChamsFriendlyInvisible);
 		RegisterElement(&chams_friendly_invisible_blend, 1);
@@ -888,7 +907,7 @@ public:
 		chams_local_real_color.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_color, 1);
 
-		chams_local_real_blend.setup("", XOR("chams_local_real_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_local_real_blend.setup("", XOR("chams_local_real_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_local_real_blend.AddShowCallback(callbacks::IsChamsLocal);
 		chams_local_real_blend.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_blend, 1);
@@ -907,7 +926,7 @@ public:
 		chams_local_real_overlay_color.AddShowCallback(callbacks::IsChamsLocalRealOverlay);
 		RegisterElement(&chams_local_real_overlay_color, 1);
 
-		chams_local_real_overlay_blend.setup("", XOR("chams_local_real_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_local_real_overlay_blend.setup("", XOR("chams_local_real_overlay_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_local_real_overlay_blend.AddShowCallback(callbacks::IsChamsLocal);
 		chams_local_real_overlay_blend.AddShowCallback(callbacks::IsChamsLocalRealOverlay);
 		RegisterElement(&chams_local_real_overlay_blend, 1);
@@ -916,6 +935,12 @@ public:
 		chams_local_real_blend_scope.AddShowCallback(callbacks::IsChamsLocal);
 		chams_local_real_blend_scope.AddShowCallback(callbacks::IsChamsLocalReal);
 		RegisterElement(&chams_local_real_blend_scope, 1);
+
+		chams_local_real_blend_scope_blend.setup("", XOR("chams_local_real_blend_scope_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_local_real_blend_scope_blend.AddShowCallback(callbacks::IsChamsLocal);
+		chams_local_real_blend_scope_blend.AddShowCallback(callbacks::IsChamsLocalReal);
+		chams_local_real_blend_scope_blend.AddShowCallback(callbacks::IsChamsLocalBlendScopedOn);
+		RegisterElement(&chams_local_real_blend_scope_blend, 1);
 
 
 		chams_local_fake.setup(XOR("fake"), XOR("chams_local_fake"));
@@ -932,7 +957,7 @@ public:
 		chams_local_fake_color.AddShowCallback(callbacks::IsChamsLocalFake);
 		RegisterElement(&chams_local_fake_color, 1);
 
-		chams_local_fake_blend.setup("", XOR("chams_local_fake_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_local_fake_blend.setup("", XOR("chams_local_fake_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_local_fake_blend.AddShowCallback(callbacks::IsChamsLocal);
 		chams_local_fake_blend.AddShowCallback(callbacks::IsChamsLocalFake);
 		RegisterElement(&chams_local_fake_blend, 1);
@@ -951,7 +976,7 @@ public:
 		chams_local_fake_overlay_color.AddShowCallback(callbacks::IsChamsLocalFakeOverlay);
 		RegisterElement(&chams_local_fake_overlay_color, 1);
 
-		chams_local_fake_overlay_blend.setup("", XOR("chams_local_fake_overlay_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		chams_local_fake_overlay_blend.setup("", XOR("chams_local_fake_overlay_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		chams_local_fake_overlay_blend.AddShowCallback(callbacks::IsChamsLocal);
 		chams_local_fake_overlay_blend.AddShowCallback(callbacks::IsChamsLocalFakeOverlay);
 		RegisterElement(&chams_local_fake_overlay_blend, 1);
@@ -964,9 +989,9 @@ public:
 	Colorpicker   item_color;
 	Checkbox      ammo;
 	Colorpicker   ammo_color;
-	Checkbox		 ammo_bar;
-	Colorpicker	 ammo_bar_color;
-	Checkbox	     dropped_c4;
+	Checkbox	  ammo_bar;
+	Colorpicker	  ammo_bar_color;
+	Checkbox	  dropped_c4;
 	Colorpicker   dropped_c4_color;
 	Checkbox      proj;
 	Colorpicker   proj_color;
@@ -976,17 +1001,17 @@ public:
 	Colorpicker   proj_ground_color;
 	Checkbox      enemy_radar;
 	MultiDropdown planted_c4;
-	Checkbox world_modulation;
-	Colorpicker world_modulation_color;
-	Slider	    world_modulation_blend;
-	Checkbox prop_modulation;
-	Colorpicker prop_modulation_color;
-	Slider	    prop_modulation_blend;
-	Checkbox skybox_modulation;
-	Colorpicker skybox_modulation_color;
-	Dropdown skybox_sky;
-	Checkbox ambient_modulation;
-	Colorpicker ambient_modulation_color;
+	Checkbox      world_modulation;
+	Colorpicker   world_modulation_color;
+	Slider	      world_modulation_blend;
+	Checkbox      prop_modulation;
+	Colorpicker   prop_modulation_color;
+	Slider	      prop_modulation_blend;
+	Checkbox      skybox_modulation;
+	Colorpicker   skybox_modulation_color;
+	Dropdown      skybox_sky;
+	Checkbox      ambient_modulation;
+	Colorpicker   ambient_modulation_color;
 	Button		  update_modulation;
 	Checkbox	  weather_modulation;
 	Checkbox	  weather_audio;
@@ -1012,14 +1037,25 @@ public:
 	Colorpicker   spread_xhair_col;
 	Slider        spread_xhair_blend;
 	Checkbox      pen_crosshair;
+	Colorpicker   pen_crosshair_solid;
+	Colorpicker   pen_crosshair_valid;
+	Colorpicker   pen_crosshair_hit;
+	Checkbox	  pen_crosshair_text;
+	Colorpicker   pen_crosshair_text_color;
 	MultiDropdown indicators;
-	Checkbox           autopeek_indicator;
-	Colorpicker        autopeek_color;
-	Checkbox           tracers;
+	Checkbox      autopeek_indicator;
+	Colorpicker   autopeek_color;
+	Checkbox      tracers;
+	Colorpicker   tracer_lines;
+	Slider	      tracer_lines_blend;
+	Colorpicker   tracer_boxes;
+	Slider	      tracer_boxes_blend;
+	Colorpicker   tracer_boxes_final;
+	Slider	      tracer_boxes_final_blend;
 	MultiDropdown impact_boxes;
-	Colorpicker		   impact_boxes_server;
-	Colorpicker		   impact_boxes_client;
-	Slider				   impact_boxes_time;
+	Colorpicker	  impact_boxes_server;
+	Colorpicker	  impact_boxes_client;
+	Slider		  impact_boxes_time;
 	Checkbox      impact_beams;
 	Colorpicker   impact_beams_color;
 	Colorpicker   impact_beams_hurt_color;
@@ -1038,7 +1074,7 @@ public:
 		item_color.AddShowCallback( callbacks::IsItemsOn );
 		RegisterElement(&item_color);
 
-		ammo.setup(XOR("dropped weapons ammo"), XOR("ammo"));
+		ammo.setup(XOR("dropped weapons ammo text"), XOR("ammo"));
 		RegisterElement(&ammo);
 
 		ammo_color.setup(XOR("color"), XOR("ammo_color"), colors::white);
@@ -1207,8 +1243,7 @@ public:
 			XOR("post-processing"),
 			XOR("flash"),
 			XOR("scope"),
-			XOR("shadows"),
-			XOR("viewbob")
+			XOR("shadows")
 		});
 		RegisterElement(&removals, 1);
 
@@ -1237,13 +1272,36 @@ public:
 		RegisterElement(&spread_xhair, 1);
 
 		spread_xhair_col.setup(XOR("visualize spread color"), XOR("spread_xhair_col"), colors::burgundy);
+		spread_xhair_col.AddShowCallback(callbacks::IsVisualizeSpreadOn);
 		RegisterElement(&spread_xhair_col, 1);
 
 		spread_xhair_blend.setup("", XOR("spread_xhair_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		spread_xhair_blend.AddShowCallback(callbacks::IsVisualizeSpreadOn);
 		RegisterElement(&spread_xhair_blend, 1);
 
 		pen_crosshair.setup(XOR("penetration crosshair"), XOR("pen_xhair"));
 		RegisterElement(&pen_crosshair, 1);
+
+		pen_crosshair_solid.setup(XOR("solid color"), XOR("pen_crosshair_solid"), colors::red);
+		pen_crosshair_solid.AddShowCallback(callbacks::IsPenetrationCrosshairOn);
+		RegisterElement(&pen_crosshair_solid, 1);
+
+		pen_crosshair_valid.setup(XOR("valid color"), XOR("pen_crosshair_valid"), colors::green);
+		pen_crosshair_valid.AddShowCallback(callbacks::IsPenetrationCrosshairOn);
+		RegisterElement(&pen_crosshair_valid, 1);
+
+		pen_crosshair_hit.setup(XOR("hit color"), XOR("pen_crosshair_hit"), colors::yellow);
+		pen_crosshair_hit.AddShowCallback(callbacks::IsPenetrationCrosshairOn);
+		RegisterElement(&pen_crosshair_hit, 1);
+
+		pen_crosshair_text.setup(XOR("damage text"), XOR("pen_crosshair_text"));
+		pen_crosshair_text.AddShowCallback(callbacks::IsPenetrationCrosshairOn);
+		RegisterElement(&pen_crosshair_text, 1);
+
+		pen_crosshair_text_color.setup(XOR("color"), XOR("pen_crosshair_text_color"), colors::white);
+		pen_crosshair_text_color.AddShowCallback(callbacks::IsPenetrationCrosshairOn);
+		pen_crosshair_text_color.AddShowCallback(callbacks::IsPenetrationCrosshairTextOn);
+		RegisterElement(&pen_crosshair_text_color, 1);
 
 		indicators.setup(XOR("indicators"), XOR("indicators"), { XOR("lby"), XOR("lag compensation"), XOR("fake latency"), XOR("fake lag extended"), XOR("minimal damage") });
 		RegisterElement(&indicators, 1);
@@ -1257,6 +1315,30 @@ public:
 
 		tracers.setup(XOR("grenade simulation"), XOR("tracers"));
 		RegisterElement(&tracers, 1);
+
+		tracer_lines.setup(XOR("lines color"), XOR("tracer_lines"), colors::light_blue);
+		tracer_lines.AddShowCallback(callbacks::IsGrenadeTracerOn);
+		RegisterElement(&tracer_lines, 1);
+
+		tracer_lines_blend.setup("", XOR("tracer_lines_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		tracer_lines_blend.AddShowCallback(callbacks::IsGrenadeTracerOn);
+		RegisterElement(&tracer_lines_blend, 1);
+
+		tracer_boxes.setup(XOR("boxes color"), XOR("tracer_boxes"), colors::white);
+		tracer_boxes.AddShowCallback(callbacks::IsGrenadeTracerOn);
+		RegisterElement(&tracer_boxes, 1);
+
+		tracer_boxes_blend.setup("", XOR("tracer_boxes_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		tracer_boxes_blend.AddShowCallback(callbacks::IsGrenadeTracerOn);
+		RegisterElement(&tracer_boxes_blend, 1);
+
+		tracer_boxes_final.setup(XOR("final box color"), XOR("tracer_boxes_final"), colors::green);
+		tracer_boxes_final.AddShowCallback(callbacks::IsGrenadeTracerOn);
+		RegisterElement(&tracer_boxes_final, 1);
+
+		tracer_boxes_final_blend.setup("", XOR("tracer_boxes_final_blend"), 0.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
+		tracer_boxes_final_blend.AddShowCallback(callbacks::IsGrenadeTracerOn);
+		RegisterElement(&tracer_boxes_final_blend, 1);
 
 		impact_boxes.setup(XOR("impact boxes"), XOR("impact_boxes"), { XOR("server"), XOR("client") });
 		RegisterElement(&impact_boxes, 1);
@@ -1301,11 +1383,11 @@ class MovementTab : public Tab {
 public:
 	Checkbox bhop;
 	Checkbox autostrafe;
+	Checkbox airduck;
+	Checkbox duck_delay;
 	Keybind  snakestrafe;
 	Slider   snake_freq;
 	Slider   snake_dist;
-	Checkbox airduck;
-	Checkbox duck_delay;
 
 	Keybind  fakewalk;
 	Keybind  lagwalk;
@@ -1323,6 +1405,12 @@ public:
 		autostrafe.setup(XOR("automatic strafe"), XOR("autostrafe"));
 		RegisterElement(&autostrafe);
 
+		airduck.setup(XOR("duck in air"), XOR("airduck"));
+		RegisterElement(&airduck);
+
+		duck_delay.setup(XOR("remove duck delay"), XOR("duck_delay"));
+		RegisterElement(&duck_delay);
+
 		snakestrafe.setup(XOR("snake-strafe"), XOR("snakestrafe"));
 		RegisterElement(&snakestrafe);
 
@@ -1331,12 +1419,6 @@ public:
 
 		snake_dist.setup("", XOR("snake_dist"), 1.f, 100.f, false, 0, 20.f, 0.5f, XOR(L"%"));
 		RegisterElement(&snake_dist);
-
-		airduck.setup(XOR("duck in air"), XOR("airduck"));
-		RegisterElement(&airduck);
-
-		duck_delay.setup(XOR("remove duck delay"), XOR("duck_delay"));
-		RegisterElement(&duck_delay);
 
 		// col2.
 		fakewalk.setup(XOR("fake-walk"), XOR("fakewalk"));
@@ -1352,6 +1434,7 @@ public:
 		RegisterElement(&autostop, 1);
 
 		autostop_speed.setup("", XOR("autostop_speed"), 1.f, 100.f, false, 0, 15.f, 1.f, XOR(L"%"));
+		autostop_speed.AddShowCallback(callbacks::IsAutomaticStopOn);
 		RegisterElement(&autostop_speed, 1);
 	}
 };
@@ -2485,6 +2568,7 @@ public:
 	// col2.
 	Checkbox unlock;
 	Checkbox hitmarker;
+	Slider   hitmarker_lifetime;
 	MultiDropdown ragdoll_modifiers;
 	Checkbox killfeed;
 	Checkbox clantag;
@@ -2594,6 +2678,10 @@ public:
 		hitmarker.setup(XOR("hitmarker"), XOR("hitmarker"));
 		RegisterElement(&hitmarker, 1);
 
+		hitmarker_lifetime.setup("", XOR("hitmarker_lifetime"), 0.f, 3.f, false, 2, 1.5f, 0.05f, XOR(L"s"));
+		hitmarker_lifetime.AddShowCallback(callbacks::IsHitmarkerOn);
+		RegisterElement(&hitmarker_lifetime, 1);
+
 		ragdoll_modifiers.setup(XOR("ragdoll modifiers"), XOR("ragdoll_modifers"), { XOR("force"), XOR("gravity") });
 		RegisterElement(&ragdoll_modifiers, 1);
 
@@ -2617,7 +2705,8 @@ public:
 		active_exploit.setup(XOR("active exploit"), XOR("active_exploit"), { XOR( "none" ), XOR( "team exploit" ), XOR( "deathmatch godmode" ), XOR("crasher") });
 		RegisterElement(&active_exploit, 1);
 
-		active_strength.setup(XOR("strength"), XOR("active_strength"), 0.f, 500.f, true, 0, 15.f, 5.f);
+		active_strength.setup("", XOR("active_strength"), 0.f, 500.f, false, 0, 15.f, 5.f);
+		active_strength.AddShowCallback(callbacks::IsCrashExploitOn);
 		RegisterElement(&active_strength, 1);
 	}
 };

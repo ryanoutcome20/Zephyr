@@ -45,10 +45,12 @@ public:
 	float     m_body_update;
 	bool      m_moved;
 
-	int m_stand_index;
-	int m_stand_index2;
-	int m_body_index;
+	int		  m_brute_index;
+	int		  m_body_index;
+	int		  m_lastmove_index;
+	int		  m_smart_index;
 
+	float m_last_body;
 
 	// data about the LBY proxy.
 	float m_body;

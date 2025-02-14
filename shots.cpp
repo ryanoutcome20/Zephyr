@@ -170,16 +170,24 @@ void Shots::OnHurt( IGameEvent *evt ) {
 
 	// hitmarker.
 	if ( g_menu.main.misc.hitmarker.get() ) {
-		g_visuals.m_hit_duration = 1.f;
+		g_visuals.m_hit_duration = g_menu.main.misc.hitmarker_lifetime.get( );
 		g_visuals.m_hit_start = g_csgo.m_globals->m_curtime;
 		g_visuals.m_hit_end = g_visuals.m_hit_start + g_visuals.m_hit_duration;
 
 		g_csgo.m_sound->EmitAmbientSound(XOR("buttons/arena_switch_press_02.wav"), 1.f);
 	}
 
-	// print this shit.
+	// print this hit.
 	if ( g_menu.main.misc.notifications.get(0) )
 		g_notify.add(tfm::format(XOR("Hit %s in the %s for %i (%i remaining)\n"), name, m_groups[ hitgroup ], (int)damage, hp));
+
+	// if we hit a player, mark vis impacts.
+	if ( !m_vis_impacts.empty() ) {
+		for ( auto& i : m_vis_impacts ) {
+			if ( i.m_tickbase == g_cl.m_local->m_nTickBase() )
+				i.m_hit_player = true;
+		}
+	}
 
 	// get our real time.
 	time = g_csgo.m_globals->m_realtime;
@@ -299,11 +307,14 @@ void Shots::Think() {
 			if ( mode == Resolver::Modes::RESOLVE_BODY )
 				++data->m_body_index;
 
-			else if ( mode == Resolver::Modes::RESOLVE_STAND )
-				++data->m_stand_index;
+			else if ( mode == Resolver::Modes::RESOLVE_BRUTE )
+				++data->m_brute_index;
 
-			else if ( mode == Resolver::Modes::RESOLVE_STAND2 )
-				++data->m_stand_index2;
+			else if ( mode == Resolver::Modes::RESOLVE_STOPPED_MOVING )
+				++data->m_lastmove_index;
+
+			else if ( mode == Resolver::Modes::RESOLVE_SMART )
+				++data->m_smart_index;
 
 			++data->m_missed_shots;
 		}
