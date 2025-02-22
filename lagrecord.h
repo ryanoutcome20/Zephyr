@@ -228,6 +228,6 @@ public:
 		// get predicted curtime.
 		float curtime = g_cl.m_local->alive() ? game::TICKS_TO_TIME( g_cl.m_local->m_nTickBase( ) ) : g_csgo.m_globals->m_curtime;
 
-		return std::fabs( correction - ( curtime - m_sim_time ) ) < 0.2f;
+		return std::fabs( correction - ( curtime - m_sim_time ) ) < g_cl.m_unlag;
 	}
 };
